@@ -1,0 +1,55 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ec.sirec.ejb.servicios;
+
+import ec.sirec.ejb.entidades.AdicionalesDeductivos;
+import ec.sirec.ejb.entidades.CatalogoDetalle;
+import ec.sirec.ejb.entidades.SegPermiso;
+import ec.sirec.ejb.facade.AdicionalesDeductivosFacade;
+import ec.sirec.ejb.facade.CatalogoDetalleFacade;
+import ec.sirec.ejb.facade.SegPermisoFacade;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author vespinoza
+ */
+@Stateless
+@LocalBean
+public class AdicionalesDeductivosServicio {
+
+    @EJB
+    private AdicionalesDeductivosFacade adicionalesDeductivosDao;
+    private String ENTIDAD_ADICIONALES_DEDUCIBLES = "AdicionalesDeductivos";
+    
+    
+     public String crearPermiso(AdicionalesDeductivos adicionalesDeductivos) throws Exception {
+        adicionalesDeductivosDao.crear(adicionalesDeductivos);
+        return "Se ha creado el permiso" + adicionalesDeductivos.getAdidedCodigo();
+    }
+
+    public String editarPemiso(AdicionalesDeductivos adicionalesDeductivos) throws Exception {
+        adicionalesDeductivosDao.editar(adicionalesDeductivos);
+        return "Se ha modificado el permiso" + adicionalesDeductivos.getAdidedCodigo();
+    }
+    
+    public List<AdicionalesDeductivos> listarAdicionalesDeducibles() throws Exception {
+        return adicionalesDeductivosDao.listarTodos();
+    }
+
+    public List<AdicionalesDeductivos> listarAdicionesDeductivosTipo(String tipo) throws Exception {
+     return adicionalesDeductivosDao.listarPorCampoOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipo", tipo, "adidedCodigo", "asc");
+    }
+    
+ 
+    
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+}
