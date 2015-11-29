@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <!--DETERMINACION 1.5 X 1000-->
+    <h:panelGrid>
+        <center>
+            <h:panelGrid id="pnlConPatPorMil" width="1000" columns="1" >
+                <p:panel header="#{txt.lbl_header_det_pat_por_mil}">
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="#{txt.btn_anadir_periodo}" 
+                                         id="btnAnPeriodoPag4" 
+                                         action="#{gestionPatenteControlador.guardarPatente()}" 
+                                         icon="ui-icon-disk"  
+                                         process="@this,pnlConPatPorMil" 
+                                         update=":frmPat:tabPrin:pnlConPatPorMil,frmPat:msgs"
+                                         async="true"
+                                         global="false"
+                                         />
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="6">
+                        <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_balance}"/>
+                        <p:selectOneMenu   required="true" id="cmbAnioBalance" 
+                                           value="#{gestionPatenteControlador.catastroPredialSelec}" style="width:250px"
+                                           converter="#{catastroPredialConverter}" var="t">
+                            <f:selectItem  itemLabel="Seleccione..." itemValue=""/> 
+                            <f:selectItems var="tipTem"  
+                                           value="#{gestionPatenteControlador.listaCatastroPredial}" 
+                                           itemLabel="#{tipTem.catpreCodNacional}" 
+                                           itemValue="#{tipTem}"/> 
+                            <p:column width="200" style="white-space: normal">  
+                                <h:outputText escape="false" value="#{t.catpreCodNacional}" style="font-size: 10px"/> 
+                            </p:column> 
+                        </p:selectOneMenu>                               
+                        <p:message for="cmbAnioBalance"/>
+
+                        <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_declaracion}"/>
+                        <p:selectOneMenu   required="true" id="cmbAclaraAnio" 
+                                           value="#{gestionPatenteControlador.catastroPredialSelec}" style="width:250px"
+                                           converter="#{catastroPredialConverter}" var="t">
+                            <f:selectItem  itemLabel="Seleccione..." itemValue=""/> 
+                            <f:selectItems var="tipTem"  
+                                           value="#{gestionPatenteControlador.listaCatastroPredial}" 
+                                           itemLabel="#{tipTem.catpreCodNacional}" 
+                                           itemValue="#{tipTem}"/> 
+                            <p:column width="200" style="white-space: normal">  
+                                <h:outputText escape="false" value="#{t.catpreCodNacional}" style="font-size: 10px"/> 
+                            </p:column> 
+                        </p:selectOneMenu>                               
+                        <p:message for="cmbAclaraAnio"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="6">
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_total_anual}"/>
+                        <p:inputText  id="txtIngTAnual"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtIngTAnual"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_num_sucursales}"/>
+                        <p:inputText   id="txtNSuc"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                       maxlength="20" size="40"/>
+                        <p:message for="txtNSuc"/>
+                    </h:panelGrid> 
+                    <h:panelGrid columns="3">
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total_activos}"/>
+                        <p:inputText  id="txtIngTActivos"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtIngTActivos"/>
+                    </h:panelGrid>  
+                    <h:panelGrid columns="6">
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_pasivo_corriente}"/>
+                        <p:inputText  id="txtPasCorr"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtPasCorr"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_pasivo_contingente}"/>
+                        <p:inputText   id="txtPasCon"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                       maxlength="20" size="40"/>
+                        <p:message for="txtPasCon"/>
+                    </h:panelGrid> 
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="#{txt.btn_calcula}" 
+                                         id="btnCalculaPag4" 
+                                         action="#{gestionPatenteControlador.guardarPatente()}" 
+                                         icon="ui-icon-disk"  
+                                         process="@this,pnlConPatPorMil" 
+                                         update=":frmPat:tabPrin:pnlConPatPorMil,frmPat:msgs"
+                                         async="true"
+                                         global="false"
+                                         />
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="6">
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_base_imponible}"/>
+                        <p:inputText  disabled="true" id="txtBaseImp"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtBaseImp"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_recargos}"/>
+                        <p:inputText  disabled="true" id="txtRec"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtRec"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_impuesto}"/>
+                        <p:inputText  disabled="true" id="txtImp"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtImp"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total}"/>
+                        <p:inputText  disabled="true" id="txtTot"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtTot"/>
+                    </h:panelGrid>
+                    <h:panelGrid>
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_tasa_procesamiento}"/>
+                        <p:inputText  disabled="true" id="txtTasPro"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtTasPro"/>
+
+                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_subtotal}"/>
+                        <p:inputText  disabled="true" id="txtSub"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                      maxlength="20" size="40"/>
+                        <p:message for="txtSub"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="#{txt.btn_guardar}" 
+                                         id="btnGuardarPag4" 
+                                         action="#{gestionPatenteControlador.guardarPatente()}" 
+                                         icon="ui-icon-disk"  
+                                         process="@this,pnlConPatPorMil" 
+                                         update=":frmPat:tabPrin:pnlConPatPorMil,frmPat:msgs"
+                                         async="true"
+                                         global="false"
+                                         />
+                    </h:panelGrid>
+                </p:panel>
+            </h:panelGrid>                      
+        </center>
+    </h:panelGrid>
+
+</html>

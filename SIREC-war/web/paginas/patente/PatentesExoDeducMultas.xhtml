@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+            <!--DETERMINACION DE PATERNTES-->
+            <h:panelGrid>
+                <center>
+                    <h:panelGrid id="pnlConExuDucMlt" width="1000" columns="1" >
+                        <p:panel header="#{txt.lbl_header_Exo_Dec_Multas}">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_mes_incumplimiento}"/>
+                                <p:inputText  id="txtMesIncumplimiento"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="txtMesIncumplimiento"/>
+
+                                <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_reduc_impuesto_mitad}"/>
+                                <p:selectBooleanButton id="redImpMitad" value="#{gestionPatenteControlador.artesCalificado}" onLabel="Yes" offLabel="No" style="width:60px" />
+                                <p:message for="redImpMitad"/>
+
+
+                                <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_reduc_impuesto_tercera}"/>
+                                <p:selectBooleanButton id="redImpTercera" value="#{gestionPatenteControlador.artesCalificado}" onLabel="Yes" offLabel="No" style="width:60px" />
+                                <p:message for="redImpTercera"/>
+
+
+                                <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_exo_artesano_calificado}"/>
+                                <p:selectBooleanButton id="exoArtCal" value="#{gestionPatenteControlador.artesCalificado}" onLabel="Yes" offLabel="No" style="width:60px" />
+                                <p:message for="exoArtCal"/>
+
+                                <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_patantes_sijetos_pago}"/>
+                                <p:selectBooleanButton id="patPasivos" value="#{gestionPatenteControlador.artesCalificado}" onLabel="Yes" offLabel="No" style="width:60px" />
+                                <p:message for="patPasivos"/>
+
+                               
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_evacion_tribut}"/>
+                                <p:inputText  id="evaTRibutaria"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="evaTRibutaria"/>
+
+
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_porcentaje_ingreso}"/>
+                                <p:inputText  id="porceIngreso"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="porceIngreso"/>
+
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_base_imponible_negativa}"/>
+                                <p:inputText  id="baseImpNegativa"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="baseImpNegativa"/> </h:panelGrid>  
+                                                        
+                            <h:panelGrid columns="2">
+                                <p:commandButton value="#{txt.btn_guardar}" 
+                                                 id="btnGuardar2" 
+                                                 action="#{gestionPatenteControlador.guardarPatente()}" 
+                                                 icon="ui-icon-disk"  
+                                                 process="@this,pnlConExuDucMlt" 
+                                                 update=":frmPat,pnlConExuDucMlt,frmPat:msgs"
+                                                 async="true"
+                                                 global="false"
+                                                 />
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid>                      
+                </center>
+                </h:panelGrid>
+          
+</html>
