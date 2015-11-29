@@ -11,22 +11,31 @@
             <center>
                 <h:form id="frmPropietario">         
                     <p:growl id="msgs" showDetail="true"/>
-                    <!-- Listado de referencias -->
                     <p:panel  header="Propietario">
                         <h:panelGrid columns="3">
-                            <h:outputLabel value="ProCi:" for="proCi" />
-                            <h:inputText id="proCi" value="#{propietarioControlador.propietarioActual.proCi}" title="ProCi" required="true" requiredMessage="The ProCi field is required."/>
+                            <h:outputLabel value="Cédula/RUC:" for="proCi" />
+                            <p:inputText id="proCi" value="#{propietarioControlador.propietarioActual.proCi}" 
+                                         maxlength="13" title="ProCi" required="true" requiredMessage="The ProCi field is required."/>
                             <p:message for="proCi"/>
-                            <h:outputLabel value="ProTipoPersona:" for="proTipoPersona" />
-                            <h:inputText id="proTipoPersona" value="#{propietarioControlador.propietarioActual.proTipoPersona}" title="ProTipoPersona" required="true" requiredMessage="The ProTipoPersona field is required."/>
+                            <h:outputLabel value="Tipo:" for="proTipoPersona" />
+                            <p:selectOneMenu id="proTipoPersona" value="#{propietarioControlador.propietarioActual.proTipoPersona}">
+                                <f:selectItem itemLabel="Natural" itemValue="N"/>
+                                <f:selectItem itemLabel="Juridica" itemValue="J"/>
+                            </p:selectOneMenu>
                             <p:message for="proTipoPersona"/>
-                            <h:outputLabel value="ProApellidos:" for="proApellidos" />
-                            <h:inputText id="proApellidos" value="#{propietarioControlador.propietarioActual.proApellidos}" title="ProApellidos" required="true" requiredMessage="The ProApellidos field is required."/>
+                            <h:outputLabel value="Apellidos:" for="proApellidos" />
+                            <p:inputText id="proApellidos" 
+                                         value="#{propietarioControlador.propietarioActual.proApellidos}" 
+                                         title="ProApellidos" required="true" 
+                                         maxlength="200" requiredMessage="The ProApellidos field is required."/>
                             <p:message for="proApellidos"/>
-                            <h:outputLabel value="ProNombres:" for="proNombres" />
-                            <h:inputText id="proNombres" value="#{propietarioControlador.propietarioActual.proNombres}" title="ProNombres" required="true" requiredMessage="The ProNombres field is required."/>
+                            <h:outputLabel value="Nombres:" for="proNombres" />
+                            <p:inputText id="proNombres" 
+                                         value="#{propietarioControlador.propietarioActual.proNombres}" 
+                                         maxlength="200" 
+                                         title="ProNombres" required="true" requiredMessage="The ProNombres field is required."/>
                             <p:message for="proNombres"/>
-                            <h:outputLabel value="ProFechaNacimiento:" for="proFechaNacimiento" />
+                            <h:outputLabel value="Fecha de Nacimiento:" for="proFechaNacimiento" />
                             <p:calendar id="proFechaNacimiento" 
                                         value="#{propietarioControlador.propietarioActual.proFechaNacimiento}" 
                                         title="ProFechaNacimiento" 
@@ -35,23 +44,28 @@
                                         pattern="yyyy-MM-dd">
                             </p:calendar>
                             <p:message for="proFechaNacimiento"/>
-                            <h:outputLabel value="ProRazonSocial:" for="proRazonSocial" />
-                            <h:inputText id="proRazonSocial" value="#{propietarioControlador.propietarioActual.proRazonSocial}" title="ProRazonSocial" required="true" requiredMessage="The ProRazonSocial field is required."/>
+                            <h:outputLabel value="Razon Social:" for="proRazonSocial" />
+                            <p:inputText id="proRazonSocial" value="#{propietarioControlador.propietarioActual.proRazonSocial}" title="ProRazonSocial" required="true" requiredMessage="The ProRazonSocial field is required."/>
                             <p:message for="proRazonSocial"/>
-                            <h:outputLabel value="ProDireccion:" for="proDireccion" />
-                            <h:inputText id="proDireccion" value="#{propietarioControlador.propietarioActual.proDireccion}" title="ProDireccion" />
+                            <h:outputLabel value="Direccion:" for="proDireccion" />
+                            <p:inputText id="proDireccion" value="#{propietarioControlador.propietarioActual.proDireccion}" title="ProDireccion" />
                             <p:message for="proDireccion"/>
-                            <h:outputLabel value="ProTelefono:" for="proTelefono" />
-                            <h:inputText id="proTelefono" value="#{propietarioControlador.propietarioActual.proTelefono}" title="ProTelefono" />
+                            <h:outputLabel value="Telefono:" for="proTelefono" />
+                            <p:inputText id="proTelefono" 
+                                         value="#{propietarioControlador.propietarioActual.proTelefono}" 
+                                         maxlength="100" 
+                                         title="ProTelefono" />
                             <p:message for="proTelefono"/>
-                            <h:outputLabel value="ProCorreo:" for="proCorreo" />
-                            <h:inputText id="proCorreo" value="#{propietarioControlador.propietarioActual.proCorreo}" title="ProCorreo" />
+                            <h:outputLabel value="Correo:" for="proCorreo" />
+                            <p:inputText id="proCorreo" value="#{propietarioControlador.propietarioActual.proCorreo}" 
+                                         maxlength="100" 
+                                         title="ProCorreo" />
                             <p:message for="proCorreo"/>
-                            <h:outputLabel value="ProDiscapacidad:" for="proDiscapacidad" />
-                            <h:selectBooleanCheckbox id="proDiscapacidad" value="#{propietarioControlador.propietarioActual.proDiscapacidad}" title="ProDiscapacidad" />
+                            <h:outputLabel value="Tiene Discapacidad:" for="proDiscapacidad" />
+                            <p:selectBooleanCheckbox id="proDiscapacidad" value="#{propietarioControlador.propietarioActual.proDiscapacidad}"/>
                             <p:message for="proDiscapacidad"/>
                             <h:outputLabel value="ProObservaciones:" for="proObservaciones" />
-                            <h:inputText id="proObservaciones" value="#{propietarioControlador.propietarioActual.proObservaciones}" title="ProObservaciones" />
+                            <p:inputText id="proObservaciones" value="#{propietarioControlador.propietarioActual.proObservaciones}" title="ProObservaciones" />
                             <p:message for="proObservaciones"/>
                             <h:outputLabel value="CatdetCiudad:" for="catdetCiudad" />
                             <h:selectOneMenu id="catdetCiudad" 
@@ -77,88 +91,88 @@
 
                     <p:panel>
                         <h:panelGrid>
-                            <h:dataTable value="#{propietarioControlador.listaPropietarios}" var="item">
-                                <h:column>
+                            <p:dataTable value="#{propietarioControlador.listaPropietarios}" var="item">
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProCi"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proCi}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProTipoPersona"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proTipoPersona}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProApellidos"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proApellidos}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProNombres"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proNombres}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProFechaNacimiento"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proFechaNacimiento}">
                                         <f:convertDateTime pattern="MM/dd/yyyy" />
                                     </h:outputText>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProRazonSocial"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proRazonSocial}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProDireccion"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proDireccion}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProTelefono"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proTelefono}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProCorreo"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proCorreo}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProDiscapacidad"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proDiscapacidad}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="ProObservaciones"/>
                                     </f:facet>
                                     <h:outputText value="#{item.proObservaciones}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="UsuIdentificacion"/>
                                     </f:facet>
                                     <h:outputText value="#{item.usuIdentificacion}"/>
-                                </h:column>
-                                <h:column>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="CatdetCiudad"/>
                                     </f:facet>
                                     <h:outputText value="#{item.catdetCiudad.catdetTexto}"/>
-                                </h:column>
-                            </h:dataTable>
+                                </p:column>
+                            </p:dataTable>
                         </h:panelGrid>
                     </p:panel>
                 </h:form>

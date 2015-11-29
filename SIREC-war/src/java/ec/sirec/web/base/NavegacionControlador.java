@@ -161,7 +161,44 @@ public class NavegacionControlador extends BaseControlador {
             propietario.setIcon("ui-icon-person");
             propietario.setCommand("#{navegacionControlador.redireccionarAPagina('base','propietario')}");
             subMenuPredios.addElement(propietario);
+            
+            DefaultMenuItem fichaCatastral = new DefaultMenuItem("Ficha Catastral");
+            fichaCatastral.setIcon("ui-icon-person");
+            fichaCatastral.setCommand("#{navegacionControlador.redireccionarAPagina('predio','ficha_catastral')}");
+            subMenuPredios.addElement(fichaCatastral);
+            
+            
+            
             menu.addElement(subMenuPredios);
+            
+            
+            DefaultSubMenu subMenuImpuestos = new DefaultSubMenu("Impuestos y Servicios");
+            
+            DefaultMenuItem predial = new DefaultMenuItem("Predial");
+            predial.setIcon("ui-icon-person");
+            predial.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','gestionImpuestoPredial')}");
+            subMenuImpuestos.addElement(predial);
+            DefaultMenuItem plusvalia = new DefaultMenuItem("Plusvalia");
+            plusvalia.setIcon("ui-icon-person");
+            plusvalia.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
+            subMenuImpuestos.addElement(plusvalia);
+            DefaultMenuItem alcabala = new DefaultMenuItem("Alcabala");
+            alcabala.setIcon("ui-icon-person");
+            alcabala.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
+            subMenuImpuestos.addElement(alcabala);
+            DefaultMenuItem patenteImp = new DefaultMenuItem("Patente y 1.5 x 1000");
+            patenteImp.setIcon("ui-icon-person");
+            patenteImp.setCommand("#{navegacionControlador.redireccionarAPagina('patente','patente')}");
+            subMenuImpuestos.addElement(patenteImp);
+            
+            
+            DefaultMenuItem servicios = new DefaultMenuItem("Tasas por Servicios");
+            servicios.setIcon("ui-icon-person");
+            servicios.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
+            subMenuImpuestos.addElement(servicios);
+            
+            menu.addElement(subMenuImpuestos);
+            
 
             DefaultMenuItem itemInicio = new DefaultMenuItem("Inicio");
             itemInicio.setIcon("ui-icon-bookmark");
