@@ -25,7 +25,7 @@ public class CatastroPredialValoracionServicio {
     // "Insert Code > Add Business Method")
     @EJB
     private CatastroPredialValoracionFacade catastroPredialValoracionDao;
-    private final String CATASTRO_PREDIAL_VALORACION="CatastroPredialValoracion";
+    private final String ENTIDAD_CATASTRO_PREDIAL_VALORACION="CatastroPredialValoracion";
     
     public String crearAplicacion(CatastroPredialValoracion catastroPredialValoracion) throws Exception {
         catastroPredialValoracionDao.crear(catastroPredialValoracion);
