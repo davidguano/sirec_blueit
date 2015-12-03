@@ -6,6 +6,7 @@
 
 package ec.sirec.ejb.servicios;
 
+import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.facade.CatastroPredialValoracionFacade;
 import java.util.List;
@@ -36,4 +37,9 @@ public class CatastroPredialValoracionServicio {
         catastroPredialValoracionDao.editar(catastroPredialValoracion);
         return "Se ha modificado la aplicación" + catastroPredialValoracion.getCatpreCodigo();
     }
+    
+     public CatastroPredialValoracion buscarPorCatastroPredial(CatastroPredial catastroPredial) throws Exception {
+        return catastroPredialValoracionDao.buscarPorCampo(ENTIDAD_CATASTRO_PREDIAL_VALORACION, "catpreCodigo", catastroPredial);
+    }
+    
 }

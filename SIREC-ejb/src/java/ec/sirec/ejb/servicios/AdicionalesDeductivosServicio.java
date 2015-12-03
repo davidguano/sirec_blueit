@@ -48,6 +48,9 @@ public class AdicionalesDeductivosServicio {
      return adicionalesDeductivosDao.listarPorCampoOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipo", tipo, "adidedCodigo", "asc");
     }
     
+    public AdicionalesDeductivos buscarAdicionesDeductivosXCodigo(Integer codigo) throws Exception {
+     return adicionalesDeductivosDao.buscarPorCampo(ENTIDAD_ADICIONALES_DEDUCIBLES, "adidedCodigo", codigo);
+    }
  
     
     // Add business logic below. (Right-click in editor and choose
