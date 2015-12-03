@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ec.sirec.ejb.entidades;
 
 import java.io.Serializable;
@@ -22,7 +21,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author DAVID GUAN
+ * @author new
  */
 @Entity
 @Table(name = "sirec.cp_valoracion_extras")
