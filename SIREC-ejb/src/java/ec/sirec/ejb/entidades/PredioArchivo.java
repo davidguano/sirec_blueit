@@ -44,8 +44,7 @@ public class PredioArchivo implements Serializable {
     @Column(name = "prearc_nombre")
     private String prearcNombre;
     @Basic(optional = false)
-    @NotNull
-    @Lob
+    @NotNull    
     @Column(name = "prearc_data")
     private byte[] prearcData;
     @Basic(optional = false)
