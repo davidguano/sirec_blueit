@@ -190,7 +190,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
        adicionalesDeductivosActual = new AdicionalesDeductivos();               
        catastroPredialValoracionActual = new CatastroPredialValoracion();
           try {
-      if(!listaPredioArchivo.isEmpty() || listaPredioArchivo!=null){
+      if(!listaPredioArchivo.isEmpty() || listaPredioArchivo!=null || listaPredioArchivo.size()>0){
             
          for (int i = 0; i < listaAdicionalesDeductivosRecargosSeleccion.size(); i++) {
              cpValoracionExtrasActual = new CpValoracionExtras();
