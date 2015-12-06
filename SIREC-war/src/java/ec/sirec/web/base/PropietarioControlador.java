@@ -33,6 +33,7 @@ public class PropietarioControlador extends BaseControlador{
     private Propietario propietarioActual;
     private List<Propietario> listaPropietarios;
     private List<CatalogoDetalle> listaCatCiudades;
+    private boolean flagEditar;
     /**
      * Creates a new instance of PropietarioControlador
      */
@@ -42,6 +43,7 @@ public class PropietarioControlador extends BaseControlador{
     @PostConstruct
     public void inicializar(){
         try{
+            flagEditar=false;
             propietarioActual=new Propietario();
             listaPropietarios=new ArrayList<Propietario>();
             listaCatCiudades=propietarioServicio.listarCiudades();
@@ -53,7 +55,7 @@ public class PropietarioControlador extends BaseControlador{
     
     public void guardarPropietario(){
         try{
-            if(propietarioActual.getUsuIdentificacion()==null){
+            if(!flagEditar){
                 propietarioActual.setUsuIdentificacion(obtenerUsuarioAutenticado());
                 propietarioServicio.crearPropietario(propietarioActual);
                 propietarioActual=new Propietario();
@@ -70,12 +72,14 @@ public class PropietarioControlador extends BaseControlador{
     public void seleccionarPropietario(Propietario vpropietario){
         try{
             propietarioActual=vpropietario;
+            flagEditar=true;
         }catch(Exception ex){
             LOGGER.log(Level.SEVERE,null,ex);
         }
     }
     public void listarPropietarios(){
         try{
+            flagEditar=false;
             listaPropietarios=propietarioServicio.listarPropietariosTodos();
         }catch(Exception ex){
             LOGGER.log(Level.SEVERE,null,ex);
