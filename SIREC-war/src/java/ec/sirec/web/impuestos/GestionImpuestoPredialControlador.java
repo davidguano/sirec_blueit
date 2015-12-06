@@ -50,28 +50,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     //LOGGER 
     private static final Logger LOGGER = Logger.getLogger(GestionImpuestoPredialControlador.class.getName());
     // VARIABLES Y ATRIBUTOS
-//    private SgmConcepto conceptoActual = new SgmConcepto();
-//    private List<SgmConcepto> listadoConceptos;
-//    private SgmAgencia agenciaAcual;
-//    private SgmClase claseAcual;
-//    private List<SgmAgencia> listaAgencias;
-//    private SgmCatalogo catalogoActual;
-//    private List<SgmCatalogo> listaCatalogoActual;
-//    private boolean HabitilaEdicionConcepto;
-//    private int valTipoConcepto;
-//    private boolean campoTipoRequerido;
-//    private boolean visibilidadTipo;
-//    private String opcion;
-//    private int opVariables;
-//    private List<SgmCatalogoDetalleA> listaCatalogoDetalleA;
-//    private List<SgmCatalogoDetalleB> listaCatalogoDetalleB;
-//    private List<SgmCatalogoDetalleA> listaCatalogoDetalleARA;
-//    private List<SgmCatalogoDetalleB> listaCatalogoDetalleBRA;
-//    private int homolog;
-//    private String temaCatalogo;
-//    private String temaCatalogoValor;
-//     private boolean visibleA;
-//    private boolean visibleB;
+
      private List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos;
      private List<String> listaAdicionalesDeductivosRecargosSeleccion;
      private List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneraciones;
@@ -102,19 +81,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     @EJB
     private CatastroPredialValoracionServicio catastroPredialValoracionServicio;
      
-//    @EJB
-//    private ConceptoServicio conceptoServicio;
-//    @EJB
-//    private CatalogoServicio catalogoServicio;
-//    @EJB
-//    private AgenciaServicio agenciaServicio;
-//    @EJB
-//    private CatalogoDetalleAServicio detalleAServicio;
-//    @EJB
-//    private CatalogoDetalleBServicio detalleBServicio;
 
- 
-     
     @PostConstruct
     public void inicializar() {
         try {
@@ -124,25 +91,9 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             usuarioActual.setUsuIdentificacion("1714576574"); 
              catastroPredialActual = new CatastroPredial();
              catastroPredialActual.setCatpreCodigo(1); 
-//            agenciaAcual = new SgmAgencia();
-//            listarAgencias();
-//            catalogoActual = new SgmCatalogo();
-//            //listarAgencias();
-//            claseAcual =new SgmClase() ;
 
-//            listarConceptos();
-//            valTipoConcepto = 0;
-//            opcion = "";
-//            opVariables = 0;
-//            
-//            HabitilaEdicionConcepto = false;
-//            campoTipoRequerido = false;
-//            visibilidadTipo = true;
-//            listaCatalogoDetalleA = new ArrayList<SgmCatalogoDetalleA>();
-//            listaCatalogoDetalleARA = new ArrayList<SgmCatalogoDetalleA>();
-//            visibleA = false;
-//        visibleB = false;
-//            
+             listaPredioArchivo =new ArrayList<PredioArchivo>();
+             
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -282,7 +233,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
       
       }
          } catch (NullPointerException exNull) {
-            LOGGER.log(Level.SEVERE, null, exNull);
+           // LOGGER.log(Level.SEVERE, null, exNull);
              addSuccessMessage("No se han cargado documentos!");
 //              FacesMessage msg = new FacesMessage("No se han cargado documentos!");
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
