@@ -91,7 +91,6 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             usuarioActual.setUsuIdentificacion("1714576574"); 
              catastroPredialActual = new CatastroPredial();
              catastroPredialActual.setCatpreCodigo(1); 
-
              listaPredioArchivo =new ArrayList<PredioArchivo>();
              
         } catch (Exception ex) {
