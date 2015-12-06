@@ -190,7 +190,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
        adicionalesDeductivosActual = new AdicionalesDeductivos();               
        catastroPredialValoracionActual = new CatastroPredialValoracion();
           try {
-      if(!listaPredioArchivo.isEmpty() || listaPredioArchivo!=null || listaPredioArchivo.size()>0){
+      if(listaPredioArchivo.size()>0){
             
          for (int i = 0; i < listaAdicionalesDeductivosRecargosSeleccion.size(); i++) {
              cpValoracionExtrasActual = new CpValoracionExtras();
@@ -225,11 +225,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
              cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
          }
          
-          addSuccessMessage("Guardado Exitosamnete!");
+          addSuccessMessage("Guardado Exitosamente!");
           
          
          }else{
-          addSuccessMessage("No se han cargado documentos!");
+          addSuccessMessage("No existen documentos cargados!");
           
 //          FacesMessage msg = new FacesMessage("No se han cargado documentos!");
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
