@@ -84,11 +84,9 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
 
     @PostConstruct
     public void inicializar() {
-        try {
-            listarCatalogosDetalle();
-            
-            usuarioActual = new SegUsuario ();
-            usuarioActual.setUsuIdentificacion("1714576574"); 
+        try {                        
+            listarCatalogosDetalle();            
+            obtenerUsuario();                      
              catastroPredialActual = new CatastroPredial();
              catastroPredialActual.setCatpreCodigo(1); 
              listaPredioArchivo =new ArrayList<PredioArchivo>();
@@ -96,6 +94,12 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void obtenerUsuario(){
+    usuarioActual = new SegUsuario (); 
+     usuarioActual = (SegUsuario) getSession().getAttribute("usuario");           
+           //System.out.println(usuarioActual.getUsuIdentificacion());         
     }
 
     public GestionImpuestoPredialControlador() {
