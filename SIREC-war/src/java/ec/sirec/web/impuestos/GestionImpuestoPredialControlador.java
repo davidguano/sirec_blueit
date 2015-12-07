@@ -108,11 +108,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
       public void listarCatalogosDetalle(){
        try {
            listaAdicionalesDeductivosRecargos = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R");
+           listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R","PA");
            listaAdicionalesDeductivosExoneraciones = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E");
+           listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E","PA");
            listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D");                                   
+           listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D","PA");                            
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
