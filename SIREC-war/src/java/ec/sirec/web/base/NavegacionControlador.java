@@ -184,7 +184,7 @@ public class NavegacionControlador extends BaseControlador {
             subMenuImpuestos.addElement(plusvalia);
             DefaultMenuItem alcabala = new DefaultMenuItem("Alcabala");
             alcabala.setIcon("ui-icon-person");
-            alcabala.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
+            alcabala.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','gestionAlcabalas')}");
             subMenuImpuestos.addElement(alcabala);
             DefaultMenuItem patenteImp = new DefaultMenuItem("Patente y 1.5 x 1000");
             patenteImp.setIcon("ui-icon-person");
