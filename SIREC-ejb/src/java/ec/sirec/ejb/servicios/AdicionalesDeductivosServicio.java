@@ -44,8 +44,8 @@ public class AdicionalesDeductivosServicio {
         return adicionalesDeductivosDao.listarTodos();
     }
 
-    public List<AdicionalesDeductivos> listarAdicionesDeductivosTipo(String tipo) throws Exception {
-     return adicionalesDeductivosDao.listarPorCampoOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipo", tipo, "adidedCodigo", "asc");
+    public List<AdicionalesDeductivos> listarAdicionesDeductivosTipo(String tipo, String tipoImpuesto) throws Exception {
+     return adicionalesDeductivosDao.listarPor2CamposOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipo", tipo, "adidedTipoImpuesto", tipoImpuesto, "adidedCodigo", "asc");
     }
     
     public AdicionalesDeductivos buscarAdicionesDeductivosXCodigo(Integer codigo) throws Exception {
