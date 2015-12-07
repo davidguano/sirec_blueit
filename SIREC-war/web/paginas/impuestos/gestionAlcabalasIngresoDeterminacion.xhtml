@@ -13,22 +13,22 @@
                                 <h:panelGrid id="panelIngreso" columns="2">                                                                                                       
                                 <p:outputLabel value="#{txt.clave_catastral}"/>
                                 
-                                <p:selectOneMenu id="alPred" value="#{gestionAlcabalas.catastroPredialActual}" style="width:154px"
+                                <p:selectOneMenu id="alPred" value="#{gestionAlcabalasControlador.catastroPredialActual}" style="width:154px"
                                                          converter="#{catastroPredialConverter}" var="t">
                                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                                             <f:selectItems var="tipo" 
-                                                           value="#{gestionAlcabalas.listaCatastroPredial}" 
+                                                           value="#{gestionAlcabalasControlador.listaCatastroPredial}" 
                                                            itemLabel="#{tipo.catpreNumero}" 
                                                            itemValue="#{tipo}"/> 
                                             <p:column width="200" style="white-space: normal">  
                                                 <h:outputText escape="false" value="#{t.catpreNumero}" style="font-size: 10px"/> 
                                             </p:column> 
-                                            <p:ajax listener="#{gestionAlcabalas.obtenerCamposCatPredial}"  update=":frmAlcabalas:tabAlca:panelContieneAplicacion"
+                                            <p:ajax listener="#{gestionAlcabalasControlador.obtenerCamposCatPredial}"  update=":frmAlcabalas:tabAlca:panelContieneAplicacion"
                                          process="@this" async="true" global="false"/>                                             
                                         </p:selectOneMenu>  
                                 
                                 <p:outputLabel value="#{txt.anio}"/>
-                                <p:selectOneMenu id="alAnio" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalAnio}" style="width:152px">
+                                <p:selectOneMenu id="alAnio" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalAnio}" style="width:152px">
                                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                                             <f:selectItem itemLabel="2015" itemValue="2015" />
                                             <f:selectItem itemLabel="2016" itemValue="2015" />          
@@ -36,15 +36,15 @@
                                         </p:selectOneMenu>
                                 
                                 <p:outputLabel value="#{txt.parroquia}"/>
-                                <p:inputText id="alParr" value="#{gestionAlcabalas.catastroPredialActual.catpreCodNacional}"                                                     
+                                <p:inputText id="alParr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreCodNacional}"                                                     
                                             />
                                 
                                 <p:outputLabel value="#{txt.sector}"/>
-                                <p:inputText id="alSec" value="#{gestionAlcabalas.catastroPredialActual.catpreNombreSector}" 
+                                <p:inputText id="alSec" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreNombreSector}" 
                                             />
                                 
                                 <p:outputLabel value="#{txt.direccion}"/>
-                                <p:inputText id="alDir" value="#{gestionAlcabalas.catastroPredialActual.catdetTipoUbicacion}"
+                                <p:inputText id="alDir" value="#{gestionAlcabalasControlador.catastroPredialActual.catdetTipoUbicacion}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.vendedor}"/>
@@ -52,35 +52,35 @@
                                             />
                                 
                                 <p:outputLabel value="#{txt.comprador}"/>
-                                <p:inputText id="alCom" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalComprador}"   
+                                <p:inputText id="alCom" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalComprador}"   
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_de_terreno}"/>
-                                <p:inputText id="alTerr" value="#{gestionAlcabalas.catastroPredialActual.catpreAreaTotalEsc}"
+                                <p:inputText id="alTerr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalEsc}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_de_construccion}"/>
-                                <p:inputText id="alCons" value="#{gestionAlcabalas.catastroPredialActual.catpreAreaTotalCons}"
+                                <p:inputText id="alCons" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalCons}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_total}"/>
-                                <p:inputText id="alTot" value="#{gestionAlcabalas.catastroPredialActual.catpreAreaTotal}"
+                                <p:inputText id="alTot" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.avaluo_actual}"/>
-                                <p:inputText id="alAva" value="#{gestionAlcabalas.catastroPredialValoracionActual.catprevalAvaluoTerr}"   
+                                <p:inputText id="alAva" value="#{gestionAlcabalasControlador.catastroPredialValoracionActual.catprevalAvaluoTerr}"   
                                             />
                                 
                                 <p:outputLabel value="#{txt.precio_de_venta}"/>
-                                <p:inputText id="alPrec" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}"
+                                <p:inputText id="alPrec" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.concepto}"/>
-                                <p:selectOneMenu id="alConc" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catdetConcepto}" style="width:154px"
+                                <p:selectOneMenu id="alConc" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catdetConcepto}" style="width:154px"
                                                          converter="#{catalogoDetalleConverter}" var="t">
                                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                                             <f:selectItems var="tipo" 
-                                                           value="#{gestionAlcabalas.listaCatalogoDetalleConcepto}" 
+                                                           value="#{gestionAlcabalasControlador.listaCatalogoDetalleConcepto}" 
                                                            itemLabel="#{tipo.catdetTexto}" 
                                                            itemValue="#{tipo}"/> 
                                             <p:column width="200" style="white-space: normal">  
@@ -95,7 +95,7 @@
                                 <h:panelGrid id="pnlCalcular" columns="2">                                                                                                       
                                 <p:commandButton value="#{txt.CALCULAR_btn}" 
                                                      id="btnCalcular" 
-                                                     action="#{gestionAlcabalas.calcularDeterminacion()}" 
+                                                     action="#{gestionAlcabalasControlador.calcularDeterminacion()}" 
                                                      icon="ui-icon-disk"  
                                                      process="@this,alAva,alPrec" 
                                                      update=":frmAlcabalas:tabAlca:pnlCalcular"
@@ -105,33 +105,33 @@
                                 <center></center>
                                 
                                 <p:outputLabel value="#{txt.base_imponible}"/>
-                                <p:inputText id="alBas" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalBaseimp}" 
+                                <p:inputText id="alBas" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalBaseimp}" 
                                              disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.impuesto}"/>
-                                <p:inputText id="alImp" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalImpuesto}" 
+                                <p:inputText id="alImp" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalImpuesto}" 
                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.consejo_provincial}"/>
-                                <p:inputText id="alConProv" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalConsejoProv}" 
+                                <p:inputText id="alConProv" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalConsejoProv}" 
                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.procesamiento}"/>
-                                <p:inputText id="alProc" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalTasaProc}" 
+                                <p:inputText id="alProc" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalTasaProc}" 
                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.total}"/>
-                                <p:inputText id="alTotal" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalTotal}" 
+                                <p:inputText id="alTotal" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalTotal}" 
                                              disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.observaciones}"/>
-                                <p:inputTextarea id="alObs" value="#{gestionAlcabalas.catastroPredialAlcabalaValoracion.catprealcvalObservaciones}"
+                                <p:inputTextarea id="alObs" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalObservaciones}"
                                                  rows="3" />
                                  </h:panelGrid>  
                                 
                                   <p:commandButton value="#{txt.guardar_btn}" 
                                                      id="btnGuardar" 
-                                                     action="#{gestionAlcabalas.guardarAlcabala()}" 
+                                                     action="#{gestionAlcabalasControlador.guardarAlcabala()}" 
                                                      icon="ui-icon-disk"  
                                                      process="@this,alAnio,alCom,alPrec,alConc,alBas,alImp,alConProv,alProc,alTotal,alObs" 
                                                      update=":frmAlcabalas:msgs"
