@@ -191,6 +191,10 @@ public class NavegacionControlador extends BaseControlador {
             patenteImp.setCommand("#{navegacionControlador.redireccionarAPagina('patente','patente')}");
             subMenuImpuestos.addElement(patenteImp);
             
+            DefaultMenuItem decTrib = new DefaultMenuItem("Declaración Tributaria");
+            decTrib.setIcon("ui-icon-person");
+            decTrib.setCommand("#{navegacionControlador.redireccionarAPagina('patente','declaracionTributaria')}");
+            subMenuImpuestos.addElement(decTrib);
             
             DefaultMenuItem servicios = new DefaultMenuItem("Tasas por Servicios");
             servicios.setIcon("ui-icon-person");

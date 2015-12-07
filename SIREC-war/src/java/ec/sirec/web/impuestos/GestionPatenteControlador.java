@@ -7,6 +7,7 @@ package ec.sirec.web.impuestos;
 
 import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
+import ec.sirec.ejb.entidades.DatoGlobal;
 import ec.sirec.ejb.entidades.Patente;
 import ec.sirec.ejb.entidades.PatenteArchivo;
 import ec.sirec.ejb.entidades.PredioArchivo;
@@ -70,6 +71,7 @@ public class GestionPatenteControlador extends BaseControlador {
     private CatastroPredial catastroPredialActual;
     private CatastroPredial catastroPredialSelec;
     private CatalogoDetalle catDetHorFuncionaActual;
+    private CatalogoDetalle catDetParroquia;
     private boolean habilitaEditar;
     private boolean d1, d2, d3, d4, d5, d6, d7;
     private Date horarioDesde;
@@ -77,16 +79,20 @@ public class GestionPatenteControlador extends BaseControlador {
     private Date fecActividadEconomica;
     private boolean artesCalificado;
     private boolean llevaConta;
+    private DatoGlobal datoGlobalActual;
+    private SegUsuario usuarioActual;
     private List<CatalogoDetalle> listEstablecimiento;
     private List<CatalogoDetalle> listaTipoEmpresa;
     private List<CatalogoDetalle> lisTipoLocal;
     private List<CatalogoDetalle> listTipoActEconomica;
     private List<CatalogoDetalle> listEspTuris;
     private List<CatalogoDetalle> listaIdentEstado;
+    private List<CatalogoDetalle> listaCatDetParroquias;
     private List<CatastroPredial> listaCatastroPredial;
     private List<ParametrosFile> listaFiles;
     private List<PatenteArchivo> listadoArchivos;
     private List<CatalogoDetalle> listaHorarioFunciona;
+    private boolean habilitaCamposPropietario;
 
     /**
      * Creates a new instance of GestionPatenteControlador
@@ -119,6 +125,7 @@ public class GestionPatenteControlador extends BaseControlador {
             artesCalificado = false;
             llevaConta = false;
             listaFiles = new ArrayList<ParametrosFile>();
+            habilitaCamposPropietario = true;
             listarTipoEstablecimiento();
             listarTipoEmpresa();
             listarTipoActividadEconomica();
@@ -127,12 +134,29 @@ public class GestionPatenteControlador extends BaseControlador {
             listarIdentificacionEstado();
             listarClaveCatastral();
             listarHorarioFuncionamiento();
+            listarParroquias();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
     public GestionPatenteControlador() {
+    }
+
+    public void cargaObjetosBitacora() {
+        try {
+            datoGlobalActual = new DatoGlobal();
+            usuarioActual = new SegUsuario();
+            datoGlobalActual = patenteServicio.buscaMensajeTransaccion("Msj_Pat_In");
+            usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void limpiarObjetosBitacora() {
+        datoGlobalActual = new DatoGlobal();
+        usuarioActual = new SegUsuario();
     }
 
     public void guardarPatente() {
@@ -161,20 +185,19 @@ public class GestionPatenteControlador extends BaseControlador {
                 patenteActual.setPatObligadoCont(llevaConta);
                 patenteActual.setPatHorarioDesde(horarioDesde.getHours() + ":" + horarioDesde.getMinutes());
                 patenteActual.setPatHorarioHasta(horarioHasta.getHours() + ":" + horarioHasta.getMinutes());
-                System.out.println("Horario desde: "+horarioDesde);
-                
+                System.out.println("Horario desde: " + horarioDesde);
                 patenteActual.setPatInicioActEco(fecActividadEconomica);
-                SegUsuario obj = new SegUsuario();
-                obj.setUsuIdentificacion("1719279729");
-                patenteActual.setUsuIdentificacion(obj);
-                patenteActual.setUltaccDetalle("makkd");
-                patenteActual.setUltaccMarcatiempo(horarioDesde);
-
-                //patenteActual.setCatdetHorarioFunc(catDetHorFunciona);
+                cargaObjetosBitacora();
+                patenteActual.setUsuIdentificacion(usuarioActual);
+                patenteActual.setUltaccDetalle(datoGlobalActual.getDatgloDescripcion());
+                patenteActual.setUltaccMarcatiempo(java.util.Calendar.getInstance().getTime());
                 patenteServicio.crearPatente(patenteActual);
                 guardarArchivos();
-                addSuccessMessage("Patente Guardado");
+                getSession().setAttribute("patente", patenteActual);
+                addSuccessMessage("Patente Registrado");
                 patenteActual = new Patente();
+                limpiarObjetosBitacora();
+                inicializar();
 //                }
             } else {
 //                agenciaServicio.editarAgencia(agenciaAcual);
@@ -187,50 +210,89 @@ public class GestionPatenteControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
- public void onTabChange(TabChangeEvent event) {
+
+    public void onTabChange(TabChangeEvent event) {
 //        FacesMessage msg = new FacesMessage("Tab Changed", "Pestaña activada: " + event.getTab().getTitle());
 //        new Fac
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
-     addSuccessMessage("Pestaña Activada:", event.getTab().getTitle());
+//        addSuccessMessage("Pestaña Activada:", event.getTab().getTitle());
+        if (event.getTab().getId().equals("patDet")) {
+            GestionDetPatenteControlador objGesDetControlador = new GestionDetPatenteControlador();
+            objGesDetControlador.inicializar();
+        }
+        if (event.getTab().getId().equals("exoDedMulPat")) {
+            GestionExoDedMulPatenteControlador objGesExoDedMulPat = new GestionExoDedMulPatenteControlador();
+            objGesExoDedMulPat.inicializar();
+        }
     }
-    public void guardarArchivos() throws Exception {
+
+    public void guardarArchivos() {
         Iterator<ParametrosFile> itera = listaFiles.iterator();
-        while (itera.hasNext()) {
-            ParametrosFile elemento = itera.next();
-            PatenteArchivo patArchivo = new PatenteArchivo();
-            patArchivo.setPatCodigo(patenteActual);
-            patArchivo.setPatarcNombre(elemento.getName());
-            patArchivo.setPatarcData(elemento.getData());
-            patArchivo.setPatarcTipo("tr");
-            SegUsuario obj = new SegUsuario();
-            obj.setUsuIdentificacion("1719279729");
-            patArchivo.setUsuIdentificacion(obj);
-            patArchivo.setUltaccDetalle("makkd");
-            patArchivo.setUltaccMarcatiempo(horarioDesde);
-            patenteArchivoServicio.guardarArchivo(patArchivo);
+        try {
+
+            while (itera.hasNext()) {
+                ParametrosFile elemento = itera.next();
+                PatenteArchivo patArchivo = new PatenteArchivo();
+                patArchivo.setPatCodigo(patenteActual);
+                patArchivo.setPatarcNombre(elemento.getName());
+                patArchivo.setPatarcData(elemento.getData());
+                patArchivo.setPatarcTipo("PA"); //Archivo de Patentes
+                patArchivo.setUsuIdentificacion(usuarioActual);
+                patArchivo.setUltaccDetalle(datoGlobalActual.getDatgloDescripcion());
+                patArchivo.setUltaccMarcatiempo(java.util.Calendar.getInstance().getTime());
+                patenteArchivoServicio.guardarArchivo(patArchivo);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
     public String generaNumPatente() { //Genera numero de patente aleatorio
-        Random rnd = new Random();
-        rnd.setSeed(System.currentTimeMillis());
-        int al6 = 0x3b9aca00 + rnd.nextInt(0xdbba0);
-        String aleatorio = (new StringBuilder()).append(al6).append("").toString();
-        String combinacion = (new StringBuilder()).append("AE-MPM-").append(aleatorio).toString();
-        String identificacion = combinacion.substring(0, 13);
+        String identificacion = "";
+        try {
+            Patente objPatente = new Patente();
+            objPatente = patenteServicio.cargarMaxObjPatente();
+            int valorRetornado = objPatente.getPatCodigo() + 1;
+            identificacion = "AE-MPM-" + valorRetornado;
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
         return identificacion;
+
     }
 
     public void cargarInformacionPropietario() throws Exception {
         try {
             catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialSelec.getCatpreCodigo());
             propietarioActual = propietarioServicio.buscarPropietario(catastroPredialActual.getProCi().getProCi());
-
+            catDetParroquia = catalogoDetalleServicio.buscarPorCodigoCatDet(propietarioActual.getCatdetCiudad().getCatdetCodigo());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-   
+
+    public void actualizaDatosPropietario() {
+        try {
+
+            propietarioActual.setCatdetCiudad(catDetParroquia);
+            propietarioServicio.editarPropietario(propietarioActual);
+            propietarioActual = propietarioServicio.buscarPropietario(catastroPredialActual.getProCi().getProCi());
+            addSuccessMessage("Propietario Actualizado");
+            habilitaCamposPropietario = true;
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void habilitaCamposPropietario() {
+        System.out.println("Habilita Campos");
+        habilitaCamposPropietario = false;
+    }
+
+    public void actualizarCamposPropietario() {
+        System.out.println("Habilita Campos");
+        habilitaCamposPropietario = true;
+    }
 
     public void listarTipoEstablecimiento() throws Exception {
         listEstablecimiento = catalogoDetalleServicio.listarPorNemonicoCatalogo("ESTABLECIMIENTO");
@@ -242,6 +304,10 @@ public class GestionPatenteControlador extends BaseControlador {
 
     public void listarTipoLocal() throws Exception {
         lisTipoLocal = catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_LOCAL");
+    }
+
+    public void listarParroquias() throws Exception {
+        listaCatDetParroquias = catalogoDetalleServicio.listarPorNemonicoCatalogo("PARROQUIAS");
     }
 
     public void listarTipoActividadEconomica() throws Exception {
@@ -571,6 +637,30 @@ public class GestionPatenteControlador extends BaseControlador {
 
     public void setListaHorarioFunciona(List<CatalogoDetalle> listaHorarioFunciona) {
         this.listaHorarioFunciona = listaHorarioFunciona;
+    }
+
+    public boolean isHabilitaCamposPropietario() {
+        return habilitaCamposPropietario;
+    }
+
+    public void setHabilitaCamposPropietario(boolean habilitaCamposPropietario) {
+        this.habilitaCamposPropietario = habilitaCamposPropietario;
+    }
+
+    public CatalogoDetalle getCatDetParroquia() {
+        return catDetParroquia;
+    }
+
+    public void setCatDetParroquia(CatalogoDetalle catDetParroquia) {
+        this.catDetParroquia = catDetParroquia;
+    }
+
+    public List<CatalogoDetalle> getListaCatDetParroquias() {
+        return listaCatDetParroquias;
+    }
+
+    public void setListaCatDetParroquias(List<CatalogoDetalle> listaCatDetParroquias) {
+        this.listaCatDetParroquias = listaCatDetParroquias;
     }
 
 }

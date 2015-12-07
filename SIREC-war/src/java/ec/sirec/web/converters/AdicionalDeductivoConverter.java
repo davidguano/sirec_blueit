@@ -5,6 +5,7 @@ package ec.sirec.web.converters;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import ec.sirec.ejb.entidades.AdicionalesDeductivos;
 import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.web.base.BaseControlador;
 import javax.faces.bean.ManagedBean;
@@ -16,11 +17,11 @@ import javax.faces.convert.ConverterException;
 
 /**
  *
- * @author valdas
+ * @author Darwin Aldas
  */
-@ManagedBean(name = "catastroPredialConverter")
+@ManagedBean(name = "adicionalDeductivoConverter")
 @ViewScoped
-public class CatastroPredialConverter extends BaseControlador implements Converter {
+public class AdicionalDeductivoConverter extends BaseControlador implements Converter {
 
     @Override
     public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) throws ConverterException {
@@ -28,7 +29,7 @@ public class CatastroPredialConverter extends BaseControlador implements Convert
         if (arg2.trim().equals("") || arg2.equals("null")) {
             return null;
         } else {
-            return new CatastroPredial(Integer.parseInt(arg2));
+            return new AdicionalesDeductivos(Integer.parseInt(arg2));
         }
 
     }
@@ -39,7 +40,7 @@ public class CatastroPredialConverter extends BaseControlador implements Convert
         if (arg2 == null || arg2.equals("")) {
             return "";
         } else {
-            return String.valueOf(((CatastroPredial) arg2).getCatpreCodigo());
+            return String.valueOf(((AdicionalesDeductivos) arg2).getAdidedCodigo());
         }
     }
 }

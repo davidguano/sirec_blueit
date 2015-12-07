@@ -13,28 +13,28 @@
                 <p:growl id="msgs" showDetail="true"/>
                 <center>
                     <p:tabView id="tabPrin" style="font-size:12px">
-                        <p:ajax event="tabChange" listener="#{gestionPatenteControlador.onTabChange}" update=":frmPat:msgs"/>
+                        <p:ajax event="tabChange" process="@this,tabPrin" immediate="true" async="true"   listener="#{gestionPatenteControlador.onTabChange}" update=":frmPat:msgs"/>
 
-                        <p:tab title="IDENTIFICACIÓN"  >
-                            <ui:include src="PatenteFichaReg.xhtml" />
+                        <p:tab title="IDENTIFICACIÓN" id="patRegFicha" closable="true">
+                            <ui:include src="patenteFichaReg.xhtml" />
                         </p:tab>
-                        <p:tab title="EXONERACIONES, DEDUCCIONES Y MULTAS DE PATENTES" closable="true">
-                            <ui:include src="PatentesExoDeducMultas.xhtml" />
+                        <p:tab title="EXONERACIONES, DEDUCCIONES Y MULTAS DE PATENTES" id="exoDedMulPat" closable="true">
+                            <ui:include src="patentesExoDeducMultas.xhtml" />
                         </p:tab>
-                        <p:tab title="DETERMINACIÓN PATENTES" closable="true">
-                            <ui:include src="PatentesDeterminacion.xhtml" />
+                        <p:tab title="DETERMINACIÓN PATENTES" id="patDet" closable="true">
+                            <ui:include src="patentesDeterminacion.xhtml" />
                         </p:tab>
                         <p:tab title="INGRESO DE TABLA DE AMORTIZACIÓN" closable="true">
-                            <h:panelGrid columns="2" cellpadding="10">
-                                <p:graphicImage name="demo/images/godfather/godfather3.jpg" />
-                                <h:outputText value="After a break of more than 15 years..." />
-                            </h:panelGrid>
+                            <ui:include src="patentesTblAmortizacion.xhtml" />
+                        </p:tab>
+                         <p:tab title="EXONERACIONES Y MULTAS 1.5 POR MIL" closable="true">
+                            <ui:include src="15porMilExoDeducMultas.xhtml" />
                         </p:tab>
                         <p:tab title="DETERMINACIÓN 1.5 POR MIL" closable="true">
-                            <ui:include src="PatentesDetPorMil.xhtml" />
+                            <ui:include src="15porMilDeterminacion.xhtml" />
                         </p:tab>
                         <p:tab title="EMISIÓN DE PATENTES y 1.5 POR MIL" closable="true">
-                            <ui:include src="PatentesEmision.xhtml" /> 
+                            <ui:include src="patentesEmision.xhtml" /> 
                         </p:tab>
                     </p:tabView>
 

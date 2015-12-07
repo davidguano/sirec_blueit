@@ -7,14 +7,14 @@ import java.io.Serializable;
  * @author Darwin Aldas
  */
 //Clase File  sirve como entidad para los parametros del archivo
-public class ParametrosFile implements Serializable{
+public class ParametrosFile implements Serializable {
 
     private String Name;
     private String mime;
     private long length;
     private byte[] data;
     private String tipo;
-    
+
     public byte[] getData() {
         return data;
     }
@@ -40,6 +40,8 @@ public class ParametrosFile implements Serializable{
                 mime = "image/gif";
             } else if ("png".equals(extension)) {
                 mime = "image/png";
+            } else if ("pdf".equals(extension)) {
+                mime = "document/pdf";
             } else {
                 mime = "image/unknown";
             }
@@ -65,5 +67,5 @@ public class ParametrosFile implements Serializable{
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
+
 }
