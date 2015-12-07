@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <!--EMISION DE PATERNTES-->
+
+    <center>
+        <h:panelGrid id="pnlConEmiPatente" width="1000" columns="1" >
+            <p:panel header="#{txt.lbl_header_emi_pat}">
+                <h:panelGrid columns="1">
+                    <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio}"/>
+                    <p:selectOneMenu id="cmbAnioPatPag5" value="#{gestionDetPatenteUnoCincoporMilControlador.patente15milValActual.pat15valAnioBalance}" style="width:152px">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                        <f:selectItem itemLabel="2015" itemValue="#{2015}" />
+                    </p:selectOneMenu>
+                    <p:message for="cmbAnioPatPag5"/>
+                </h:panelGrid>
+
+                <h:panelGrid columns="3">
+                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_clave_patente}"/>
+                    <p:inputText  id="txtClavePat"  value="#{gestionPatenteControlador.propietarioActual.proCi}" 
+                                  maxlength="20" size="40"/>
+                    <p:message for="txtClavePat"/>
+                </h:panelGrid>
+                <h:panelGrid columns="3">
+                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_parroquia}"/>
+                <p:selectOneMenu   required="true" id="cmbParroquia" 
+                                   value="#{gestionEmiPatenteUnoCincoporMilControlador.catDetalleActual}" style="width:250px"
+                                   converter="#{catalogoDetalleConverter}" var="t">
+                    <f:selectItem  itemLabel="Seleccione..." itemValue=""/> 
+                    <f:selectItems var="tipTem"  
+                                   value="#{gestionEmiPatenteUnoCincoporMilControlador.listaParroquias()}" 
+                                   itemLabel="#{tipTem.catdetTexto}" 
+                                   itemValue="#{tipTem}"/> 
+                    <p:column width="200" style="white-space: normal">  
+                        <h:outputText escape="false" value="#{t.catdetTexto}" style="font-size: 10px"/> 
+                    </p:column> 
+                </p:selectOneMenu>                               
+                <p:message for="cmbParroquia"/>
+        </h:panelGrid>  
+        <h:panelGrid columns="2">
+            <p:commandButton value="#{txt.btn_guardar}" 
+                             id="btnGuardarPag5" 
+                             action="#{gestionPatenteControlador.guardarPatente()}" 
+                             icon="ui-icon-disk"  
+                             process="@this,pnlConEmiPatente" 
+                             update=":frmPat:tabPrin:pnlConEmiPatente,frmPat:msgs"
+                             async="true"
+                             global="false"
+                             />
+        </h:panelGrid>
+        </p:panel>
+        </h:panelGrid>                      
+    </center>
+</html>
