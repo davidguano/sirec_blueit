@@ -47,7 +47,6 @@ public class PatenteArchivo implements Serializable {
     private String patarcNombre;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "patarc_data")
     private byte[] patarcData;
     @Basic(optional = false)

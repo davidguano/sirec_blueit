@@ -28,7 +28,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 @LocalBean
-public class PatenteServicio {
+public class UnoPCinoPorMilServicio {
 
     @EJB
     private Patente15xmilValoracionFacade patente15xmilValoracionDao;

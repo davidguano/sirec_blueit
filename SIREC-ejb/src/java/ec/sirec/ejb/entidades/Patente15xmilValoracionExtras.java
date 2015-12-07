@@ -49,8 +49,21 @@ public class Patente15xmilValoracionExtras implements Serializable {
     @ManyToOne(optional = false)
     private Patente15xmilValoracion pat15valCodigo;
     @JoinColumn(name = "adided_codigo", referencedColumnName = "adided_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false)    
     private AdicionalesDeductivos adidedCodigo;
+     @Column(name = "pat15valext_entiPub")
+    private Boolean pat15valextentiPub;
+    @Column(name = "pat15valext_funBenEdu")
+    private Boolean pat15valextfunBenEdu;
+    @Column(name = "pat15valext_leyFomArtes")
+    private Boolean pat15valextleyFomArtes;
+    @Column(name = "pat15valext_actAgro")
+    private Boolean pat15valextactAgro;
+    @Column(name = "pat15valext_coop")
+    private Boolean pat15valextCoop;
+    @Column(name = "pat15valext_multiNac")
+    private Boolean pat15valextmultiNac;
+   
 
     public Patente15xmilValoracionExtras() {
     }
@@ -103,6 +116,54 @@ public class Patente15xmilValoracionExtras implements Serializable {
 
     public void setAdidedCodigo(AdicionalesDeductivos adidedCodigo) {
         this.adidedCodigo = adidedCodigo;
+    }
+
+    public Boolean getPat15valextentiPub() {
+        return pat15valextentiPub;
+    }
+
+    public void setPat15valextentiPub(Boolean pat15valextentiPub) {
+        this.pat15valextentiPub = pat15valextentiPub;
+    }
+
+    public Boolean getPat15valextfunBenEdu() {
+        return pat15valextfunBenEdu;
+    }
+
+    public void setPat15valextfunBenEdu(Boolean pat15valextfunBenEdu) {
+        this.pat15valextfunBenEdu = pat15valextfunBenEdu;
+    }
+
+    public Boolean getPat15valextleyFomArtes() {
+        return pat15valextleyFomArtes;
+    }
+
+    public void setPat15valextleyFomArtes(Boolean pat15valextleyFomArtes) {
+        this.pat15valextleyFomArtes = pat15valextleyFomArtes;
+    }
+
+    public Boolean getPat15valextactAgro() {
+        return pat15valextactAgro;
+    }
+
+    public void setPat15valextactAgro(Boolean pat15valextactAgro) {
+        this.pat15valextactAgro = pat15valextactAgro;
+    }
+
+    public Boolean getPat15valextCoop() {
+        return pat15valextCoop;
+    }
+
+    public void setPat15valextCoop(Boolean pat15valextCoop) {
+        this.pat15valextCoop = pat15valextCoop;
+    }
+
+    public Boolean getPat15valextmultiNac() {
+        return pat15valextmultiNac;
+    }
+
+    public void setPat15valextmultiNac(Boolean pat15valextmultiNac) {
+        this.pat15valextmultiNac = pat15valextmultiNac;
     }
 
     @Override

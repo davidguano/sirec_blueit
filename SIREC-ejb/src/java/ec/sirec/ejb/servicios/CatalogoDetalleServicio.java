@@ -30,4 +30,7 @@ public class CatalogoDetalleServicio {
     public List<CatalogoDetalle> listarPorNemonicoCatalogo(String vnemonicoCatalogo) throws Exception{
         return catalogoDetalleDao.listarPor2CamposOrdenada(ENTIDAD_CAT_DETALLE, "catCodigo.catNemonico", vnemonicoCatalogo, "catdetEstado", true, "catdetOrden", "asc");
     }
+    public  CatalogoDetalle buscarPorCodigoCatDet(int codCatDet) throws Exception{
+    return catalogoDetalleDao.buscarPorCampo(ENTIDAD_CAT_DETALLE, "catdetCodigo", codCatDet);
+    }
 }
