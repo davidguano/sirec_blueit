@@ -152,12 +152,13 @@ public class CatastroPredial implements Serializable {
     @Column(name = "ultacc_marcatiempo")
     @Temporal(TemporalType.TIMESTAMP)
     private Date ultaccMarcatiempo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialAreas> catastroPredialAreasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialValoracion> catastroPredialValoracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialPlusvaliaValoracion> catastroPredialPlusvaliaValoracionList;
+    @Size(max = 200)
+    @Column(name = "catpre_via_principal")
+    private String catpreViaPrincipal;
+    @Size(max = 200)
+    @Column(name = "catpre_interseccion")
+    private String catpreInterseccion;
+    
     @JoinColumn(name = "usu_identificacion", referencedColumnName = "usu_identificacion")
     @ManyToOne(optional = false)
     private SegUsuario usuIdentificacion;
@@ -192,25 +193,25 @@ public class CatastroPredial implements Serializable {
     @ManyToOne
     private CatalogoDetalle catdetDocRelevamiento;
     @JoinColumn(name = "catdet_tipo_via", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetTipoVia;
     @JoinColumn(name = "catdet_tipo_ubicacion", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetTipoUbicacion;
     @JoinColumn(name = "catdet_tipo_prop1", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetTipoProp1;
     @JoinColumn(name = "catdet_tipo_prop2", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetTipoProp2;
     @JoinColumn(name = "catdet_ref_cartografica", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetRefCartografica;
     @JoinColumn(name = "catdet_dominio", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetDominio;
     @JoinColumn(name = "catdet_traslacion_dominio", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetTraslacionDominio;
     @JoinColumn(name = "catdet_ocupacion", referencedColumnName = "catdet_codigo")
     @ManyToOne
@@ -224,24 +225,24 @@ public class CatastroPredial implements Serializable {
     @JoinColumn(name = "catdet_caracteristicas_suelo", referencedColumnName = "catdet_codigo")
     @ManyToOne
     private CatalogoDetalle catdetCaracteristicasSuelo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialUsosuelo> catastroPredialUsosueloList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<Patente> patenteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialAlcabalaValoracion> catastroPredialAlcabalaValoracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<PredioArchivo> predioArchivoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialEdificacion> catastroPredialEdificacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialInfraestructura> catastroPredialInfraestructuraList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<CatastroPredialInfAnt> catastroPredialInfAntList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catpreCodigo")
-    private List<Mejora> mejoraList;
+    
 
     public CatastroPredial() {
+        proCi=new Propietario();
+        catdetTipoProp1=new CatalogoDetalle();
+        catdetTipoProp2=new CatalogoDetalle();
+        catdetTipoVia=new CatalogoDetalle();
+        catdetTipoUbicacion=new CatalogoDetalle();
+        catdetRefCartografica=new CatalogoDetalle();
+        catdetDominio=new CatalogoDetalle();
+        catdetTraslacionDominio=new CatalogoDetalle();
+        catdetOcupacion=new CatalogoDetalle();
+        catdetNoEdificado=new CatalogoDetalle();
+        catdetEnConstruccion=new CatalogoDetalle();
+        catdetCaracteristicasSuelo=new CatalogoDetalle();
+        catdetForma=new CatalogoDetalle();
+        catdetTopografia=new CatalogoDetalle();
+        catdetLocalizacion=new CatalogoDetalle();
     }
 
     public CatastroPredial(Integer catpreCodigo) {
@@ -591,29 +592,23 @@ public class CatastroPredial implements Serializable {
         this.ultaccMarcatiempo = ultaccMarcatiempo;
     }
 
-    public List<CatastroPredialAreas> getCatastroPredialAreasList() {
-        return catastroPredialAreasList;
+    public String getCatpreViaPrincipal() {
+        return catpreViaPrincipal;
     }
 
-    public void setCatastroPredialAreasList(List<CatastroPredialAreas> catastroPredialAreasList) {
-        this.catastroPredialAreasList = catastroPredialAreasList;
+    public void setCatpreViaPrincipal(String catpreViaPrincipal) {
+        this.catpreViaPrincipal = catpreViaPrincipal;
     }
 
-    public List<CatastroPredialValoracion> getCatastroPredialValoracionList() {
-        return catastroPredialValoracionList;
+    public String getCatpreInterseccion() {
+        return catpreInterseccion;
     }
 
-    public void setCatastroPredialValoracionList(List<CatastroPredialValoracion> catastroPredialValoracionList) {
-        this.catastroPredialValoracionList = catastroPredialValoracionList;
+    public void setCatpreInterseccion(String catpreInterseccion) {
+        this.catpreInterseccion = catpreInterseccion;
     }
 
-    public List<CatastroPredialPlusvaliaValoracion> getCatastroPredialPlusvaliaValoracionList() {
-        return catastroPredialPlusvaliaValoracionList;
-    }
-
-    public void setCatastroPredialPlusvaliaValoracionList(List<CatastroPredialPlusvaliaValoracion> catastroPredialPlusvaliaValoracionList) {
-        this.catastroPredialPlusvaliaValoracionList = catastroPredialPlusvaliaValoracionList;
-    }
+   
 
     public SegUsuario getUsuIdentificacion() {
         return usuIdentificacion;
@@ -744,6 +739,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetDominio() {
+        if(catdetDominio==null){
+            catdetDominio=new CatalogoDetalle();
+        }
         return catdetDominio;
     }
 
@@ -752,6 +750,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTraslacionDominio() {
+        if(catdetTraslacionDominio==null){
+            catdetTraslacionDominio=new CatalogoDetalle();
+        }
         return catdetTraslacionDominio;
     }
 
@@ -791,70 +792,7 @@ public class CatastroPredial implements Serializable {
         this.catdetCaracteristicasSuelo = catdetCaracteristicasSuelo;
     }
 
-    public List<CatastroPredialUsosuelo> getCatastroPredialUsosueloList() {
-        return catastroPredialUsosueloList;
-    }
-
-    public void setCatastroPredialUsosueloList(List<CatastroPredialUsosuelo> catastroPredialUsosueloList) {
-        this.catastroPredialUsosueloList = catastroPredialUsosueloList;
-    }
-
-    public List<Patente> getPatenteList() {
-        return patenteList;
-    }
-
-    public void setPatenteList(List<Patente> patenteList) {
-        this.patenteList = patenteList;
-    }
-
-    public List<CatastroPredialAlcabalaValoracion> getCatastroPredialAlcabalaValoracionList() {
-        return catastroPredialAlcabalaValoracionList;
-    }
-
-    public void setCatastroPredialAlcabalaValoracionList(List<CatastroPredialAlcabalaValoracion> catastroPredialAlcabalaValoracionList) {
-        this.catastroPredialAlcabalaValoracionList = catastroPredialAlcabalaValoracionList;
-    }
-
-    public List<PredioArchivo> getPredioArchivoList() {
-        return predioArchivoList;
-    }
-
-    public void setPredioArchivoList(List<PredioArchivo> predioArchivoList) {
-        this.predioArchivoList = predioArchivoList;
-    }
-
-    public List<CatastroPredialEdificacion> getCatastroPredialEdificacionList() {
-        return catastroPredialEdificacionList;
-    }
-
-    public void setCatastroPredialEdificacionList(List<CatastroPredialEdificacion> catastroPredialEdificacionList) {
-        this.catastroPredialEdificacionList = catastroPredialEdificacionList;
-    }
-
-    public List<CatastroPredialInfraestructura> getCatastroPredialInfraestructuraList() {
-        return catastroPredialInfraestructuraList;
-    }
-
-    public void setCatastroPredialInfraestructuraList(List<CatastroPredialInfraestructura> catastroPredialInfraestructuraList) {
-        this.catastroPredialInfraestructuraList = catastroPredialInfraestructuraList;
-    }
-
-    public List<CatastroPredialInfAnt> getCatastroPredialInfAntList() {
-        return catastroPredialInfAntList;
-    }
-
-    public void setCatastroPredialInfAntList(List<CatastroPredialInfAnt> catastroPredialInfAntList) {
-        this.catastroPredialInfAntList = catastroPredialInfAntList;
-    }
-
-    public List<Mejora> getMejoraList() {
-        return mejoraList;
-    }
-
-    public void setMejoraList(List<Mejora> mejoraList) {
-        this.mejoraList = mejoraList;
-    }
-
+   
     @Override
     public int hashCode() {
         int hash = 0;
