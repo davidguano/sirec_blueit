@@ -8,7 +8,7 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core">
                 
                 <center>
-                    <h:panelGrid id="panelContieneAplicacion" width="1000" columns="1" >                                                 
+                    <h:panelGrid id="panelContieneAplicacion1" width="1000" columns="1" >                                                 
                             <p:panel header="#{txt.INGRESO}">                                
                                 <h:panelGrid id="panelIngreso" columns="2">                                                                                                       
                                 <p:outputLabel value="#{txt.clave_catastral}"/>
@@ -18,14 +18,14 @@
                                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                                             <f:selectItems var="tipo" 
                                                            value="#{gestionAlcabalasControlador.listaCatastroPredial}" 
-                                                           itemLabel="#{tipo.catpreNumero}" 
+                                                           itemLabel="#{tipo.catpreCodNacional}#{tipo.catpreCodLocal}" 
                                                            itemValue="#{tipo}"/> 
                                             <p:column width="200" style="white-space: normal">  
-                                                <h:outputText escape="false" value="#{t.catpreNumero}" style="font-size: 10px"/> 
+                                                <h:outputText escape="false" value="#{t.catpreCodNacional}#{t.catpreCodLocal}" style="font-size: 10px"/> 
                                             </p:column> 
-                                            <p:ajax listener="#{gestionAlcabalasControlador.obtenerCamposCatPredial}"  update=":frmAlcabalas:tabAlca:panelContieneAplicacion"
+                                            <p:ajax listener="#{gestionAlcabalasControlador.obtenerCamposCatPredial}"  update=":frmAlcabalas:tabAlca:panelContieneAplicacion1"
                                          process="@this" async="true" global="false"/>                                             
-                                        </p:selectOneMenu>  
+                                        </p:selectOneMenu> 
                                 
                                 <p:outputLabel value="#{txt.anio}"/>
                                 <p:selectOneMenu id="alAnio" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalAnio}" style="width:152px">
@@ -48,7 +48,7 @@
                                             />
                                 
                                 <p:outputLabel value="#{txt.vendedor}"/>
-                                <p:inputText id="alVen" value="" 
+                                <p:inputText id="alVen" value="#{gestionAlcabalasControlador.catastroPredialActual.proCi.proNombres} #{gestionAlcabalasControlador.catastroPredialActual.proCi.proApellidos}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.comprador}"/>
@@ -56,7 +56,7 @@
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_de_terreno}"/>
-                                <p:inputText id="alTerr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalEsc}"
+                                <p:inputText id="alTerr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_de_construccion}"/>
@@ -64,7 +64,7 @@
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_total}"/>
-                                <p:inputText id="alTot" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal}"
+                                <p:inputText id="alTot" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal+gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalCons}"
                                             />
                                 
                                 <p:outputLabel value="#{txt.avaluo_actual}"/>

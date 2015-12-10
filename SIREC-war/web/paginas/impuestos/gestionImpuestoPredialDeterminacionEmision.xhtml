@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+                
+                <center>
+                    <h:panelGrid id="panelContieneAplicacion2" width="1000" columns="1" >                                                 
+                            <p:panel>                                
+                               
+                                <h:panelGrid id="panelIngreso" columns="2">
+                                 
+                                  
+                                  <p:outputLabel value="Criterio de busqueda:"/>  
+                                  <p:selectOneMenu id="cmbCriterio" value="#{gestionImpuestoPredialControlador.criterio}" style="width:152px">
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                                            <f:selectItem itemLabel="#{txt.anio}" itemValue="A" />
+                                            <f:selectItem itemLabel="#{txt.clave_catastral}" itemValue="C" />
+                                            <f:selectItem itemLabel="#{txt.parroquia}" itemValue="P" />
+                                            <f:selectItem itemLabel="#{txt.sector}" itemValue="S" />
+                                            <f:selectItem itemLabel="#{txt.Manzana}" itemValue="M" />
+                                            <f:selectItem itemLabel="#{txt.Todo}" itemValue="T" />
+                                           <p:ajax event="change" process="@this" update="frmImpPredial:tabImpPred:panelIngreso" async="true" global="false"/>  
+                                        </p:selectOneMenu>
+                                    
+                                  <center></center>
+                                  
+                                  <p:selectOneMenu id="advanced" value="#{gestionImpuestoPredialControlador.catastroPredialActual}" converter="#{catastroPredialConverter}" panelStyle="width:180px"
+                                                    effect="fade" var="t" style="width:160px" filter="true" filterMatchMode="startsWith"
+                                                    rendered="#{gestionImpuestoPredialControlador.criterio=='C'}"
+                                                    >
+                                      <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                                      <f:selectItems value="#{gestionImpuestoPredialControlador.listaCatastroPredialClavesCatastrales}" 
+                                                     var="theme" 
+                                                     itemLabel="#{theme.catpreCodNacional}#{theme.catpreCodLocal}"
+                                                     itemValue="#{theme}" />
+                                      <p:column>
+                                          <h:outputText value="#{t.catpreCodNacional}#{t.catpreCodLocal}"/>
+                                      </p:column>
+                                      <!--
+                                       <p:ajax event="change" listener="#{gestionImpuestoPredialControlador.buscarClaveCatastral()}"
+                                                        process="@this" update="frmImpPredial:tabImpPred:panelIngreso" async="true" global="false"/>
+                                      -->
+                                  </p:selectOneMenu>
+                                  
+                                  
+                                                                                                                
+                                       
+                                </h:panelGrid>                                                                                                       
+                                
+                                <p:panel id="pnlEjeVal" >
+                                
+                                    <p:commandButton value="#{txt.EJECUTAR_VALORACION_btn}" 
+                                                     id="btnEjeVal" 
+                                                     action="#{gestionImpuestoPredialControlador.ejecutarValoracion()}" 
+                                                     icon="ui-icon-disk"  
+                                                     process="@this, panelIngreso" 
+                                                     update=":frmImpPredial:tabImpPred:pnllstVal"
+                                                     async="true"
+                                                     global="false"
+                                                     />
+                                    
+                                    <p:panel id="pnllstVal">
+                                        
+                                        <p:dataTable id="lstVals" value="#{gestionImpuestoPredialControlador.listaCatastroPredialTablaValoracion}"  var="catastroP"  >
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Lista de Valoraciones" style="font-size:12px;"/>
+                                        </f:facet>
+                                            <p:column headerText="#{txt.clave_catastral}" width="50">
+                                            <h:outputText value="#{catastroP.catpreCodNacional}#{catastroP.catpreCodLocal}" style="font-size:12px;" />
+                                        </p:column>
+                                            <p:column headerText="#{txt.nombre_razón_social}" width="150">
+                                            <h:outputText value="" style="font-size:12px;" />
+                                        </p:column>
+                                            <p:column headerText="#{txt.dirección}" width="105">
+                                            <h:outputText value="" style="font-size:12px;"/>
+                                        </p:column>
+                                                                                  
+                                        
+                                    </p:dataTable>
+                                        
+                                    </p:panel>    
+                                         
+                                    
+                                    
+                                
+                                </p:panel>
+                                      
+                                      
+                                      
+                                
+                                                                                               
+                                </p:panel>
+                            
+                                                                                                                                                                         
+                  </h:panelGrid>
+                </center>
+</html>    
