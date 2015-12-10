@@ -382,4 +382,8 @@ public class CatastroPredialServicio {
 public List<CatastroPredial> listarCatastroXCodigo(Integer codigo) throws Exception {
         return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catpreCodigo", codigo, "catpreCodigo", "asc");
     }
+ public CatastroPredial cargarObjCatPorPropietario(String proCi) throws Exception {
+        return catastroPredialDao.buscarPorCampo(ENTIDAD_CATASTRO, "proCi.proCi", proCi);
+    }
+
 }
