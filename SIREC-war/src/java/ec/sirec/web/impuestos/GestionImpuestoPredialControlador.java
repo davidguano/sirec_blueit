@@ -8,11 +8,14 @@ package ec.sirec.web.impuestos;
 
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
 import ec.sirec.ejb.entidades.CatalogoDetalle;
+import ec.sirec.ejb.entidades.CatastroPredial;
+import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
+import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.web.base.BaseControlador;
@@ -47,37 +50,18 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     //LOGGER 
     private static final Logger LOGGER = Logger.getLogger(GestionImpuestoPredialControlador.class.getName());
     // VARIABLES Y ATRIBUTOS
-//    private SgmConcepto conceptoActual = new SgmConcepto();
-//    private List<SgmConcepto> listadoConceptos;
-//    private SgmAgencia agenciaAcual;
-//    private SgmClase claseAcual;
-//    private List<SgmAgencia> listaAgencias;
-//    private SgmCatalogo catalogoActual;
-//    private List<SgmCatalogo> listaCatalogoActual;
-//    private boolean HabitilaEdicionConcepto;
-//    private int valTipoConcepto;
-//    private boolean campoTipoRequerido;
-//    private boolean visibilidadTipo;
-//    private String opcion;
-//    private int opVariables;
-//    private List<SgmCatalogoDetalleA> listaCatalogoDetalleA;
-//    private List<SgmCatalogoDetalleB> listaCatalogoDetalleB;
-//    private List<SgmCatalogoDetalleA> listaCatalogoDetalleARA;
-//    private List<SgmCatalogoDetalleB> listaCatalogoDetalleBRA;
-//    private int homolog;
-//    private String temaCatalogo;
-//    private String temaCatalogoValor;
-//     private boolean visibleA;
-//    private boolean visibleB;
+
      private List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos;
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargosSeleccion;
+     private List<String> listaAdicionalesDeductivosRecargosSeleccion;
      private List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneraciones;
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneracionesSeleccion;
+     private List<String> listaAdicionalesDeductivosExoneracionesSeleccion;
      private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones;
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeduccionesSeleccion;
+     private List<String> listaAdicionalesDeductivosDeduccionesSeleccion;
      private List<PredioArchivo> listaPredioArchivo;
      
      private PredioArchivo predioArchivo;
+     private CatastroPredial catastroPredialActual;
+     private CatastroPredialValoracion catastroPredialValoracionActual;
      private SegUsuario usuarioActual;
      private AdicionalesDeductivos adicionalesDeductivosActual;
      private CpValoracionExtras cpValoracionExtrasActual;
@@ -94,50 +78,28 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     //private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
     @EJB
     private CpValoracionExtrasServicio cpValoracionExtrasServicio;
+    @EJB
+    private CatastroPredialValoracionServicio catastroPredialValoracionServicio;
      
-//    @EJB
-//    private ConceptoServicio conceptoServicio;
-//    @EJB
-//    private CatalogoServicio catalogoServicio;
-//    @EJB
-//    private AgenciaServicio agenciaServicio;
-//    @EJB
-//    private CatalogoDetalleAServicio detalleAServicio;
-//    @EJB
-//    private CatalogoDetalleBServicio detalleBServicio;
 
- 
-     
     @PostConstruct
     public void inicializar() {
-        try {
-            listarCatalogosDetalle();
-            
-            usuarioActual = new SegUsuario ();
-            usuarioActual.setUsuIdentificacion("0704520279"); 
-            
-//            agenciaAcual = new SgmAgencia();
-//            listarAgencias();
-//            catalogoActual = new SgmCatalogo();
-//            //listarAgencias();
-//            claseAcual =new SgmClase() ;
-
-//            listarConceptos();
-//            valTipoConcepto = 0;
-//            opcion = "";
-//            opVariables = 0;
-//            
-//            HabitilaEdicionConcepto = false;
-//            campoTipoRequerido = false;
-//            visibilidadTipo = true;
-//            listaCatalogoDetalleA = new ArrayList<SgmCatalogoDetalleA>();
-//            listaCatalogoDetalleARA = new ArrayList<SgmCatalogoDetalleA>();
-//            visibleA = false;
-//        visibleB = false;
-//            
+        try {                        
+            listarCatalogosDetalle();            
+            obtenerUsuario();                      
+             catastroPredialActual = new CatastroPredial();
+             catastroPredialActual.setCatpreCodigo(1); 
+             listaPredioArchivo =new ArrayList<PredioArchivo>();
+             
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void obtenerUsuario(){
+    usuarioActual = new SegUsuario (); 
+     usuarioActual = (SegUsuario) getSession().getAttribute("usuario");           
+           //System.out.println(usuarioActual.getUsuIdentificacion());         
     }
 
     public GestionImpuestoPredialControlador() {
@@ -185,7 +147,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
            
             try {
       predioArchivo = new PredioArchivo();            
-      predioArchivo.setPrearcNombre(event.getFile().getFileName());           
+      predioArchivo.setPrearcNombre(event.getFile().getFileName());
+      predioArchivo.setCatpreCodigo(catastroPredialActual); 
       predioArchivo.setPrearcData(event.getFile().getContents());
       predioArchivo.setPrearcTipo("PR");      
       predioArchivo.setUsuIdentificacion(usuarioActual);
@@ -223,19 +186,64 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     
     public void guardarAdicionalesDeductivos(){        
      try {
-       cpValoracionExtrasActual = new CpValoracionExtras();
-       
-       for (int i=0;i<listaAdicionalesDeductivosRecargosSeleccion.size(); i++){
-//       
-//           AdicionalesDeductivos adiDec =  listaAdicionalesDeductivosRecargosSeleccion.get(i);            
-//            cpValoracionExtrasActual.setAdidedCodigo(adiDec);
-            //cpValoracionExtrasActual.setCatprevalCodigo();
+                   
+       adicionalesDeductivosActual = new AdicionalesDeductivos();               
+       catastroPredialValoracionActual = new CatastroPredialValoracion();
+          try {
+      if(listaPredioArchivo.size()>0){
+            
+         for (int i = 0; i < listaAdicionalesDeductivosRecargosSeleccion.size(); i++) {
+             cpValoracionExtrasActual = new CpValoracionExtras();
+             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosRecargosSeleccion.get(i)));             
+             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
+             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
 //            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO); 
-       }
-       
+//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
+             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
+         }
+         
+         for (int i = 0; i < listaAdicionalesDeductivosExoneracionesSeleccion.size(); i++) {
+             cpValoracionExtrasActual = new CpValoracionExtras();
+             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosExoneracionesSeleccion.get(i)));             
+             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
+             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
+//            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
+//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
+             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
+         }
+
+         for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
+             cpValoracionExtrasActual = new CpValoracionExtras();
+             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));             
+             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
+             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
+//            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
+//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
+             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
+         }
+         
+          addSuccessMessage("Guardado Exitosamente!");
+          
+         
+         }else{
+          addSuccessMessage("No existen documentos cargados!");
+          
+//          FacesMessage msg = new FacesMessage("No se han cargado documentos!");
+//        FacesContext.getCurrentInstance().addMessage(null, msg);
+      
+      }
+         } catch (NullPointerException exNull) {
+           // LOGGER.log(Level.SEVERE, null, exNull);
+             addSuccessMessage("No se han cargado documentos!");
+//              FacesMessage msg = new FacesMessage("No se han cargado documentos!");
+//        FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
+         
         }
         
     }
@@ -246,15 +254,16 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         return listaAdicionalesDeductivosRecargos;
     }
 
-    public void setListaAdicionalesDeductivosRecargos(List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos) {
+    public void setListaAdicionalesDeductivosRecargos(
+            List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos) {
         this.listaAdicionalesDeductivosRecargos = listaAdicionalesDeductivosRecargos;
     }
 
-    public List<AdicionalesDeductivos> getListaAdicionalesDeductivosRecargosSeleccion() {
+    public List<String> getListaAdicionalesDeductivosRecargosSeleccion() {
         return listaAdicionalesDeductivosRecargosSeleccion;
     }
 
-    public void setListaAdicionalesDeductivosRecargosSeleccion(List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargosSeleccion) {
+    public void setListaAdicionalesDeductivosRecargosSeleccion(List<String> listaAdicionalesDeductivosRecargosSeleccion) {
         this.listaAdicionalesDeductivosRecargosSeleccion = listaAdicionalesDeductivosRecargosSeleccion;
     }
 
@@ -266,11 +275,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         this.listaAdicionalesDeductivosExoneraciones = listaAdicionalesDeductivosExoneraciones;
     }
 
-    public List<AdicionalesDeductivos> getListaAdicionalesDeductivosExoneracionesSeleccion() {
+    public List<String> getListaAdicionalesDeductivosExoneracionesSeleccion() {
         return listaAdicionalesDeductivosExoneracionesSeleccion;
     }
 
-    public void setListaAdicionalesDeductivosExoneracionesSeleccion(List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneracionesSeleccion) {
+    public void setListaAdicionalesDeductivosExoneracionesSeleccion(List<String> listaAdicionalesDeductivosExoneracionesSeleccion) {
         this.listaAdicionalesDeductivosExoneracionesSeleccion = listaAdicionalesDeductivosExoneracionesSeleccion;
     }
 
@@ -282,11 +291,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         this.listaAdicionalesDeductivosDeducciones = listaAdicionalesDeductivosDeducciones;
     }
 
-    public List<AdicionalesDeductivos> getListaAdicionalesDeductivosDeduccionesSeleccion() {
+    public List<String> getListaAdicionalesDeductivosDeduccionesSeleccion() {
         return listaAdicionalesDeductivosDeduccionesSeleccion;
     }
 
-    public void setListaAdicionalesDeductivosDeduccionesSeleccion(List<AdicionalesDeductivos> listaAdicionalesDeductivosDeduccionesSeleccion) {
+    public void setListaAdicionalesDeductivosDeduccionesSeleccion(List<String> listaAdicionalesDeductivosDeduccionesSeleccion) {
         this.listaAdicionalesDeductivosDeduccionesSeleccion = listaAdicionalesDeductivosDeduccionesSeleccion;
     }
 

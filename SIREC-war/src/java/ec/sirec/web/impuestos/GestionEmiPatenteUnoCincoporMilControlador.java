@@ -75,18 +75,18 @@ public class GestionEmiPatenteUnoCincoporMilControlador extends BaseControlador 
     public void guardaEmiPatente15xMil() {
         try {
             if (habilitaEdicion == false) {
-////////                if (patenteServicio.existePatente15milValoracion(patente15milValActual.getPat15valCodigo())) {
-////////                    addWarningMessage("Existe Código");
-////////                } else {
-//////////                    patente15milValActual.setPat15valBaseImponible(valBaseImponible);
-//////////                    patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
-//////////                    patente15milValActual.setPat15valSubtotal(valSubTotal);
-//////////                    patenteServicio.crearPatente15milValoracion(patente15milValActual);
-////////                    addSuccessMessage("Patente Valoración 1.5xmil Guardado");
-////////                    patente15milValActual = new Patente15xmilValoracion();
-////////                }
+                if (patenteServicio.existePatente15milValoracion(patente15milValActual.getPat15valCodigo())) {
+                    addWarningMessage("Existe Código");
+                } else {
+//                    patente15milValActual.setPat15valBaseImponible(valBaseImponible);
+//                    patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+//                    patente15milValActual.setPat15valSubtotal(valSubTotal);
+//                    patenteServicio.crearPatente15milValoracion(patente15milValActual);
+                    addSuccessMessage("Patente Valoración 1.5xmil Guardado");
+                    patente15milValActual = new Patente15xmilValoracion();
+                }
             } else {
-             //   patenteServicio.editarPatente15milValoracion(patente15milValActual);
+                patenteServicio.editarPatente15milValoracion(patente15milValActual);
                 addSuccessMessage("Patente Valoración  Actualizado");
                 patente15milValActual = new Patente15xmilValoracion();
                 habilitaEdicion = false;

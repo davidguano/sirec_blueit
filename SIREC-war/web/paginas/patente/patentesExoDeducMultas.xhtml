@@ -11,38 +11,6 @@
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlConExuDedMul" width="1000" columns="1" >
-                <h:panelGrid id="ExoDedBuscaPatente" columns="2">
-                    <p:column>
-                        <p:commandButton value="#{txt.btn_buscar}" 
-                                         id="btnBusPat" 
-                                         action="#{gestionExoDedMulPatenteControlador.buscarPatente()}" 
-                                         icon="ui-icon-disk"  
-                                         process="@this,ExoDedBuscaPatente" 
-                                         update=":frmPat,ExoDedBuscaPatente,frmPat:msgs"
-                                         async="true"
-                                         global="false"
-                                         />                        
-                    </p:column>
-                    <p:panel rendered="#{gestionExoDedMulPatenteControlador.verBuscaPatente==1}" header="Búsqueda de Patente:">
-                        <h:panelGrid columns="4">
-                            <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca} AE-MPM-"/>
-                            <p:inputText  id="txtbusPatente"  value="#{gestionExoDedMulPatenteControlador.buscNumPat}" 
-                                          maxlength="20" size="40"/>
-                            <p:message for="txtbusPatente"/>
-
-                            <p:commandButton value="#{txt.btn_aceptar}" 
-                                             id="btnBuscaPatente" 
-                                             action="#{gestionExoDedMulPatenteControlador.cagarPatenteActual()}" 
-                                             icon="ui-icon-disk"  
-                                             process="@this,ExoDedBuscaPatente" 
-                                             update=":frmPat:tabPrin:pnlConExoDedMulNumPat"
-                                             async="true"
-                                             global="false"
-                                             />            
-                        </h:panelGrid>
-
-                    </p:panel>
-                </h:panelGrid>
                 <p:panel header="#{txt.lbl_header_Exo_Dec_Multas}">
                     <h:panelGrid columns="2">
                         <p:commandButton process="@this" action="#{gestionExoDedMulPatenteControlador.cargarNumPatente()}" value="Ver N° Patente:" update=":frmPat:tabPrin:pnlConExoDedMulNumPat"/>
@@ -105,18 +73,13 @@
                         <p:selectBooleanButton id="patPasivos" value="#{gestionExoDedMulPatenteControlador.patValExActual.patvalextIncumPlazoDecla}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="patPasivos"/>
 
-                        <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_falsedad_datos}"/>
-                        <p:inputText  id="valDatosFalsos"  value="#{gestionExoDedMulPatenteControlador.patValExActual.patentePorcDatosfalsos}" 
-                                      maxlength="20" size="40"/>
-                        <p:message for="valDatosFalsos"/>
-                        
-                        
+
                         <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_evacion_tribut}"/>
                         <p:selectOneMenu id="evaTRibutaria" value="#{gestionExoDedMulPatenteControlador.patValExActual.patenteEvasionTributaria}"  style="width:152px">
                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
-                            <f:selectItem itemLabel="Tributo 1" itemValue="#{1}" />
-                            <f:selectItem itemLabel="Tributo 2" itemValue="#{2}" />
-                            <f:selectItem itemLabel="Tributo 3" itemValue="#{3}" />
+                            <f:selectItem itemLabel="1 Tributo" itemValue="#{1}" />
+                            <f:selectItem itemLabel="2 Tributo" itemValue="#{2}1" />
+                            <f:selectItem itemLabel="3 Tributo" itemValue="#{3}" />
                         </p:selectOneMenu>
                         <p:message for="evaTRibutaria"/>
 
@@ -129,12 +92,12 @@
                         <p:inputText  id="baseImpNegativa"  value="#{gestionExoDedMulPatenteControlador.patValExActual.patenteBaseimpNegativa}" 
                                       maxlength="20" size="40"/>
                         <p:message for="baseImpNegativa"/> </h:panelGrid>  
-                    <h:panelGrid columns="2" id="pnlConBotExoDeducMul">
+                    <h:panelGrid columns="2">
                         <p:commandButton value="#{txt.btn_ver_documentos}" 
                                          id="btnVerDocu" 
                                          action="#{gestionExoDedMulPatenteControlador.activaPanerVerArchivos()}" 
                                          icon="ui-icon-disk"  
-                                         process="@this,pnlConBotExoDeducMul" 
+                                         process="@this,pnlConExuDedMul" 
                                          update=":frmPat,pnlConExuDedMul,frmPat:msgs"
                                          async="true"
                                          global="false"
@@ -143,122 +106,116 @@
                                          id="btnCargaDocu" 
                                          action="#{gestionExoDedMulPatenteControlador.activPanelCargrArchivos()}" 
                                          icon="ui-icon-disk"  
-                                         process="@this,pnlConBotExoDeducMul" 
+                                         process="@this,pnlConExuDedMul" 
                                          update=":frmPat,pnlConExuDedMul,frmPat:msgs"
                                          async="true"
                                          global="false"
                                          />
                     </h:panelGrid>                   
                 </p:panel>
-                <h:panelGrid id="pnlConCargarFile" width="1000">
-                    <center>
-                        <p:panel header="Archivo" style="font-size: #{txt.font_size}" rendered="#{gestionExoDedMulPatenteControlador.cargarArchivos==1}">
-                            <h:panelGrid>
-                                <p:panel header="Adjuntar Documentos" style="font-size: #{txt.font_size}">
-                                    <h:panelGrid columns="3">
-                                        <h:panelGrid width="150">
-                                            <p:graphicImage value="/imagenes/subir.png" height="40px" width="40px"/>
-                                            <h:outputText value="Recuerde:" style="color: firebrick;font-size: 10px;font-weight: bold" ></h:outputText>
-                                            <h:outputText value="El archivo debe ser: *.pdf,excel,jpg(max 750 px)" style="color: #666;font-size: 10px;font-weight: bold" ></h:outputText>
-                                        </h:panelGrid>
-                                        <p:fileUpload fileUploadListener="#{gestionExoDedMulPatenteControlador.handleFileUpload}"  
-                                                      mode="advanced"
-                                                      dragDropSupport="false"
-                                                      multiple="true"  
-                                                      update=":frmPat:msgs,:frmPat:tabPrin:infoExoDedMul"
-                                                      sizeLimit="1000000"
-                                                      allowTypes="/(\.|\/)(pdf|xls|xlsx|jpg)$/"
-                                                      invalidSizeMessage="El archivo debe ser maximo 1MB"
-                                                      label="Seleccione el archivo" 
-                                                      uploadLabel="Cargar"
-                                                      cancelLabel="Cancelar"
-                                                      process="@this,infoExoDedMul"  >                                                                                             
-                                            <f:attribute name="tipoArchivo" value="Capacitación teórica" />
-                                        </p:fileUpload>  
-                                        <h:panelGroup id="infoExoDedMul">
-                                            <p:panel rendered="#{gestionExoDedMulPatenteControlador.listaFiles.size()>0}">
-                                                <f:facet name="header">
-                                                    <h:outputText value="Archivos:" />
-                                                </f:facet>
-                                                <p:dataGrid  columns="1" value="#{gestionExoDedMulPatenteControlador.listaFiles}"  var="file" >
-                                                    <p:panel>
-                                                        <h:panelGrid columns="2">
-                                                            <h:panelGrid columns="4">
-                                                                <h:outputText value="Achivo:" />
-                                                                <h:outputText value="#{file.name}" />  
-                                                                <h:outputText value=" " />
-                                                                <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
-                                                                    <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
-                                                                                     actionListener="#{gestionExoDedMulPatenteControlador.confirmaEliminarArchivo(file)}" 
-                                                                                     process="@this" async="true" global="false" update=":frmPat:tabPrin:infoExoDedMul,:frmPat:msgs"  >
-                                                                        <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
-                                                                    </p:commandButton>
-                                                                </p:column>  
-                                                            </h:panelGrid>
+                <h:panelGrid id="pnlConCargarFile">
+                    <p:panel header="Archivo" style="font-size: #{txt.font_size}" rendered="#{gestionExoDedMulPatenteControlador.cargarArchivos==1}">
+                        <h:panelGrid>
+                            <p:panel header="Adjuntar Documentos" style="font-size: #{txt.font_size}">
+                                <h:panelGrid columns="3">
+                                    <h:panelGrid width="150">
+                                        <p:graphicImage value="/imagenes/subir.png" height="40px" width="40px"/>
+                                        <h:outputText value="Recuerde:" style="color: firebrick;font-size: 10px;font-weight: bold" ></h:outputText>
+                                        <h:outputText value="El archivo debe ser: *.pdf,excel,jpg(max 750 px)" style="color: #666;font-size: 10px;font-weight: bold" ></h:outputText>
+                                    </h:panelGrid>
+                                    <p:fileUpload fileUploadListener="#{gestionExoDedMulPatenteControlador.handleFileUpload}"  
+                                                  mode="advanced"
+                                                  dragDropSupport="false"
+                                                  multiple="true"  
+                                                  update=":frmPat:msgs,:frmPat:tabPrin:infoExoDedMul"
+                                                  sizeLimit="1000000"
+                                                  allowTypes="/(\.|\/)(pdf|xls|xlsx|jpg)$/"
+                                                  invalidSizeMessage="El archivo debe ser maximo 1MB"
+                                                  label="Seleccione el archivo" 
+                                                  uploadLabel="Cargar"
+                                                  cancelLabel="Cancelar"
+                                                  process="@this,infoExoDedMul"  >                                                                                             
+                                        <f:attribute name="tipoArchivo" value="Capacitación teórica" />
+                                    </p:fileUpload>  
+                                    <h:panelGroup id="infoExoDedMul">
+                                        <p:panel rendered="#{gestionExoDedMulPatenteControlador.listaFiles.size()>0}">
+                                            <f:facet name="header">
+                                                <h:outputText value="Archivos:" />
+                                            </f:facet>
+                                            <p:dataGrid  columns="1" value="#{gestionExoDedMulPatenteControlador.listaFiles}"  var="file" >
+                                                <p:panel>
+                                                    <h:panelGrid columns="2">
+                                                        <h:panelGrid columns="4">
+                                                            <h:outputText value="Achivo:" />
+                                                            <h:outputText value="#{file.name}" />  
+                                                            <h:outputText value=" " />
+                                                            <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
+                                                                <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
+                                                                                 actionListener="#{gestionExoDedMulPatenteControlador.confirmaEliminarArchivo(file)}" 
+                                                                                 process="@this" async="true" global="false" update=":frmPat:tabPrin:infoExoDedMul,:frmPat:msgs"  >
+                                                                    <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                            </p:column>  
                                                         </h:panelGrid>
-                                                    </p:panel>
-                                                </p:dataGrid>
-                                            </p:panel>
-                                        </h:panelGroup>
-                                    </h:panelGrid> 
-                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                    </p:confirmDialog>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                            </p:dataGrid>
+                                        </p:panel>
+                                    </h:panelGroup>
+                                </h:panelGrid> 
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+
+                            </p:panel>
+                            <h:panelGrid id="tblListArchvosExoDedmul">
+                                <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionPatenteControlador.listadoArchivos.size()>0}">
+                                    <p:dataTable    paginator="true" rows="5" id="tablLisExoDedMul" value="#{gestionPatenteControlador.listadoArchivos}"  var="archivoColumna"   
+                                                    selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
+                                                    styleClass="pdataTable_font"
+                                                    currentPageReportTemplate="{currentPage} de {totalPages}">                              
+                                        <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
+                                            <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
+                                        </p:column> 
+
+                                        <p:column headerText="#{txt.eliminar_btn}" style="width:50px;text-align: center;font-size:12px;" >
+                                            <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
+                                                             actionListener="#{gestionPatenteControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
+                                                             process="@this" update=":frmPat:tabPrin:tablLisExoDedMul,:frmPat:tabPrin:tablLisExoDedMul:message" async="true" global="false">
+                                                <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>  
+                                    </p:dataTable>     
                                 </p:panel>
-                                <h:panelGrid id="tblListArchvosExoDedmul">
-                                    <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionPatenteControlador.listadoArchivos.size()>0}">
-                                        <p:dataTable    paginator="true" rows="5" id="tablLisExoDedMul" value="#{gestionPatenteControlador.listadoArchivos}"  var="archivoColumna"   
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:panel>
+                    <p:panel>
+                        <h:panelGrid id="tblLisArchCargados" rendered="#{gestionExoDedMulPatenteControlador.verArchivos==1}">
+                                    <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionExoDedMulPatenteControlador.listadoArchivos.size()>0}">
+                                        <p:dataTable    paginator="true" rows="5" id="tablaListaPatArchivos" value="#{gestionExoDedMulPatenteControlador.listadoArchivos}"  var="archivoColumna"   
                                                         selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
                                                         styleClass="pdataTable_font"
                                                         currentPageReportTemplate="{currentPage} de {totalPages}">                              
                                             <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
                                                 <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
                                             </p:column> 
-
-                                            <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
-                                                <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
-                                                                 actionListener="#{gestionPatenteControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
-                                                                 process="@this" update=":frmPat:tabPrin:tablLisExoDedMul,:frmPat:tabPrin:tablLisExoDedMul:message" async="true" global="false">
-                                                    <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                            </p:column>  
+                                            <p:column   headerText="Tipo" width="100" style="font-size:12px;">
+                                                <h:outputText value="PATENTE" rendered="#{archivoColumna.patarcTipo=='PA'}" style="font-size:12px;" />
+                                                <h:outputText value="EXONERACIÓN" rendered="#{archivoColumna.patarcTipo=='EX'}" style="font-size:12px;" />
+                                                <h:outputText value="RECARGO" rendered="#{archivoColumna.patarcTipo=='RE'}" style="font-size:12px;" />
+                                                <h:outputText value="DEDUCCIÓN" rendered="#{archivoColumna.patarcTipo=='DE'}" style="font-size:12px;" />
+                                                <h:outputText value="TABLA" rendered="#{archivoColumna.patarcTipo=='TA'}" style="font-size:12px;" />
+                                            </p:column> 
+                                            
                                         </p:dataTable>     
                                     </p:panel>
                                 </h:panelGrid>
-                            </h:panelGrid>
-                        </p:panel>
-                    </center>
-                    <h:panelGrid id="tblLisArchCargados" width="1000" >
-                        <center>
-                            <p:panel  header="Archivos Cargados" rendered="#{gestionExoDedMulPatenteControlador.listadoArchivos.size()>0}">
-                                <p:dataTable    paginator="true" rows="5" id="tablaListaPatArchivos" value="#{gestionExoDedMulPatenteControlador.listadoArchivos}"  var="archivoColumna"   
-                                                selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
-                                                styleClass="pdataTable_font"
-                                                currentPageReportTemplate="{currentPage} de {totalPages}">                              
-                                    <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
-                                        <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
-                                    </p:column> 
-                                    <p:column   headerText="Tipo" width="100" style="font-size:12px;">
-                                        <h:outputText value="PATENTE" rendered="#{archivoColumna.patarcTipo=='PA'}" style="font-size:12px;" />
-                                        <h:outputText value="EXONERACIÓN" rendered="#{archivoColumna.patarcTipo=='EX'}" style="font-size:12px;" />
-                                        <h:outputText value="RECARGO" rendered="#{archivoColumna.patarcTipo=='RE'}" style="font-size:12px;" />
-                                        <h:outputText value="DEDUCCIÓN" rendered="#{archivoColumna.patarcTipo=='DE'}" style="font-size:12px;" />
-                                        <h:outputText value="TABLA" rendered="#{archivoColumna.patarcTipo=='TA'}" style="font-size:12px;" />
-                                    </p:column> 
-                                    <p:column headerText="Descargar" width="70">
-                                        <center>
-                                            <p:commandButton  process="@this" async="true" global="false" icon="fa fa-download fa-lg"  actionListener="#{gestionExoDedMulPatenteControlador.descargarArchivo(archivoColumna)}" oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/DescargarArchivos','DescargarArchivos')">
-                                            </p:commandButton>
-                                        </center>
-                                    </p:column>
-                                </p:dataTable>     
-                            </p:panel>
-                            </center>
-                        </h:panelGrid>
-                    
+                    </p:panel>
+                        
                 </h:panelGrid>
-
                 <h:panelGrid columns="2">
                     <p:commandButton value="#{txt.btn_guardar}" 
                                      id="btnGuardar2" 
