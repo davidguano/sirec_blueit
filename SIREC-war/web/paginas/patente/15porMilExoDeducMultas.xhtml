@@ -11,6 +11,36 @@
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlCon15xMilExuDedMul" width="1000" columns="1" >
+                <h:panelGrid id="pnl15xMilExoBuscaPatente" columns="2">
+                    <p:column>
+                        <p:commandButton value="#{txt.btn_buscar}" 
+                                         id="btn15xMilExoBusPat" 
+                                         action="#{gestionExoDedMulUnoCincoPorMil.buscarPatente()}" 
+                                         icon="ui-icon-disk"  
+                                         process="@this,pnl15xMilExoBuscaPatente" 
+                                         update=":frmPat,pnl15xMilExoBuscaPatente,frmPat:msgs"
+                                         async="true"
+                                         global="false"
+                                         />                        
+                    </p:column>
+                    <p:panel rendered="#{gestionExoDedMulUnoCincoPorMil.verBuscaPatente==1}" header="Búsqueda de Patente:">
+                        <h:panelGrid columns="4">
+                            <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca}: AE-MPM-"/>
+                            <p:inputText  id="txtExo15xMilBusPatente"  value="#{gestionExoDedMulUnoCincoPorMil.buscNumPat}" 
+                                          maxlength="20" size="40"/>
+                            <p:message for="txtbusPatente"/>
+                            <p:commandButton value="#{txt.btn_aceptar}" 
+                                             id="btn15xMilExoBuscaPatente" 
+                                             action="#{gestionExoDedMulUnoCincoPorMil.cagarPatenteActual()}" 
+                                             icon="ui-icon-disk"  
+                                             process="@this,pnl15xMilExoBuscaPatente" 
+                                             update=":frmPat:tabPrin:pnlCon15xMilExoDedMulNumPat"
+                                             async="true"
+                                             global="false"
+                                             />            
+                        </h:panelGrid>
+                    </p:panel>
+                </h:panelGrid>
                 <p:panel header="#{txt.lbl_header_Exo_Dec_Multas}">
                     <h:panelGrid columns="2">
                         <p:commandButton process="@this" action="#{gestionExoDedMulUnoCincoPorMil.cargarNumPatente()}" value="Ver N° Patente:" update=":frmPat:tabPrin:pnlCon15xMilExoDedMulNumPat"/>
@@ -28,7 +58,6 @@
                         </p:panel>
                     </h:panelGrid>
                     <h:panelGrid columns="3">
-
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_adi_deductivo}"/>
                         <p:selectOneMenu   required="true" id="cmbAdiDeduc15xMil" 
                                            value="#{gestionExoDedMulUnoCincoPorMil.adiDeductivoActual}" style="width:250px"
@@ -46,48 +75,48 @@
 
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_enti_public}"/>
-                        <p:selectBooleanButton id="lblEntiPub" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextentiPub}" onLabel="Obligado" offLabel="No Obligado" style="width:80px" />
+                        <p:selectBooleanButton id="lblEntiPub" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextEntiPub}" onLabel="Obligado" offLabel="No Obligado" style="width:80px" />
                         <p:message for="lblEntiPub"/>
 
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_fundacion_beneficiencia}"/>
-                        <p:selectBooleanButton id="redFunBen" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextfunBenEdu}" onLabel="Si" offLabel="No" style="width:60px" />
+                        <p:selectBooleanButton id="redFunBen" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextFunBenEdu}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="redFunBen"/>
 
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_multiNac_economia}"/>
-                        <p:selectBooleanButton id="redmultiNac" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextmultiNac}" onLabel="Si" offLabel="No" style="width:60px" />
+                        <p:selectBooleanButton id="redmultiNac" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextMultiNac}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="redmultiNac"/>
 
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_fomrnto_artesanal}"/>
-                        <p:selectBooleanButton id="exoFomArt" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextleyFomArtes}" onLabel="Si" offLabel="No" style="width:60px" />
+                        <p:selectBooleanButton id="exoFomArt" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextLeyFomArtes}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="exoFomArt"/>
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_agropecuaria}"/>
-                        <p:selectBooleanButton id="patAgro" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextactAgro}" onLabel="Si" offLabel="No" style="width:60px" />
+                        <p:selectBooleanButton id="patAgro" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextActAgro}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="patAgro"/>
 
 
                         <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_cooperativas}"/>
-                        <p:selectBooleanButton id="patCoop" value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextCoop}" onLabel="Si" offLabel="No" style="width:60px" />
+                        <p:selectBooleanButton id="patCoop" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextCoop}" onLabel="Si" offLabel="No" style="width:60px" />
                         <p:message for="patCoop"/>
 
                         <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_porcentaje_ingreso}"/>
-                        <p:inputText  id="porceIngresoMil"  value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextBase}" 
+                        <p:inputText  id="porceIngresoMil"  value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextBase}" 
                                       maxlength="20" size="40"/>
                         <p:message for="porceIngresoMil"/>
 
                         <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_base_imponible_negativa}"/>
-                        <p:inputText  id="baseImpNegativaMil"  value="#{gestionExoDedMulUnoCinoPorMil.patValEx15xMilActual.pat15valextValor}" 
+                        <p:inputText  id="baseImpNegativaMil"  value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextValor}" 
                                       maxlength="20" size="40"/>
                         <p:message for="baseImpNegativaMil"/> </h:panelGrid>  
-                    <h:panelGrid columns="2">
+                    <h:panelGrid columns="2" id="pnlConBot15xMilExoDedMul">
                         <p:commandButton value="#{txt.btn_ver_documentos}" 
                                          id="btnVerDocuExoxMil" 
                                          action="#{gestionExoDedMulUnoCincoPorMil.activaPanerVerArchivos()}" 
                                          icon="ui-icon-disk"  
-                                         process="@this,pnlCon15xMilExuDedMul" 
+                                         process="@this,pnlConBot15xMilExoDedMul" 
                                          update=":frmPat,pnlCon15xMilExuDedMul,frmPat:msgs"
                                          async="true"
                                          global="false"
@@ -96,16 +125,16 @@
                                          id="btnCargaDocuExoxMil" 
                                          action="#{gestionExoDedMulUnoCincoPorMil.activPanelCargrArchivos()}" 
                                          icon="ui-icon-disk"  
-                                         process="@this,pnlCon15xMilExuDedMul" 
+                                         process="@this,pnlConBot15xMilExoDedMul" 
                                          update=":frmPat,pnlCon15xMilExuDedMul,frmPat:msgs"
                                          async="true"
                                          global="false"
                                          />
                     </h:panelGrid>                   
                 </p:panel>
-                <h:panelGrid id="pnlCargarFile15PorMil">
-                    <p:panel header="Archivo" style="font-size: #{txt.font_size}" rendered="#{gestionExoDedMulUnoCincoPorMil.cargarArchivos==1}">
-                        <h:panelGrid>
+                <h:panelGrid id="pnlCargarFile15PorMil" width="1000">
+                    <center>
+                        <p:panel header="Archivo" style="font-size: #{txt.font_size}" rendered="#{gestionExoDedMulUnoCincoPorMil.cargarArchivos==1}">
                             <p:panel header="Adjuntar Documentos" style="font-size: #{txt.font_size}">
                                 <h:panelGrid columns="3">
                                     <h:panelGrid width="150">
@@ -157,8 +186,6 @@
                                     <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                                 </p:confirmDialog>
-
-
                             </p:panel>
                             <h:panelGrid id="tblListArchExoDedxMil">
                                 <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionPatenteControlador.listadoArchivos.size()>0}">
@@ -180,36 +207,38 @@
                                     </p:dataTable>     
                                 </p:panel>
                             </h:panelGrid>
-                        </h:panelGrid>
-                    </p:panel>
-                    <p:panel>
-                        <h:panelGrid id="panLisArchCargadosxMil" rendered="#{gestionExoDedMulUnoCincoPorMil.verArchivos==1}">
-                                    <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionExoDedMulUnoCincoPorMil.listadoArchivos.size()>0}">
-                                        <p:dataTable    paginator="true" rows="5" id="tablaListaArchivosxMil" value="#{gestionExoDedMulUnoCincoPorMil.listadoArchivos}"  var="archivoColumna"   
-                                                        selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
-                                                        styleClass="pdataTable_font"
-                                                        currentPageReportTemplate="{currentPage} de {totalPages}">                              
-                                            <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
-                                                <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
-                                            </p:column> 
-                                            <p:column   headerText="Tipo" width="100" style="font-size:12px;">
-                                                <h:outputText value="PATENTE" rendered="#{archivoColumna.patarcTipo=='PA'}" style="font-size:12px;" />
-                                                <h:outputText value="EXONERACIÓN" rendered="#{archivoColumna.patarcTipo=='EX'}" style="font-size:12px;" />
-                                                <h:outputText value="RECARGO" rendered="#{archivoColumna.patarcTipo=='RE'}" style="font-size:12px;" />
-                                                <h:outputText value="DEDUCCIÓN" rendered="#{archivoColumna.patarcTipo=='DE'}" style="font-size:12px;" />
-                                                <h:outputText value="TABLA" rendered="#{archivoColumna.patarcTipo=='TA'}" style="font-size:12px;" />
-                                            </p:column> 
-                                            
-                                        </p:dataTable>     
-                                    </p:panel>
-                                </h:panelGrid>
-                    </p:panel>
-                        
+                        </p:panel>
+                    </center>
+                    <h:panelGrid id="panLisArchCargadosxMil" >
+                        <p:panel header="Archivos Cargados" rendered="#{gestionExoDedMulUnoCincoPorMil.listadoArchivos.size()>0}">
+                            <p:dataTable    paginator="true" rows="5" id="tablaListaArchivosxMil" value="#{gestionExoDedMulUnoCincoPorMil.listadoArchivos}"  var="archivoColumna"   
+                                            selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
+                                            styleClass="pdataTable_font"
+                                            currentPageReportTemplate="{currentPage} de {totalPages}">                              
+                                <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
+                                    <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
+                                </p:column> 
+                                <p:column   headerText="Tipo" width="100" style="font-size:12px;">
+                                    <h:outputText value="PATENTE" rendered="#{archivoColumna.patarcTipo=='PA'}" style="font-size:12px;" />
+                                    <h:outputText value="EXONERACIÓN" rendered="#{archivoColumna.patarcTipo=='EX'}" style="font-size:12px;" />
+                                    <h:outputText value="RECARGO" rendered="#{archivoColumna.patarcTipo=='RE'}" style="font-size:12px;" />
+                                    <h:outputText value="DEDUCCIÓN" rendered="#{archivoColumna.patarcTipo=='DE'}" style="font-size:12px;" />
+                                    <h:outputText value="TABLA" rendered="#{archivoColumna.patarcTipo=='TA'}" style="font-size:12px;" />
+                                </p:column> 
+                                <p:column headerText="Descargar" width="70">
+                                    <center>
+                                        <p:commandButton icon="fa fa-download fa-lg"  actionListener="#{gestionExoDedMulUnoCincoPorMil.descargarArchivo(archivoColumna)}" oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/DescargarArchivos','DescargarArchivos')">
+                                        </p:commandButton>
+                                    </center>
+                                </p:column>
+                            </p:dataTable>     
+                        </p:panel>
+                    </h:panelGrid>
                 </h:panelGrid>
                 <h:panelGrid columns="2">
                     <p:commandButton value="#{txt.btn_guardar}" 
                                      id="btnGuardar15xMilExoDed" 
-                                     action="#{gestionExoDedMulUnoCincoPorMil.guardaPatenteValExtra()}" 
+                                     action="#{gestionExoDedMulUnoCincoPorMil.guardaPatente15xMilValExtra()}" 
                                      icon="ui-icon-disk"  
                                      process="@this,pnlCon15xMilExuDedMul" 
                                      update=":frmPat,pnlCon15xMilExuDedMul,frmPat:msgs"

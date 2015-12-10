@@ -8,13 +8,14 @@ package ec.sirec.web.impuestos;
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
 import ec.sirec.ejb.entidades.DatoGlobal;
 import ec.sirec.ejb.entidades.Patente;
+import ec.sirec.ejb.entidades.Patente15xmilValoracion;
 import ec.sirec.ejb.entidades.Patente15xmilValoracionExtras;
 import ec.sirec.ejb.entidades.PatenteArchivo;
-import ec.sirec.ejb.entidades.PatenteValoracion;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.PatenteArchivoServicio;
 import ec.sirec.ejb.servicios.PatenteServicio;
+import ec.sirec.ejb.servicios.UnoPCinoPorMilServicio;
 import ec.sirec.web.base.BaseControlador;
 import ec.sirec.web.util.ParametrosFile;
 import java.io.InputStream;
@@ -29,6 +30,9 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.FileUploadEvent;
 
 /**
@@ -37,28 +41,35 @@ import org.primefaces.event.FileUploadEvent;
  */
 @ManagedBean
 @ViewScoped
-public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
+public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
+    @EJB
+    private PatenteServicio patenteServicio;
+
+    @EJB
+    private UnoPCinoPorMilServicio unoPCinoPorMilServicio;
 
     @EJB
     private PatenteArchivoServicio patenteArchivoServicio;
     @EJB
     private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
-    @EJB
-    private PatenteServicio patenteServicio;
+
     private Patente patenteActual;
-    Patente15xmilValoracionExtras patValEx15xMilActual;
-    PatenteValoracion patenteValoracionActal;
+    private Patente15xmilValoracionExtras patValEx15xMilActual;
+    private Patente15xmilValoracion patValo15xMilActal;
     private String numPatente = "";
     private boolean habilitaEdicion;
-    private static final Logger LOGGER = Logger.getLogger(GestionExoDedMulUnoCinoPorMil.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GestionExoDedMulUnoCincoPorMil.class.getName());
     private int verArchivos;
     private int cargarArchivos;
-    AdicionalesDeductivos adiDeductivoActual;
+    private AdicionalesDeductivos adiDeductivoActual;
     private List<AdicionalesDeductivos> listAdicionalDeductivo;
     private List<ParametrosFile> listaFiles;
     private List<PatenteArchivo> listadoArchivos;
     private DatoGlobal datoGlobalActual;
     private SegUsuario usuarioActual;
+    private PatenteArchivo patenteArchivoActual;
+    private int buscNumPat;
+    private int verBuscaPatente;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -66,22 +77,25 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+            buscNumPat = 0;
+            verBuscaPatente = 0;
             adiDeductivoActual = new AdicionalesDeductivos();
             patenteActual = new Patente();
-            patenteValoracionActal = new PatenteValoracion();
+            patValo15xMilActal = new Patente15xmilValoracion();
             verArchivos = 0;
             cargarArchivos = 0;
             patValEx15xMilActual = new Patente15xmilValoracionExtras();
             habilitaEdicion = false;
             listaFiles = new ArrayList<ParametrosFile>();
-            listadoArchivos= new ArrayList<PatenteArchivo>();
+            listadoArchivos = new ArrayList<PatenteArchivo>();
+            patenteArchivoActual = new PatenteArchivo();
             listarAdicionalDeductivo();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
-    public GestionExoDedMulUnoCinoPorMil() {
+    public GestionExoDedMulUnoCincoPorMil() {
     }
 
     public void cargarNumPatente() {
@@ -93,19 +107,36 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
         }
     }
 
-    public void guardaPatenteValExtra() {
+    public void buscarPatente() {
+        try {
+            verBuscaPatente = 1;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void cagarPatenteActual() {
+        try {
+            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
+            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void guardaPatente15xMilValExtra() {
         try {
             if (habilitaEdicion == false) {
 //                if (patenteServicio.existePatenteValoracionExtra(patValExActual.getPatvalextCodigo())) {
 //                    addWarningMessage("Existe Código");
 //                } else {
-//                guardaPatenteValoracion();
-//                patValExActual.setAdidedCodigo(adiDeductivoActual);
-//                patValExActual.setPatvalCodigo(patenteValoracionActal);
-//                patenteServicio.crearPatenteValoracionExtra(patValExActual);
-//                addSuccessMessage("Patente Valoración Extra Guardado");
-//                patValExActual = new PatenteValoracionExtras();
-//                cargaObjetosBitacora();
+                guardaPatenteValoracion();
+                patValEx15xMilActual.setAdidedCodigo(adiDeductivoActual);
+                patValEx15xMilActual.setPat15valCodigo(patValo15xMilActal);
+                unoPCinoPorMilServicio.crearPatenteValoracion15xMilExtra(patValEx15xMilActual);
+                addSuccessMessage("Patente Valoración Extra Guardado");
+                patValEx15xMilActual = new Patente15xmilValoracionExtras();
+                cargaObjetosBitacora();
                 guardarArchivos();
             }
 //            } else {
@@ -123,27 +154,34 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
         BigDecimal valTemporal;
         valTemporal = BigDecimal.valueOf(0.00);
         try {
-            patenteValoracionActal.setPatCodigo(patenteActual);
-            patenteValoracionActal.setPatvalPatrimonio(valTemporal);
-            patenteValoracionActal.setPatvalImpuesto(valTemporal);
-            patenteValoracionActal.setPatvalSubtotal(valTemporal);
-            patenteValoracionActal.setPatvalTasaProc(valTemporal);
-            patenteValoracionActal.setPatvalDeducciones(valTemporal);
-            patenteValoracionActal.setPatvalPasivos(valTemporal);
-            patenteValoracionActal.setPatvalActivos(valTemporal);
-            patenteValoracionActal.setPatvalTotal(valTemporal);
-            patenteValoracionActal.setPatvalAnio(0);
-            patenteServicio.crearPatenteValoracion(patenteValoracionActal);
+            patValo15xMilActal.setPatCodigo(patenteActual);
+            patValo15xMilActal.setPat15valNumSucursales(0);
+            patValo15xMilActal.setPat15valAnioBalance(0);
+            patValo15xMilActal.setPat15valIngresoAnual(valTemporal);
+            patValo15xMilActal.setPat15valActivos(valTemporal);
+            patValo15xMilActal.setPat15valPasivosCorriente(valTemporal);
+            patValo15xMilActal.setPat15valPasivosConting(valTemporal);
+            patValo15xMilActal.setPat15valOtrasDeducciones(valTemporal);
+            patValo15xMilActal.setPat15valBaseImponible(valTemporal);
+            patValo15xMilActal.setPat15valTasaProc(valTemporal);
+            patValo15xMilActal.setPat15valImpuesto(valTemporal);
+            patValo15xMilActal.setPat15valImpuesto(valTemporal);
+            patValo15xMilActal.setPat15valSubtotal(valTemporal);
+            patValo15xMilActal.setPat15valRecargos(valTemporal);
+            patValo15xMilActal.setPat15valTotal(valTemporal);
+
+            unoPCinoPorMilServicio.crearPatenteValoracion15xMil(patValo15xMilActal);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
+
     //Carga los objetos para guardar en la tabla bitacora
-        public void cargaObjetosBitacora() {
+    public void cargaObjetosBitacora() {
         try {
             datoGlobalActual = new DatoGlobal();
             usuarioActual = new SegUsuario();
-            datoGlobalActual = patenteServicio.buscaMensajeTransaccion("Msj_Pat_In");
+            datoGlobalActual = unoPCinoPorMilServicio.buscaMensajeTransaccion("Msj_Pat_In");
             usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -206,12 +244,36 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
             addWarningMessage("No se puede eliminar el regitro");
         }
     }
+//Preparamos archivo para descarga
+
+    public void descargarArchivo(PatenteArchivo patArchivoActual) {
+        patenteArchivoActual = patArchivoActual;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("datoArchivo", patArchivoActual.getPatarcData());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("nombreArchivo", patArchivoActual.getPatarcNombre());
+    }
+//Se descarga archivo por medio de  Servlet
+
+    public String download() {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-disposition", "attachment; filename=\"" + "c://subido" + patenteArchivoActual.getPatarcNombre() + "\"");
+        try {
+            ServletOutputStream os = response.getOutputStream();
+            os.write(patenteArchivoActual.getPatarcData());
+            os.flush();
+            os.close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
 
     public void listarAdicionalDeductivo() throws Exception {
-        listAdicionalDeductivo = adicionalesDeductivosServicio.listarAdicionalesDeducibles();
+        listAdicionalDeductivo = adicionalesDeductivosServicio.listarAdicionesDeductivosTipoImpuesto("PA");
     }
-    public void listarArchivosPatente() throws Exception{
-    listadoArchivos=patenteArchivoServicio.listarArchivoPorPatente(patenteActual);
+
+    public void listarArchivosPatente() throws Exception {
+        listadoArchivos = patenteArchivoServicio.listarArchivoPorPatente(patenteActual);
     }
 
     public void activPanelCargrArchivos() {
@@ -221,17 +283,14 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
 
     public void activaPanerVerArchivos() {
         try {
-          verArchivos = 1;
-        listarArchivosPatente();  
+            verArchivos = 1;
+            listarArchivosPatente();
         } catch (Exception e) {
-           LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
-        
-        
 
     }
 
-    
     public Patente15xmilValoracionExtras getPatValEx15xMilActual() {
         return patValEx15xMilActual;
     }
@@ -294,6 +353,22 @@ public class GestionExoDedMulUnoCinoPorMil extends BaseControlador {
 
     public void setListadoArchivos(List<PatenteArchivo> listadoArchivos) {
         this.listadoArchivos = listadoArchivos;
+    }
+
+    public int getBuscNumPat() {
+        return buscNumPat;
+    }
+
+    public void setBuscNumPat(int buscNumPat) {
+        this.buscNumPat = buscNumPat;
+    }
+
+    public int getVerBuscaPatente() {
+        return verBuscaPatente;
+    }
+
+    public void setVerBuscaPatente(int verBuscaPatente) {
+        this.verBuscaPatente = verBuscaPatente;
     }
 
 }

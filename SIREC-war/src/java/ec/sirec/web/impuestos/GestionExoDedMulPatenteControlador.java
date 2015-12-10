@@ -29,6 +29,9 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.FileUploadEvent;
 
 /**
@@ -46,19 +49,23 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     @EJB
     private PatenteServicio patenteServicio;
     private Patente patenteActual;
-    PatenteValoracionExtras patValExActual;
-    PatenteValoracion patenteValoracionActal;
+    private PatenteValoracionExtras patValExActual;
+    private PatenteValoracion patenteValoracionActal;
     private String numPatente = "";
     private boolean habilitaEdicion;
     private static final Logger LOGGER = Logger.getLogger(GestionExoDedMulPatenteControlador.class.getName());
     private int verArchivos;
     private int cargarArchivos;
-    AdicionalesDeductivos adiDeductivoActual;
+    private int verBuscaPatente;
+    private AdicionalesDeductivos adiDeductivoActual;
     private List<AdicionalesDeductivos> listAdicionalDeductivo;
     private List<ParametrosFile> listaFiles;
     private List<PatenteArchivo> listadoArchivos;
     private DatoGlobal datoGlobalActual;
     private SegUsuario usuarioActual;
+    private PatenteArchivo patenteArchivoActual;
+
+    private int buscNumPat;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -66,6 +73,7 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+            patenteArchivoActual = new PatenteArchivo();
             adiDeductivoActual = new AdicionalesDeductivos();
             patenteActual = new Patente();
             patenteValoracionActal = new PatenteValoracion();
@@ -74,7 +82,8 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
             patValExActual = new PatenteValoracionExtras();
             habilitaEdicion = false;
             listaFiles = new ArrayList<ParametrosFile>();
-            listadoArchivos= new ArrayList<PatenteArchivo>();
+            listadoArchivos = new ArrayList<PatenteArchivo>();
+            listAdicionalDeductivo = new ArrayList<AdicionalesDeductivos>();
             listarAdicionalDeductivo();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -119,6 +128,24 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
         }
     }
 
+    public void buscarPatente() {
+        try {
+            verBuscaPatente = 1;
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void cagarPatenteActual() {
+        try {
+            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
+            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
     public void guardaPatenteValoracion() {
         BigDecimal valTemporal;
         valTemporal = BigDecimal.valueOf(0.00);
@@ -138,8 +165,9 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
+
     //Carga los objetos para guardar en la tabla bitacora
-        public void cargaObjetosBitacora() {
+    public void cargaObjetosBitacora() {
         try {
             datoGlobalActual = new DatoGlobal();
             usuarioActual = new SegUsuario();
@@ -206,12 +234,36 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
             addWarningMessage("No se puede eliminar el regitro");
         }
     }
+    //Preparamos archivo para descarga
+
+    public void descargarArchivo(PatenteArchivo patArchivo) {
+        patenteArchivoActual = patArchivo;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("datoArchivo", patenteArchivoActual.getPatarcData());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("nombreArchivo", patenteArchivoActual.getPatarcNombre());
+    }
+//Se descarga archivo por medio de  Servlet
+
+    public String download() {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-disposition", "attachment; filename=\"" + "c://subido" + patenteArchivoActual.getPatarcNombre() + "\"");
+        try {
+            ServletOutputStream os = response.getOutputStream();
+            os.write(patenteArchivoActual.getPatarcData());
+            os.flush();
+            os.close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
 
     public void listarAdicionalDeductivo() throws Exception {
-        listAdicionalDeductivo = adicionalesDeductivosServicio.listarAdicionalesDeducibles();
+        listAdicionalDeductivo = adicionalesDeductivosServicio.listarAdicionesDeductivosTipoImpuesto("PA");
     }
-    public void listarArchivosPatente() throws Exception{
-    listadoArchivos=patenteArchivoServicio.listarArchivoPorPatente(patenteActual);
+
+    public void listarArchivosPatente() throws Exception {
+        listadoArchivos = patenteArchivoServicio.listarArchivoPorPatente(patenteActual);
     }
 
     public void activPanelCargrArchivos() {
@@ -221,13 +273,11 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
 
     public void activaPanerVerArchivos() {
         try {
-          verArchivos = 1;
-        listarArchivosPatente();  
+            verArchivos = 1;
+            listarArchivosPatente();
         } catch (Exception e) {
-           LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
-        
-        
 
     }
 
@@ -293,6 +343,22 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
 
     public void setListadoArchivos(List<PatenteArchivo> listadoArchivos) {
         this.listadoArchivos = listadoArchivos;
+    }
+
+    public int getVerBuscaPatente() {
+        return verBuscaPatente;
+    }
+
+    public void setVerBuscaPatente(int verBuscaPatente) {
+        this.verBuscaPatente = verBuscaPatente;
+    }
+
+    public int getBuscNumPat() {
+        return buscNumPat;
+    }
+
+    public void setBuscNumPat(int buscNumPat) {
+        this.buscNumPat = buscNumPat;
     }
 
 }

@@ -46,6 +46,8 @@ public class GestionDetPatenteControlador extends BaseControlador {
     private boolean habilitaEdicion;
     private String numPatente;
     DatoGlobal datoGlobalActual;
+    private int buscNumPat;
+    private int verBuscaPatente;
     private static final Logger LOGGER = Logger.getLogger(GestionDetPatenteControlador.class.getName());
 
     /**
@@ -54,6 +56,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+            verBuscaPatente=0;
             patValorExtra = new PatenteValoracionExtras();
             inicializarValores();
             datoGlobalActual = new DatoGlobal();
@@ -151,7 +154,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
 //                if (patenteServicio.existePatenteValoracionExtra(patenteValoracionActal.getPatvalCodigo())) {
 //                    addWarningMessage("Existe Código");
 //                } else {
-                patenteValoracionActal.setPatCodigo(patenteActual);
+              //  patenteValoracionActal.setPatCodigo(patenteActual);
                 patenteValoracionActal.setPatvalPatrimonio(valPatrimonio);
                 patenteValoracionActal.setPatvalImpuesto(valImpPatente);
                 patenteValoracionActal.setPatvalSubtotal(valSubTotal);
@@ -169,6 +172,23 @@ public class GestionDetPatenteControlador extends BaseControlador {
 //                patenteValoracionActal = new PatenteValoracion();
 //                habilitaEdicion = false;
             }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void buscarPatente() {
+        try {
+            verBuscaPatente = 1;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void cagarPatenteActual() {
+        try {
+            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
+            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -288,6 +308,22 @@ public class GestionDetPatenteControlador extends BaseControlador {
 
     public void setValPasivos(BigDecimal valPasivos) {
         this.valPasivos = valPasivos;
+    }
+
+    public int getBuscNumPat() {
+        return buscNumPat;
+    }
+
+    public void setBuscNumPat(int buscNumPat) {
+        this.buscNumPat = buscNumPat;
+    }
+
+    public int getVerBuscaPatente() {
+        return verBuscaPatente;
+    }
+
+    public void setVerBuscaPatente(int verBuscaPatente) {
+        this.verBuscaPatente = verBuscaPatente;
     }
 
 }
