@@ -212,18 +212,14 @@ public class GestionPatenteControlador extends BaseControlador {
     }
 
     public void onTabChange(TabChangeEvent event) {
-//        FacesMessage msg = new FacesMessage("Tab Changed", "Pestaña activada: " + event.getTab().getTitle());
-//        new Fac
-//        FacesContext.getCurrentInstance().addMessage(null, msg);
-//        addSuccessMessage("Pestaña Activada:", event.getTab().getTitle());
-        if (event.getTab().getId().equals("patDet")) {
-            GestionDetPatenteControlador objGesDetControlador = new GestionDetPatenteControlador();
-            objGesDetControlador.inicializar();
-        }
-        if (event.getTab().getId().equals("exoDedMulPat")) {
-            GestionExoDedMulPatenteControlador objGesExoDedMulPat = new GestionExoDedMulPatenteControlador();
-            objGesExoDedMulPat.inicializar();
-        }
+//        if (event.getTab().getId().equals("patDet")) {
+//            GestionDetPatenteControlador objGesDetControlador = new GestionDetPatenteControlador();
+//            objGesDetControlador.inicializar();
+//        }
+//        if (event.getTab().getId().equals("exoDedMulPat")) {
+//            GestionExoDedMulPatenteControlador objGesExoDedMulPat = new GestionExoDedMulPatenteControlador();
+//            objGesExoDedMulPat.inicializar();
+//        }
     }
 
     public void guardarArchivos() {
