@@ -228,4 +228,8 @@ public class CatastroPredialServicio {
     public List<CatalogoDetalle> listaUsoSueloTiempoFuncionamiento() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("USO_SUELO_T_FUNC");
     }
+    
+    public List<CatastroPredial> listarCatastroXCodigo(Integer codigo) throws Exception {
+        return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catpreCodigo", codigo, "catpreCodigo", "asc");
+    }
 }
