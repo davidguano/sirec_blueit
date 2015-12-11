@@ -11,6 +11,7 @@ import ec.sirec.ejb.entidades.SegPermiso;
 import ec.sirec.ejb.facade.AdicionalesDeductivosFacade;
 import ec.sirec.ejb.facade.CatalogoDetalleFacade;
 import ec.sirec.ejb.facade.SegPermisoFacade;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -39,15 +40,23 @@ public class AdicionalesDeductivosServicio {
         adicionalesDeductivosDao.editar(adicionalesDeductivos);
         return "Se ha modificado el permiso" + adicionalesDeductivos.getAdidedCodigo();
     }
-       
+    
+    public List<AdicionalesDeductivos> listarAdicionalesDeducibles() throws Exception {
+        return adicionalesDeductivosDao.listarTodos();
+    }
+
     public List<AdicionalesDeductivos> listarAdicionesDeductivosTipo(String tipo, String tipoImpuesto) throws Exception {
      return adicionalesDeductivosDao.listarPor2CamposOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipo", tipo, "adidedTipoImpuesto", tipoImpuesto, "adidedCodigo", "asc");
     }
-    public List<AdicionalesDeductivos> listarAdicionesDeductivosTipoImpuesto(String tipo) throws Exception {
-     return adicionalesDeductivosDao.listarPorCampoOrdenada(ENTIDAD_ADICIONALES_DEDUCIBLES,"adidedTipoImpuesto", tipo, "adidedCodigo", "asc");
+    
+    public AdicionalesDeductivos buscarAdicionesDeductivosXCodigo(Integer codigo) throws Exception {
+     return adicionalesDeductivosDao.buscarPorCampo(ENTIDAD_ADICIONALES_DEDUCIBLES, "adidedCodigo", codigo);
+    }
+ 
+    public BigDecimal obteneValorXAdicional(Integer codigo, String TipoImp, String tipo) throws Exception {
+     return adicionalesDeductivosDao.obteneValorXAdicional(codigo, TipoImp, tipo); 
     }
     
- 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }
