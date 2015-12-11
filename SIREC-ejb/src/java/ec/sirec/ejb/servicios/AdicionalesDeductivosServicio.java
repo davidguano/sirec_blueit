@@ -51,6 +51,10 @@ public class AdicionalesDeductivosServicio {
     public BigDecimal obteneValorXAdicional(Integer codigo, String TipoImp, String tipo) throws Exception {
      return adicionalesDeductivosDao.obteneValorXAdicional(codigo, TipoImp, tipo);
     }
+    
+     public AdicionalesDeductivos buscarAdicionesDeductivosXCodigo(Integer codigo) throws Exception {
+     return adicionalesDeductivosDao.buscarPorCampo(ENTIDAD_ADICIONALES_DEDUCIBLES, "adidedCodigo", codigo);
+    }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }
