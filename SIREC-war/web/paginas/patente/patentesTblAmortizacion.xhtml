@@ -10,24 +10,20 @@
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlConTblAmortizacion" width="1000" columns="1" >
-                <p:panel header="#{txt.lbl_header_det_pat}">
-
-
-                    <h:panelGrid  >
-
+                <p:panel header="#{txt.lbl_header_tbl_amortiza}">
+                    <h:panelGrid>
                         <h:panelGrid columns="3">
-                            <p:outputLabel style="font-size: #{txt.font_size}" for="button" value="#{txt.lbl_fecha_adjudicacion}"/>                               
-                            <p:calendar id="buttonAdju" value="#{gestionPatenteControlador.fecActividadEconomica}" showOn="buttonAdju" />
+                            <p:outputLabel style="font-size: #{txt.font_size}" for="buttonAdju" value="#{txt.lbl_fecha_adjudicacion}"/>                               
+                            <p:calendar id="buttonAdju" value="#{gestionTblAmortizaControlador.fechaAdjudica}" showOn="buttonAdju" />
                             <p:message for="buttonAdju"/>
-
-                            <p:outputLabel style="font-size: #{txt.font_size}" for="button" value="#{txt.lbl_fecha_vencimiento}"/>                               
-                            <p:calendar id="buttonVen" value="#{gestionPatenteControlador.fecActividadEconomica}" showOn="buttonVen" />
+                            <p:outputLabel style="font-size: #{txt.font_size}" for="buttonVen" value="#{txt.lbl_fecha_vencimiento}"/>                               
+                            <p:calendar id="buttonVen" value="#{gestionTblAmortizaControlador.fechaVencmiento}" showOn="buttonVen" />
                             <p:message for="buttonVen"/>
                         </h:panelGrid>
 
                         <h:panelGrid columns="3">
                             <p:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_deuda_ini}"/>
-                            <p:inputText   id="txtDeInicial" value="#{gestionPatenteControlador.patenteActual.patAreaLocal}"  
+                            <p:inputText   id="txtDeInicial" value="#{gestionTblAmortizaControlador.patenteActual.patAreaLocal}"  
                                            size="40"   />
                             <p:message for="txtDeInicial"/>  
                         </h:panelGrid>  
@@ -36,7 +32,7 @@
                         <h:panelGrid columns="2">
                             <p:commandButton value="#{txt.btn_visualizar_archivo}" 
                                              id="btnVerFile" 
-                                             action="#{gestionDetPatenteControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -45,7 +41,7 @@
                                              />
                             <p:commandButton value="#{txt.bnt_carga_archivo}" 
                                              id="btnCargaFile" 
-                                             action="#{gestionDetPatenteControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -54,7 +50,7 @@
                                              />
                             <p:commandButton value="#{txt.btn_guardar}" 
                                              id="btnSave" 
-                                             action="#{gestionDetPatenteControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -63,7 +59,7 @@
                                              />
                             <p:commandButton value="#{txt.btn_cancelar}" 
                                              id="btnCancel" 
-                                             action="#{gestionDetPatenteControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -71,19 +67,114 @@
                                              global="false"
                                              />
                         </h:panelGrid>
-
-                      
-                    
-                       
-
                     </h:panelGrid>
-                 
-
-
-
                 </p:panel>
-            </h:panelGrid>                      
+            </h:panelGrid>  
+            <h:panelGrid id="pnlCargarFileAmortiza">
+                <p:panel header="Archivo" style="font-size: #{txt.font_size}">
+                    <h:panelGrid>
+                        <p:panel header="Adjuntar Documentos" style="font-size: #{txt.font_size}">
+                            <h:panelGrid columns="3">
+                                <h:panelGrid width="150">
+                                    <p:graphicImage value="/imagenes/subir.png" height="40px" width="40px"/>
+                                    <h:outputText value="Recuerde:" style="color: firebrick;font-size: 10px;font-weight: bold" ></h:outputText>
+                                    <h:outputText value="El archivo debe ser: *.pdf,excel,jpg(max 750 px)" style="color: #666;font-size: 10px;font-weight: bold" ></h:outputText>
+                                </h:panelGrid>
+                                <p:fileUpload fileUploadListener="#{gestionTblAmortizaControlador.handleFileUpload}"  
+                                              mode="advanced"
+                                              dragDropSupport="false"
+                                              multiple="true"  
+                                              update=":frmPat:msgs,:frmPat:tabPrin:infoAmortiza"
+                                              sizeLimit="1000000"
+                                              allowTypes="/(\.|\/)(pdf|xls|xlsx|jpg)$/"
+                                              invalidSizeMessage="El archivo debe ser maximo 1MB"
+                                              label="Seleccione el archivo" 
+                                              uploadLabel="Cargar"
+                                              cancelLabel="Cancelar"
+                                              process="@this,infoAmortiza"  >                                                                                             
+                                    <f:attribute name="tipoArchivo" value="Capacitación teórica" />
+                                </p:fileUpload>  
+                                <h:panelGroup id="infoAmortiza">
+                                    <p:panel rendered="#{gestionTblAmortizaControlador.listaFiles.size()>0}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Archivos:" />
+                                        </f:facet>
+                                        <p:dataGrid  columns="1" value="#{gestionTblAmortizaControlador.listaFiles}"  var="file" >
+                                            <p:panel>
+                                                <h:panelGrid columns="2">
+                                                    <h:panelGrid columns="4">
+                                                        <h:outputText value="Achivo:" />
+                                                        <h:outputText value="#{file.name}" />  
+                                                        <h:outputText value=" " />
+                                                        <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
+                                                            <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
+                                                                             actionListener="#{gestionTblAmortizaControlador.confirmaEliminarArchivo(file)}" 
+                                                                             process="@this" async="true" global="false" update=":frmPat:tabPrin:infoAmortiza,:frmPat:msgs"  >
+                                                                <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>  
+                                                    </h:panelGrid>
+                                                </h:panelGrid>
+                                            </p:panel>
+                                        </p:dataGrid>
+                                    </p:panel>
+                                </h:panelGroup>
+                            </h:panelGrid> 
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+                        </p:panel>
+                        <h:panelGrid id="tblListArchAmortiza">
+                            <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionTblAmortizaControlador.listadoArchivos.size()>0}">
+                                <p:dataTable    paginator="true" rows="5" id="tablLisAmortiza" value="#{gestionTblAmortizaControlador.listadoArchivos}"  var="archivoColumna"   
+                                                selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
+                                                styleClass="pdataTable_font"
+                                                currentPageReportTemplate="{currentPage} de {totalPages}">                              
+                                    <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
+                                        <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
+                                    </p:column> 
+
+                                    <p:column headerText="#{txt.eliminar_btn}" style="width:50px;text-align: center;font-size:12px;" >
+                                        <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
+                                                         actionListener="#{gestionTblAmortizaControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
+                                                         process="@this" update=":frmPat:tabPrin:tablLisAmortiza,:frmPat:tabPrin:tablLisAmortiza:message" async="true" global="false">
+                                            <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>  
+                                </p:dataTable>     
+                            </p:panel>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:panel>
+                <p:panel>
+                    <h:panelGrid id="tblLisArchAmortizaCargados" rendered="#{gestionTblAmortizaControlador.verArchivos==1}">
+                        <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionTblAmortizaControlador.listadoArchivos.size()>0}">
+                            <p:dataTable    paginator="true" rows="5" id="tablaListaPatArchAmortiza" value="#{gestionTblAmortizaControlador.listadoArchivos}"  var="archivoColumna"   
+                                            selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
+                                            styleClass="pdataTable_font"
+                                            currentPageReportTemplate="{currentPage} de {totalPages}">                              
+                                <p:column   headerText="Nombre Archivo" width="100" style="font-size:12px;">
+                                    <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
+                                </p:column> 
+                                <p:column   headerText="Tipo" width="100" style="font-size:12px;">
+                                    <h:outputText value="PATENTE" rendered="#{archivoColumna.patarcTipo=='PA'}" style="font-size:12px;" />
+                                    <h:outputText value="EXONERACIÓN" rendered="#{archivoColumna.patarcTipo=='EX'}" style="font-size:12px;" />
+                                    <h:outputText value="RECARGO" rendered="#{archivoColumna.patarcTipo=='RE'}" style="font-size:12px;" />
+                                    <h:outputText value="DEDUCCIÓN" rendered="#{archivoColumna.patarcTipo=='DE'}" style="font-size:12px;" />
+                                    <h:outputText value="TABLA" rendered="#{archivoColumna.patarcTipo=='TA'}" style="font-size:12px;" />
+                                </p:column> 
+                                <p:column headerText="Descargar" width="70">
+                                    <center>
+                                        <p:commandButton icon="fa fa-download fa-lg"  actionListener="#{gestionTblAmortizaControlador.descargarArchivo(archivoColumna)}" oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/DescargarArchivos','DescargarArchivos')">
+                                        </p:commandButton>
+                                    </center>
+                                </p:column>
+                            </p:dataTable>     
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
+            </h:panelGrid>
         </center>
     </h:panelGrid>
-
 </html>

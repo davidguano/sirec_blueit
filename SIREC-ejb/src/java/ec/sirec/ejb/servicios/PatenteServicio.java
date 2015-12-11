@@ -16,6 +16,7 @@ import ec.sirec.ejb.facade.Patente15xmilValoracionFacade;
 import ec.sirec.ejb.facade.PatenteFacade;
 import ec.sirec.ejb.facade.PatenteValoracionExtrasFacade;
 import ec.sirec.ejb.facade.PatenteValoracionFacade;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -30,8 +31,6 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class PatenteServicio {
 
-    @EJB
-    private Patente15xmilValoracionFacade patente15xmilValoracionDao;
     @EJB
     private PatenteValoracionFacade patenteValoracionDao;
     @EJB
@@ -48,6 +47,11 @@ public class PatenteServicio {
     @PersistenceContext(unitName = "SIREC-ejbPU")
     private EntityManager em;
     private String ENTIDAD_PATENTE_15MIL_VALORACION = "Patente15xmilValoracion";
+//************************Metodos Patente******************************
+
+    public Patente cargarObjPatentePorCatastro(int codCatastro) throws Exception {
+        return patenteDao.buscarPorCampo(ENTIDAD_PATENTE, "catpreCodigo.catpreCodigo", codCatastro);
+    }
 
     public boolean existeCodigoPatente(int codPatente) throws Exception {
         return patenteDao.existePorCampo(ENTIDAD_PATENTE, "patCodigo", codPatente);
@@ -68,8 +72,16 @@ public class PatenteServicio {
         return "se ha eliminado la patente" + codPatente;
     }
 
+    public List<Patente> listarPatentes() throws Exception {
+        return patenteDao.listarTodos();
+    }
+
     public Patente cargarMaxObjPatente() throws Exception {
         return patenteDao.retornaNumSecuencial();
+    }
+
+    public Patente cargarObjPatente(int codPatente) throws Exception {
+        return patenteDao.buscarPorCampo(ENTIDAD_PATENTE, "patCodigo", codPatente);
     }
 
     public DatoGlobal buscaMensajeTransaccion(String nombre) throws Exception {
@@ -112,21 +124,6 @@ public class PatenteServicio {
 
     public PatenteValoracion buscaPatValoracion(int patCodigo) throws Exception {
         return patenteValoracionDao.buscarPorCampo(ENTIDAD_PATENTE_VALORACION, "patCodigo.patCodigo", patCodigo);
-    }
-
-    //*****************************Metodos Determinacion de Patente 1.5 x Mil*************************
-    public String crearPatente15milValoracion(Patente15xmilValoracion pat15valCodigo) throws Exception {
-        patente15xmilValoracionDao.crear(pat15valCodigo);
-        return "se ha creado la patente 1.5xmil valoracion" + pat15valCodigo;
-    }
-
-    public String editarPatente15milValoracion(Patente15xmilValoracion pat15valCodgo) throws Exception {
-        patente15xmilValoracionDao.editar(pat15valCodgo);
-        return "se ha modificado la patente 1.5xmil  valoraciont" + pat15valCodgo;
-    }
-
-    public boolean existePatente15milValoracion(int pat15valCodigo) throws Exception {
-        return patente15xmilValoracionDao.existePorCampo(ENTIDAD_PATENTE_15MIL_VALORACION, "pat15valCodigo", pat15valCodigo);
     }
 
     // Add business logic below. (Right-click in editor and choose
