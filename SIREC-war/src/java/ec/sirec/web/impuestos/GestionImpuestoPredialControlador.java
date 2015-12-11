@@ -5,26 +5,21 @@
  */
 package ec.sirec.web.impuestos;
 
-
 import ec.sirec.ejb.clases.EjecutarValoracion;
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
-import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
-import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.web.base.BaseControlador;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,19 +31,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import static org.apache.poi.ss.util.CellUtil.createCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.event.FileUploadEvent;
@@ -69,113 +55,110 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private static final Logger LOGGER = Logger.getLogger(GestionImpuestoPredialControlador.class.getName());
     // VARIABLES Y ATRIBUTOS
 
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos;
-     private List<String> listaAdicionalesDeductivosRecargosSeleccion;
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneraciones;
-     private List<String> listaAdicionalesDeductivosExoneracionesSeleccion;
-     private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones;
-     private List<String> listaAdicionalesDeductivosDeduccionesSeleccion;
-     private List<PredioArchivo> listaPredioArchivo;
-     private List<CatastroPredial> listaCatastroPredialTablaValoracion;
-     private List<CatastroPredial> listaCatastroPredialExoRecarDeduc;
-     private List<CatastroPredial> listaCatastroPredialClavesCatastrales;
-     private List<EjecutarValoracion> listaEjecutarValoracion;
-     private EjecutarValoracion ejecutarValoracionAcual;
-     
-     private PredioArchivo predioArchivo;
-     private CatastroPredial catastroPredialActual;
-     private CatastroPredialValoracion catastroPredialValoracionActual;
-     private SegUsuario usuarioActual;
-     private AdicionalesDeductivos adicionalesDeductivosActual;
-     private CpValoracionExtras cpValoracionExtrasActual;
-     private StreamedContent archivo;
-     private String criterio;
-    
+    private List<AdicionalesDeductivos> listaAdicionalesDeductivosRecargos;
+    private List<String> listaAdicionalesDeductivosRecargosSeleccion;
+    private List<AdicionalesDeductivos> listaAdicionalesDeductivosExoneraciones;
+    private List<String> listaAdicionalesDeductivosExoneracionesSeleccion;
+    private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones;
+    private List<String> listaAdicionalesDeductivosDeduccionesSeleccion;
+    private List<PredioArchivo> listaPredioArchivo;
+    private List<CatastroPredial> listaCatastroPredialTablaValoracion;
+    private List<CatastroPredial> listaCatastroPredialExoRecarDeduc;
+    private List<CatastroPredial> listaCatastroPredialClavesCatastrales;
+    private List<EjecutarValoracion> listaEjecutarValoracion;
+    private EjecutarValoracion ejecutarValoracionAcual;
+
+    private PredioArchivo predioArchivo;
+    private CatastroPredial catastroPredialActual;
+    private CatastroPredialValoracion catastroPredialValoracionActual;
+    private SegUsuario usuarioActual;
+    private AdicionalesDeductivos adicionalesDeductivosActual;
+    private CpValoracionExtras cpValoracionExtrasActual;
+    private StreamedContent archivo;
+    private String criterio;
+    private BigDecimal totalTotal;
+
     // SERVICIOS
-     
     @EJB
-    private AdicionalesDeductivosServicio adicionalesDeductivosServicio;     
+    private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
     @EJB
-    private PredioArchivoServicio predioArchivoServicio;   
+    private PredioArchivoServicio predioArchivoServicio;
     @EJB
     private CatastroPredialServicio catastroPredialServicio;
     @EJB
     private CpValoracionExtrasServicio cpValoracionExtrasServicio;
     @EJB
     private CatastroPredialValoracionServicio catastroPredialValoracionServicio;
-     
 
     @PostConstruct
     public void inicializar() {
-        try {                        
-            listarCatalogosDetalle();            
-            obtenerUsuario();                      
-             catastroPredialActual = new CatastroPredial();
-             //catastroPredialActual.setCatpreCodigo(1); 
-             listaPredioArchivo =new ArrayList<PredioArchivo>();
-             listarTodasComboClaves(); 
-             listarCatastroPredialERD();
-             criterio="";
-             
+        try {
+            listarCatalogosDetalle();
+            obtenerUsuario();
+            catastroPredialActual = new CatastroPredial();
+            listaPredioArchivo = new ArrayList<PredioArchivo>();
+            listarTodasComboClaves();
+            listarCatastroPredialERD();
+            criterio = "";
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void listarCatastroPredialERD(){
-         try { 
-         listaCatastroPredialExoRecarDeduc = catastroPredialServicio.listarClaveCatastral();
-    } catch (Exception ex) {
+
+    public void listarCatastroPredialERD() {
+        try {
+            listaCatastroPredialExoRecarDeduc = catastroPredialServicio.listarClaveCatastral();
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-        }       
+        }
     }
-    
-    public void listarTodasComboClaves(){
-        
-         try { 
-         listaCatastroPredialClavesCatastrales = catastroPredialServicio.listarClaveCatastral();
-    } catch (Exception ex) {
+
+    public void listarTodasComboClaves() {
+
+        try {
+            listaCatastroPredialClavesCatastrales = catastroPredialServicio.listarClaveCatastral();
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-        }       
+        }
     }
-    
-    
-    public void obtenerUsuario(){
-    usuarioActual = new SegUsuario (); 
-    usuarioActual = (SegUsuario) getSession().getAttribute("usuario");           
-           //System.out.println(usuarioActual.getUsuIdentificacion());         
+
+    public void obtenerUsuario() {
+        usuarioActual = new SegUsuario();
+        usuarioActual = (SegUsuario) getSession().getAttribute("usuario");
+        //System.out.println(usuarioActual.getUsuIdentificacion());         
     }
 
     public GestionImpuestoPredialControlador() {
     }
 
-      public void listarCatalogosDetalle(){
-       try {
-           listaAdicionalesDeductivosRecargos = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R","PA");
-           listaAdicionalesDeductivosExoneraciones = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E","PA");
-           listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
-           listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D","PA");                            
+    public void listarCatalogosDetalle() {
+        try {
+            listaAdicionalesDeductivosRecargos = new ArrayList<AdicionalesDeductivos>();
+            listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R", "PA");
+            listaAdicionalesDeductivosExoneraciones = new ArrayList<AdicionalesDeductivos>();
+            listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E", "PA");
+            listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
+            listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D", "PA");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-      }
-    
-       public void listarArchivos(){
-       try {
-           listaPredioArchivo = new ArrayList<PredioArchivo>();
-           listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
-           
-           System.out.println("s:  "+listaPredioArchivo.size());
-           
-           } catch (Exception ex) {
+    }
+
+    public void listarArchivos() {
+        try {
+            listaPredioArchivo = new ArrayList<PredioArchivo>();
+            listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
+
+            System.out.println("s:  " + listaPredioArchivo.size());
+
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-           
-      }
-      
-        public void eliminarArchivo(PredioArchivo archivo) {
+
+    }
+
+    public void eliminarArchivo(PredioArchivo archivo) {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             predioArchivoServicio.eliminarPredioArchivo(archivo);
@@ -186,39 +169,36 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-       
-       public void handleFileUpload(FileUploadEvent event){
-           
-            try {
-                
-               if(catastroPredialActual.getCatpreCodigo()!=null){
-                    predioArchivo = new PredioArchivo();            
-      predioArchivo.setPrearcNombre(event.getFile().getFileName());
-      predioArchivo.setCatpreCodigo(catastroPredialActual); 
-      predioArchivo.setPrearcData(event.getFile().getContents());
-      predioArchivo.setPrearcTipo("PR");      
-      predioArchivo.setUsuIdentificacion(usuarioActual);
-      predioArchivo.setUltaccDetalle("");
-      predioArchivo.setUltaccMarcatiempo(new Date());
-      
-      predioArchivoServicio.crearPredioArchivo(predioArchivo);            
-      
-        FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-         listarArchivos();                                  
-               } else{               
-                    addErrorMessage("Seleccione Clave Catastral!!!");               
-               }
-                
-     
-        
-        
-         } catch (Exception ex) {
+
+    public void handleFileUpload(FileUploadEvent event) {
+
+        try {
+
+            if (catastroPredialActual.getCatpreCodigo() != null) {
+                predioArchivo = new PredioArchivo();
+                predioArchivo.setPrearcNombre(event.getFile().getFileName());
+                predioArchivo.setCatpreCodigo(catastroPredialActual);
+                predioArchivo.setPrearcData(event.getFile().getContents());
+                predioArchivo.setPrearcTipo("PR");
+                predioArchivo.setUsuIdentificacion(usuarioActual);
+                predioArchivo.setUltaccDetalle("");
+                predioArchivo.setUltaccMarcatiempo(new Date());
+
+                predioArchivoServicio.crearPredioArchivo(predioArchivo);
+
+                FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+
+                listarArchivos();
+            } else {
+                addErrorMessage("Seleccione Clave Catastral!!!");
+            }
+
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-      
+
     public void startDownload(PredioArchivo archivo) {
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
                 .getExternalContext().getResponse();
@@ -232,9 +212,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         } catch (IOException ioex) {
             LOGGER.log(Level.SEVERE, null, ioex);
         }
-    }   
-                  
-    
+    }
+
     public void guardarAdicionalesDeductivos() {
         try {
 
@@ -252,8 +231,6 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
                             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
                             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
-//            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
                             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
                         }
 
@@ -263,14 +240,12 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
                             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
                             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
-//            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-//            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
                             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
                         }
 
                         for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
                             cpValoracionExtrasActual = new CpValoracionExtras();
-                            adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i))); 
+                            adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));
                             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
                             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
                             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
@@ -299,202 +274,107 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
-     public void buscarClaveCatastral(){
-        try{
-            
-          catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());
-          
-          
-          
-            
-//           listaCatastroPredialTablaValoracion = new ArrayList<CatastroPredial>();          
-//           listaCatastroPredialTablaValoracion = catastroPredialServicio.buscarClaveCatastralConPresicion(criterio);
-//           if(catastroPredialActual!=null){
-//               System.out.println("nombre sector: "+catastroPredialActual.getCatpreNombreSector());
-//           }else{
-//               System.out.println("no existe");
-//           }
-                                    
+
+    public void buscarClaveCatastral() {
+        try {
+            catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());
         } catch (Exception ex) {
             catastroPredialActual = new CatastroPredial();
             // System.out.println("alma de hombre");            
             //LOGGER.log(Level.SEVERE, null, ex);         
         }
     }
-       
-     
-     public void ejecutarValoracion(){
-         try {
-             
-             listaEjecutarValoracion = new ArrayList<EjecutarValoracion>();
 
-             if (criterio.equals("C")) {
-                 listaCatastroPredialTablaValoracion = catastroPredialServicio.listarCatastroXCodigo(catastroPredialActual.getCatpreCodigo());
-             } else {
-                 if (criterio.equals("T")) {
-                     listaCatastroPredialTablaValoracion = catastroPredialServicio.listarClaveCatastral();
-                     for (int i = 0; i < listaCatastroPredialTablaValoracion.size(); i++) {
-                         EjecutarValoracion eVal = new EjecutarValoracion();
-                         CatastroPredial CP = listaCatastroPredialTablaValoracion.get(i);
-                         eVal.setCatpreCodigo(CP.getCatpreCodigo());
-                         eVal.setCatpreClaveCatastal(CP.getCatpreCodNacional()+CP.getCatpreCodLocal());
-                         eVal.setProCi(CP.getProCi());
-                         eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
-                         eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());                                               
-                         eVal.setCatastroPredialValoracion(catastroPredialValoracionServicio.buscarPorCatastroPredial(CP));       
-                         
-                         if(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","R")!=null){
-                             eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","R")); 
-                         }else{
-                             eVal.setTotalRecargos(new BigDecimal(0.0));  
-                         }
-                          if(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","D")!=null){
-                              eVal.setTotalDeduciones(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","D")); 
-                         }else{
-                               eVal.setTotalDeduciones(new BigDecimal(0.0));
-                          }
-                         if(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","E")!=null){
-                              eVal.setTotalExoneracion(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(),"PA","E")); 
-                         }else{
-                                eVal.setTotalExoneracion(new BigDecimal(0.0));
-                         }
-                         
-                         Double terreno;
-                         if(eVal.getCatpreAreaTotal()==null){
-                          terreno=0.0;
-                         }else{
-                            terreno = eVal.getCatpreAreaTotal();
-                         }
-                         
-                         Double construccion;
-                         if(eVal.getCatpreAreaTotalCons()==null){
-                          construccion=0.0;
-                         }else{
-                            construccion = eVal.getCatpreAreaTotalCons();
-                         }
-                                                  
-//                         eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(terreno)).add(new BigDecimal(construccion)))));     
-                        // eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons()))))));   
-                         
-                         
-                                                  
-                         listaEjecutarValoracion.add(eVal);
-                     }
-                 }
-             }
-         } catch (Exception ex) {
-             LOGGER.log(Level.SEVERE, null, ex);
-         }
- 
-      }
-     
-      public void preEmisionValoracion(){
-       try {                               
-        
-           
-           } catch (Exception ex) {
+    
+
+    public void ejecutarValoracion() {
+        try {
+            totalTotal = new BigDecimal(0);
+            listaEjecutarValoracion = new ArrayList<EjecutarValoracion>();
+            if (criterio.equals("C")) {
+                listaCatastroPredialTablaValoracion = catastroPredialServicio.listarCatastroXCodigo(catastroPredialActual.getCatpreCodigo());
+            } else {
+                if (criterio.equals("T")) {
+                    listaCatastroPredialTablaValoracion = catastroPredialServicio.listarClaveCatastral();
+                }
+            }
+
+            for (int i = 0; i < listaCatastroPredialTablaValoracion.size(); i++) {
+                EjecutarValoracion eVal = new EjecutarValoracion();
+                CatastroPredial CP = listaCatastroPredialTablaValoracion.get(i);
+                eVal.setCatpreCodigo(CP.getCatpreCodigo());
+                eVal.setCatpreClaveCatastal(CP.getCatpreCodNacional() + CP.getCatpreCodLocal());
+                eVal.setProCi(CP.getProCi());
+                eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
+                eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());
+                eVal.setCatastroPredialValoracion(catastroPredialValoracionServicio.buscarPorCatastroPredial(CP));
+
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R") != null) {
+                    eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R"));
+                } else {
+                    eVal.setTotalRecargos(BigDecimal.ZERO);
+                }
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D") != null) {
+                    eVal.setTotalDeduciones(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D"));
+                } else {
+                    eVal.setTotalDeduciones(BigDecimal.ZERO);
+                }
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E") != null) {
+                    eVal.setTotalExoneracion(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E"));
+                } else {
+                    eVal.setTotalExoneracion(BigDecimal.ZERO);
+                }
+                if (eVal.getCatpreAreaTotal() == null) {
+                    eVal.setCatpreAreaTotal(0.0);
+                }
+                if (eVal.getCatpreAreaTotalCons() == null) {
+                    eVal.setCatpreAreaTotalCons(0.0);
+                }
+                if (eVal.getCatastroPredialValoracion() == null) {
+                    CatastroPredialValoracion CPV = new CatastroPredialValoracion();
+                    CPV.setCatprevalAvaluoEdif(BigDecimal.ZERO);
+                    CPV.setCatprevalAvaluoTerr(BigDecimal.ZERO);
+                    eVal.setCatastroPredialValoracion(CPV);
+                } else {
+                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr() == null) {
+                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoTerr(BigDecimal.ZERO);
+                    }
+                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif() == null) {
+                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoEdif(BigDecimal.ZERO);
+                    }
+                }
+
+                        // Fatan setiar campos Acta 2 :
+                        // VALOR PROPIEDAD
+                        // BASE IMPONIBLE
+                        // IMPUESTO
+                        // BOMBEROS
+                        // SOLAR NO EDIFICADO
+                        // TASA ADMINISTRATIVA
+                eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons())).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr()).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif())))));
+
+                listaEjecutarValoracion.add(eVal);
+                totalTotal = totalTotal.add(eVal.getTotalRegistro());
+            }
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-           
-      }
-     
-      
- 
-     
-//     public void postProcessXLS(Object document) throws IOException {
-//        XSSFWorkbook wb = (XSSFWorkbook) document;
-//        XSSFSheet hoja = wb.getSheetAt(0);
-//        XSSFRow fila7 = hoja.getRow(0);
-//
-//        XSSFCellStyle styleHeaderTable = wb.createCellStyle();
-//        styleHeaderTable.setFillPattern(CellStyle.NO_FILL);
-//
-//        org.apache.poi.ss.usermodel.Font fontHeaderTable = wb.createFont();
-//        fontHeaderTable.setFontName("Aharoni");
-//        fontHeaderTable.setBoldweight(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
-//        fontHeaderTable.setColor(IndexedColors.WHITE.getIndex());
-//        styleHeaderTable.setFont(fontHeaderTable);
-//        byte[] rgb = new byte[3];
-//        rgb[0] = (byte) 0; // red
-//        rgb[1] = (byte) 136; // green
-//        rgb[2] = (byte) 204; // blue
-//        XSSFColor myColor = new XSSFColor(rgb);
-//        styleHeaderTable.setFillForegroundColor(myColor);
-//        styleHeaderTable.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-//
-//        fila7.getCell(1);
-//        
-//        for (Row row : hoja) {
-//            //if (row.getRowNum() == 1) {
-//                for (Cell cell : row) {
-//                    System.out.println(cell.getStringCellValue().toUpperCase()+" C "+row.getRowNum());                 
-//                    createCell(fila7, cell.getColumnIndex(), cell.getStringCellValue().toUpperCase() + "      ", styleHeaderTable);
-//                    //cell.setCellValue("");
-//                }
-////            } else {
-////                break;
-////            }
-//        }
-//
-//        Sheet sheet = wb.getSheetAt(0);
-//        sheet.autoSizeColumn((short) 0); //ajusta el ancho de la primera columna
-//        sheet.autoSizeColumn((short) 1);
-//        sheet.autoSizeColumn((short) 2);
-//        for (int i = 0; i < 20; i++) {
-//            hoja.autoSizeColumn((short) i);
-//        }
-//    }
-//
-//    public void preProcessXLS(Object document) throws IOException {
-//        Date hoy = new Date();
-//        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-//        XSSFWorkbook wb = (XSSFWorkbook) document;
-//        wb.setSheetName(0, "VDatos2 - Indicadores");
-//        XSSFSheet hoja = wb.getSheetAt(0);
-//
-//        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-//        String logo = servletContext.getRealPath("") + File.separator + "imagenes" + File.separator + "vdatoscabexcel.png";
-//
-//        File file = new File(logo);
-//
-////        XSSFDrawing patriarch = hoja.createDrawingPatriarch();
-////        XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 470, 100, (short) 0, 0, (short) 4, 5);
-////        anchor.setAnchorType(5);
-////        patriarch.createPicture(anchor, loadPicture(file, wb));
-//
-//        CellStyle style = wb.createCellStyle();
-//        style.setFillPattern(CellStyle.NO_FILL);
-//        org.apache.poi.ss.usermodel.Font font = wb.createFont();
-//        font.setFontName("Arial");
-//        font.setBoldweight(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
-//        font.setColor(IndexedColors.BLACK.getIndex());
-//        style.setFont(font);
-//        String encabezadoFecha = formato.format(hoy);
-//        //XSSFRow fila0 = hoja.createRow(0);
-//        //createCell(fila0, 0, "Fecha de descarga: " + encabezadoFecha, style);
-//       // hoja.createRow(0);
-//    }
-     
+
+    }
+
+    public void preEmisionValoracion() {
+        try {
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+    }
+
     public void postProcessXLS(Object document) throws IOException {
-      //  Date hoy = new Date();
- 
-       // SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-       // int indexRow = 0;
+
         XSSFWorkbook wb = (XSSFWorkbook) document;
         XSSFSheet hoja = wb.getSheetAt(0);
- 
-        // HSSFSheet hoja = wb.createSheet("operacionesEstadísticas");
-      //  ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-       // String logo = servletContext.getRealPath("") + File.separator + "recursos" + File.separator + "imagenes" + File.separator + "visualizadorTabla1-1.png";
- 
-//        File file = new File(logo);
-//        HSSFPatriarch patriarch = hoja.createDrawingPatriarch();
-//        HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 470, 100, (short) 0, 0, (short) 4, 6);
-//        anchor.setAnchorType(5);
-//        patriarch.createPicture(anchor, loadPicture(file, wb));
- 
- 
         CellStyle style = wb.createCellStyle();
         style.setFillPattern(CellStyle.NO_FILL);
         org.apache.poi.ss.usermodel.Font font = wb.createFont();
@@ -502,51 +382,27 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         font.setBoldweight(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
         font.setColor(IndexedColors.BLACK.getIndex());
         style.setFont(font);
- //       XSSFCellStyle cellStyle = wb.createCellStyle();
-//        cellStyle.setFillForegroundColor(XSSFColor.INDIGO.index);
-//        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-      //  String encabezadoFecha = formato.format(hoy);
-      //  XSSFRow fila0 = hoja.createRow(7);
-      //  createCell(fila0, 0, "Fecha de descarga:" + encabezadoFecha, style);
- 
         /**
          * ** ConfiguraciÃ³n del estilo de la celda header de la tabla. *****
          */
         CellStyle styleHeaderTable = wb.createCellStyle();
         styleHeaderTable.setFillPattern(CellStyle.NO_FILL);
- 
+
         org.apache.poi.ss.usermodel.Font fontHeaderTable = wb.createFont();
         fontHeaderTable.setFontName("Times Roman");
         fontHeaderTable.setBoldweight(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
         fontHeaderTable.setColor(IndexedColors.BLACK.getIndex());
         styleHeaderTable.setFont(fontHeaderTable);
-      //  styleHeaderTable.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        // styleHeaderTable.setFillForegroundColor(HSSFColor.WHITE.index);
-     //   styleHeaderTable.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        /**
-         * ** Fin configuraciÃ³n del estilo de la celda. *****
-         */
-    //    XSSFRow fila8 = hoja.createRow(8);
- 
-      //  indexRow = 8;
-//        createCell(fila8, 0, "ÁREA TEMÁTICA                          ", styleHeaderTable);
-//        createCell(fila8, 1, "INSTITUCIÓN                                             ", styleHeaderTable);
-//        createCell(fila8, 2, "OPERACIONES ESTADÍSTICAS                                                 ", styleHeaderTable);
-//        createCell(fila8, 3, "TIPO DE OPERACIÓN              ", styleHeaderTable);
-   //     indexRow = indexRow + 2;
         Sheet sheet = wb.getSheetAt(0);
         sheet.autoSizeColumn((short) 0); //ajusta el ancho de la primera columna
         sheet.autoSizeColumn((short) 1);
         sheet.autoSizeColumn((short) 2);
         for (int i = 0; i < 20; i++) {
             hoja.autoSizeColumn((short) i);
-        }     
+        }
     }
-  
-      
-      
-    // METODOS
 
+    // METODOS
     public List<AdicionalesDeductivos> getListaAdicionalesDeductivosRecargos() {
         return listaAdicionalesDeductivosRecargos;
     }
@@ -596,8 +452,6 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         this.listaAdicionalesDeductivosDeduccionesSeleccion = listaAdicionalesDeductivosDeduccionesSeleccion;
     }
 
-    
-
     public List<PredioArchivo> getListaPredioArchivo() {
         return listaPredioArchivo;
     }
@@ -613,8 +467,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     public void setArchivo(StreamedContent archivo) {
         this.archivo = archivo;
     }
-    
-     public String getCriterio() {
+
+    public String getCriterio() {
         return criterio;
     }
 
@@ -661,7 +515,12 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     public void setListaEjecutarValoracion(List<EjecutarValoracion> listaEjecutarValoracion) {
         this.listaEjecutarValoracion = listaEjecutarValoracion;
     }
-    
-    
-    
+
+    public BigDecimal getTotalTotal() {
+        return totalTotal;
+    }
+
+    public void setTotalTotal(BigDecimal TotalTotal) {
+        this.totalTotal = TotalTotal;
+    }
 }
