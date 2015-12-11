@@ -627,6 +627,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetFuenteInformacion() {
+        if(catdetFuenteInformacion==null){
+            catdetFuenteInformacion=new CatalogoDetalle();
+        }
         return catdetFuenteInformacion;
     }
 
@@ -635,14 +638,19 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetAlicuotas() {
+        if(catdetAlicuotas==null){
+            catdetAlicuotas=new CatalogoDetalle();
+        }
         return catdetAlicuotas;
     }
 
     public void setCatdetAlicuotas(CatalogoDetalle catdetAlicuotas) {
         this.catdetAlicuotas = catdetAlicuotas;
     }
-
     public CatalogoDetalle getCatdetDimension() {
+        if(catdetDimension==null){
+            catdetDimension=new CatalogoDetalle();
+        }
         return catdetDimension;
     }
 
@@ -651,6 +659,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoFuncNegocio() {
+        if(catdetTipoFuncNegocio==null){
+            catdetTipoFuncNegocio=new CatalogoDetalle();
+        }
         return catdetTipoFuncNegocio;
     }
 
@@ -659,6 +670,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoNegocio() {
+        if(catdetTipoNegocio==null){
+            catdetTipoNegocio=new CatalogoDetalle();
+        }
         return catdetTipoNegocio;
     }
 
@@ -667,6 +681,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetLocalizacion() {
+        if(catdetLocalizacion==null){
+            catdetLocalizacion=new CatalogoDetalle();
+        }
         return catdetLocalizacion;
     }
 
@@ -675,6 +692,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTopografia() {
+        if(catdetTopografia==null){
+            catdetTopografia=new CatalogoDetalle();
+        }
         return catdetTopografia;
     }
 
@@ -683,6 +703,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetForma() {
+        if(catdetForma==null){
+            catdetForma=new CatalogoDetalle();
+        }
         return catdetForma;
     }
 
@@ -691,6 +714,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetDocRelevamiento() {
+        if(catdetDocRelevamiento==null){
+            catdetDocRelevamiento=new CatalogoDetalle();
+        }
         return catdetDocRelevamiento;
     }
 
@@ -699,6 +725,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoVia() {
+        if(catdetTipoVia==null){
+            catdetTipoVia=new CatalogoDetalle();
+        }
         return catdetTipoVia;
     }
 
@@ -707,6 +736,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoUbicacion() {
+        if(catdetTipoUbicacion==null){
+            catdetTipoUbicacion=new CatalogoDetalle();
+        }
         return catdetTipoUbicacion;
     }
 
@@ -715,6 +747,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoProp1() {
+        if(catdetTipoProp1==null){
+            catdetTipoProp1=new CatalogoDetalle();
+        }
         return catdetTipoProp1;
     }
 
@@ -723,6 +758,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoProp2() {
+        if(catdetTipoProp2==null){
+            catdetTipoProp2=new CatalogoDetalle();
+        }
         return catdetTipoProp2;
     }
 
@@ -731,6 +769,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetRefCartografica() {
+        if(catdetRefCartografica==null){
+            catdetRefCartografica=new CatalogoDetalle();
+        }
         return catdetRefCartografica;
     }
 
@@ -761,6 +802,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetOcupacion() {
+        if(catdetOcupacion==null){
+            catdetOcupacion=new CatalogoDetalle();
+        }
         return catdetOcupacion;
     }
 
@@ -769,6 +813,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetNoEdificado() {
+        if(catdetNoEdificado==null){
+            catdetNoEdificado=new CatalogoDetalle();
+        }
         return catdetNoEdificado;
     }
 
@@ -777,6 +824,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetEnConstruccion() {
+        if(catdetEnConstruccion==null){
+            catdetEnConstruccion=new CatalogoDetalle();
+        }
         return catdetEnConstruccion;
     }
 
@@ -785,6 +835,9 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetCaracteristicasSuelo() {
+        if(catdetCaracteristicasSuelo==null){
+            catdetCaracteristicasSuelo=new CatalogoDetalle();
+        }
         return catdetCaracteristicasSuelo;
     }
 

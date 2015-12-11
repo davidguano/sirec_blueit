@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ec.sirec.ejb.entidades;
 
 import java.io.Serializable;
@@ -18,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "CatastroPredialEdificacion.findAll", query = "SELECT c FROM CatastroPredialEdificacion c")})
 public class CatastroPredialEdificacion implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +44,7 @@ public class CatastroPredialEdificacion implements Serializable {
     private String catpreediGrupo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 1)
+    @Size(min = 1, max = 2)
     @Column(name = "catpreedi_subgrupo")
     private String catpreediSubgrupo;
     @Basic(optional = false)
@@ -56,12 +57,18 @@ public class CatastroPredialEdificacion implements Serializable {
     @Size(min = 1, max = 1)
     @Column(name = "catpreedi_piso")
     private String catpreediPiso;
+    @Column(name = "catpreedi_valor")
+    private Integer catpreediValor;
     @JoinColumn(name = "catpre_codigo", referencedColumnName = "catpre_codigo")
     @ManyToOne(optional = false)
     private CatastroPredial catpreCodigo;
     @JoinColumn(name = "catdet_codigo", referencedColumnName = "catdet_codigo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CatalogoDetalle catdetCodigo;
+    @Transient
+    private String nombreGrupo;
+    @Transient
+    private String nombreSubGrupo;
 
     public CatastroPredialEdificacion() {
     }
@@ -127,11 +134,124 @@ public class CatastroPredialEdificacion implements Serializable {
     }
 
     public CatalogoDetalle getCatdetCodigo() {
+        if (catdetCodigo == null) {
+            catdetCodigo = new CatalogoDetalle();
+        }
         return catdetCodigo;
     }
 
     public void setCatdetCodigo(CatalogoDetalle catdetCodigo) {
         this.catdetCodigo = catdetCodigo;
+    }
+
+    public Integer getCatpreediValor() {
+        return catpreediValor;
+    }
+
+    public void setCatpreediValor(Integer catpreediValor) {
+        this.catpreediValor = catpreediValor;
+    }
+
+    public String getNombreGrupo() {
+        if (catpreediGrupo.equals("1")) {
+            nombreGrupo = "Caracteristicas Generales";
+        } else if (catpreediGrupo.equals("2")) {
+            nombreGrupo = "Estructura";
+        } else if (catpreediGrupo.equals("3")) {
+            nombreGrupo = "Acabados";
+        } else if (catpreediGrupo.equals("4")) {
+            nombreGrupo = "Instalaciones";
+        } else if (catpreediGrupo.equals("5")) {
+            nombreGrupo = "Otras Inversiones";
+        }
+        return nombreGrupo;
+    }
+
+    public void setNombreGrupo(String nombreGrupo) {
+        this.nombreGrupo = nombreGrupo;
+    }
+
+    public String getNombreSubGrupo() {
+        if (catpreediGrupo.equals("1")) {
+            if(catpreediSubgrupo.equals("1")){
+                nombreSubGrupo="Estructura";
+            }else if(catpreediSubgrupo.equals("2")){
+                nombreSubGrupo="Edad Cons.";
+            }else if(catpreediSubgrupo.equals("3")){
+                nombreSubGrupo="Estado Cons.";
+            }else if(catpreediSubgrupo.equals("4")){
+                nombreSubGrupo="Reparacion";
+            }
+        } else if (catpreediGrupo.equals("2")) {
+            if(catpreediSubgrupo.equals("1")){
+                nombreSubGrupo="Columnas";
+            }else if(catpreediSubgrupo.equals("2")){
+                nombreSubGrupo="Vigas Cad.";
+            }else if(catpreediSubgrupo.equals("3")){
+                nombreSubGrupo="Entrepisos";
+            }else if(catpreediSubgrupo.equals("4")){
+                nombreSubGrupo="Paredes";
+            }else if(catpreediSubgrupo.equals("5")){
+                nombreSubGrupo="Escaleras";
+            }else if(catpreediSubgrupo.equals("6")){
+                nombreSubGrupo="Cubierta";
+            }
+        } else if (catpreediGrupo.equals("3")) {
+            if(catpreediSubgrupo.equals("1")){
+                nombreSubGrupo="Rev. Pisos";
+            }else if(catpreediSubgrupo.equals("2")){
+                nombreSubGrupo="Rev. Interior";
+            }else if(catpreediSubgrupo.equals("3")){
+                nombreSubGrupo="Rev. Exterior";
+            }else if(catpreediSubgrupo.equals("4")){
+                nombreSubGrupo="Rev. Escalera";
+            }else if(catpreediSubgrupo.equals("5")){
+                nombreSubGrupo="Tumbados";
+            }else if(catpreediSubgrupo.equals("6")){
+                nombreSubGrupo="Cubierta";
+            }else if(catpreediSubgrupo.equals("7")){
+                nombreSubGrupo="Puertas";
+            }else if(catpreediSubgrupo.equals("8")){
+                nombreSubGrupo="Ventanas";
+            }else if(catpreediSubgrupo.equals("9")){
+                nombreSubGrupo="Cubierta";
+            }else if(catpreediSubgrupo.equals("10")){
+                nombreSubGrupo="Closets";
+            }
+        } else if (catpreediGrupo.equals("4")) {
+            if(catpreediSubgrupo.equals("1")){
+                nombreSubGrupo="Sanitaria";
+            }else if(catpreediSubgrupo.equals("2")){
+                nombreSubGrupo="Banos";
+            }else if(catpreediSubgrupo.equals("3")){
+                nombreSubGrupo="Electricas";
+            }
+        } else if (catpreediGrupo.equals("5")) {
+            if(catpreediSubgrupo.equals("1")){
+                nombreSubGrupo="Sauna/Turco/Hidromasaje";
+            }else if(catpreediSubgrupo.equals("2")){
+                nombreSubGrupo="Ascensor";
+            }else if(catpreediSubgrupo.equals("3")){
+                nombreSubGrupo="Escalera Electrica";
+            }else if(catpreediSubgrupo.equals("4")){
+                nombreSubGrupo="Aire Acondicionado";
+            }else if(catpreediSubgrupo.equals("5")){
+                nombreSubGrupo="Sistema Seguridad";
+            }else if(catpreediSubgrupo.equals("6")){
+                nombreSubGrupo="Piscinas";
+            }else if(catpreediSubgrupo.equals("7")){
+                nombreSubGrupo="Cerramientos";
+            }else if(catpreediSubgrupo.equals("8")){
+                nombreSubGrupo="Vias y caminos internos";
+            }else if(catpreediSubgrupo.equals("9")){
+                nombreSubGrupo="Instalaciones deportivas";
+            }
+        }
+        return nombreSubGrupo;
+    }
+
+    public void setNombreSubGrupo(String nombreSubGrupo) {
+        this.nombreSubGrupo = nombreSubGrupo;
     }
 
     @Override
@@ -158,5 +278,5 @@ public class CatastroPredialEdificacion implements Serializable {
     public String toString() {
         return "ec.sirec.ejb.entidades.CatastroPredialEdificacion[ catpreediCodigo=" + catpreediCodigo + " ]";
     }
-    
+
 }
