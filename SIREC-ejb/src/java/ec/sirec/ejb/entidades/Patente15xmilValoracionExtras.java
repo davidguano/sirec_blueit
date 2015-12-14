@@ -51,8 +51,8 @@ public class Patente15xmilValoracionExtras implements Serializable {
     @JoinColumn(name = "adided_codigo", referencedColumnName = "adided_codigo")
     @ManyToOne(optional = false)    
     private AdicionalesDeductivos adidedCodigo;
-    //Campos extra
-     @Column(name = "pat15valext_enti_pub")
+   //Nuevos Cmpos Adicionales 
+    @Column(name = "pat15valext_enti_pub")
     private Boolean pat15valextEntiPub;
     @Column(name = "pat15valext_fun_ben_edu")
     private Boolean pat15valextFunBenEdu;

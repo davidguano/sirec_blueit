@@ -84,7 +84,7 @@ public class PatenteServicio {
         return patenteDao.buscarPorCampo(ENTIDAD_PATENTE, "patCodigo", codPatente);
     }
 
-    public DatoGlobal buscaMensajeTransaccion(String nombre) throws Exception {
+    public DatoGlobal cargarObjPorNombre(String nombre) throws Exception {
         return datoGlobalDao.buscarPorCampo(ENTIDAD_DATO_GLOBAL, "datgloNombre", nombre);
     }
 //*****************************Metodos Exoneracion Deduccion y Multas de Patente*************************

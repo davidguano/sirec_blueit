@@ -7,6 +7,7 @@
 package ec.sirec.ejb.entidades;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -112,6 +113,15 @@ public class Patente implements Serializable {
     @Column(name = "ultacc_marcatiempo")
     @Temporal(TemporalType.TIMESTAMP)
     private Date ultaccMarcatiempo;
+     @Column(name = "pat_fecha_adjudicacion")
+    @Temporal(TemporalType.DATE)
+    private Date patFechaAdjudicacion;
+    @Column(name = "pat_fecha_vencimiento")
+    @Temporal(TemporalType.DATE)
+    private Date patFechaVencimiento;
+    @Column(name = "pat_deuda_inicial")
+    private BigDecimal patDeudaInicial;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "patCodigo")
     private List<PatenteArchivo> patenteArchivoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "patCodigo")
@@ -429,6 +439,30 @@ public class Patente implements Serializable {
 
     public CatalogoDetalle getCatdetTipoEmpresa() {
         return catdetTipoEmpresa;
+    }
+
+    public Date getPatFechaAdjudicacion() {
+        return patFechaAdjudicacion;
+    }
+
+    public void setPatFechaAdjudicacion(Date patFechaAdjudicacion) {
+        this.patFechaAdjudicacion = patFechaAdjudicacion;
+    }
+
+    public Date getPatFechaVencimiento() {
+        return patFechaVencimiento;
+    }
+
+    public void setPatFechaVencimiento(Date patFechaVencimiento) {
+        this.patFechaVencimiento = patFechaVencimiento;
+    }
+
+    public BigDecimal getPatDeudaInicial() {
+        return patDeudaInicial;
+    }
+
+    public void setPatDeudaInicial(BigDecimal patDeudaInicial) {
+        this.patDeudaInicial = patDeudaInicial;
     }
 
     public void setCatdetTipoEmpresa(CatalogoDetalle catdetTipoEmpresa) {
