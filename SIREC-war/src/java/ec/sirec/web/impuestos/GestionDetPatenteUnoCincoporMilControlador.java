@@ -42,18 +42,18 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
     private BigDecimal valBaseImponible;
     private BigDecimal valRecargos;
     private BigDecimal valImpuesto15xMil;
-    private BigDecimal valTotalActivos;
+    //private BigDecimal valTotalActivos;
     private BigDecimal valTasaProc;
     private BigDecimal valSubTotal;
-    private BigDecimal valOtrasDeduc;
-    private BigDecimal valPasivoCorriente;
-    private BigDecimal valPasivoContingente;
+    //  private BigDecimal valOtrasDeduc;
+    //  private BigDecimal valPasivoCorriente;
+    // private BigDecimal valPasivoContingente;
     private BigDecimal valTotal;
     private BigDecimal valTotAnual;
     private boolean habilitaEdicion;
-    private int buscNumPat;
+    private String buscNumPat;
     private int verBuscaPatente;
-    String numPatente = "";
+    String numPatente;
 
     private static final Logger LOGGER = Logger.getLogger(GestionDetPatenteUnoCincoporMilControlador.class.getName());
 
@@ -63,8 +63,9 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
     @PostConstruct
     public void inicializar() {
         try {
+            numPatente = "";
             verBuscaPatente = 0;
-            buscNumPat = 0;
+            buscNumPat = "";
             datoGlobalActal = new DatoGlobal();
             patenteActual = new Patente();
             patente15milValActual = new Patente15xmilValoracion();
@@ -97,7 +98,7 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
 
     public void cagarPatenteActual() {
         try {
-            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
+            patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
             numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -110,11 +111,15 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
 
     public void calcularBaseImponible() {
         try {
-            patente15milValActual = unoPCinoPorMilServicio.buscaPatValoracion15xMil(patenteActual.getPatCodigo());
-            pat15milValExtrActual = unoPCinoPorMilServicio.buscaPatVal15xMilExtraPorPatValoracion(patente15milValActual.getPat15valCodigo());
-            valBaseImponible = BigDecimal.valueOf((valTotalActivos.doubleValue() - valPasivoCorriente.doubleValue() - valPasivoContingente.doubleValue() - valOtrasDeduc.doubleValue()));
+            //   patente15milValActual = unoPCinoPorMilServicio.buscaPatValoracion15xMil(patenteActual.getPatCodigo());
+            //   pat15milValExtrActual = unoPCinoPorMilServicio.buscaPatVal15xMilExtraPorPatValoracion(patente15milValActual.getPat15valCodigo());
+            //   valBaseImponible = BigDecimal.valueOf((valTotalActivos.doubleValue() - valPasivoCorriente.doubleValue() - valPasivoContingente.doubleValue() - valOtrasDeduc.doubleValue()));
+            valBaseImponible = BigDecimal.valueOf((patente15milValActual.getPat15valActivos().doubleValue() - patente15milValActual.getPat15valPasivosCorriente().doubleValue() - patente15milValActual.getPat15valPasivosConting().doubleValue() - patente15milValActual.getPat15valOtrasDeducciones().doubleValue()));
+            valBaseImponible.setScale(2, RoundingMode.HALF_UP);
+            patente15milValActual.setPat15valBaseImponible(valBaseImponible);
             datoGlobalActal = unoPCinoPorMilServicio.buscaMensajeTransaccion("Val_tasa_procesamiento");
             valTasaProc = BigDecimal.valueOf(Double.parseDouble(datoGlobalActal.getDatgloValor()));
+            patente15milValActual.setPat15valTasaProc(valTasaProc);
             calculaValorImpuesto15xMil();
 
         } catch (Exception e) {
@@ -125,26 +130,74 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
 
     public void calculaValorImpuesto15xMil() {
         valImpuesto15xMil = BigDecimal.valueOf((valBaseImponible.doubleValue() * 1.5) / (1000));
-        calculaSubtotal();
+        valImpuesto15xMil.setScale(2, RoundingMode.HALF_UP);
+        patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+        calculaDeducciones();
     }
 
-    public void calculaSubtotal() {
-        valSubTotal = BigDecimal.valueOf(valImpuesto15xMil.doubleValue() + valTasaProc.doubleValue());
-        valSubTotal = valSubTotal.setScale(2, RoundingMode.HALF_UP);
-        valRecargos = pat15milValExtrActual.getPat15valextBase();
+    public void calculaTotalSubtotal() {
+        valSubTotal = BigDecimal.valueOf(valTasaProc.doubleValue() + valImpuesto15xMil.doubleValue());
+        valSubTotal.setScale(2, RoundingMode.HALF_UP);
+        patente15milValActual.setPat15valSubtotal(valSubTotal);
         valTotal = BigDecimal.valueOf(valSubTotal.doubleValue() + valRecargos.doubleValue());
+        valTotal.setScale(2, RoundingMode.HALF_UP);
+        patente15milValActual.setPat15valTotal(valTotal);
+    }
+//--Falta calcular los recargos
+
+    public void calculaDeducciones() {
+        try {
+            Patente15xmilValoracion objPat15MilAux = new Patente15xmilValoracion();
+            objPat15MilAux = unoPCinoPorMilServicio.buscaPatValoracion15xMil(patenteActual.getPatCodigo());
+            Patente15xmilValoracionExtras objPat15MilExtAux = new Patente15xmilValoracionExtras();
+            objPat15MilExtAux = unoPCinoPorMilServicio.buscaPatVal15xMilExtraPorPatValoracion(objPat15MilAux.getPat15valCodigo());
+            //--Exoneracion entidad publica
+            if (objPat15MilExtAux.getPat15valextEntiPub() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            //--Exoneracion Fundaciones
+            if (objPat15MilExtAux.getPat15valextFunBenEdu() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            //--Exoneracion Artesano
+            if (objPat15MilExtAux.getPat15valextLeyFomArtes() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            //--Exoneracion Agro Industria
+            if (objPat15MilExtAux.getPat15valextActAgro() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            //--Exoneracion coop
+            if (objPat15MilExtAux.getPat15valextCoop() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            //--Exoneracion Multi Nacional
+            if (objPat15MilExtAux.getPat15valextMultiNac() == true) {
+                valImpuesto15xMil = BigDecimal.ZERO;
+                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+            }
+            valRecargos = objPat15MilExtAux.getPat15valextBase();
+            objPat15MilAux = new Patente15xmilValoracion();
+            objPat15MilExtAux = new Patente15xmilValoracionExtras();
+            calculaTotalSubtotal();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+
     }
 
     public void inicializarValores() {
         valBaseImponible = null;
         valRecargos = null;
         valImpuesto15xMil = null;
-        valTotalActivos = null;
         valTasaProc = null;
         valSubTotal = null;
-        valOtrasDeduc = null;
-        valPasivoCorriente = null;
-        valPasivoContingente = null;
         valTotal = null;
         valTotAnual = null;
     }
@@ -159,17 +212,6 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
                 //Año declaracion
                 //Numero de sucursales
                 //Año balance
-                patente15milValActual.setPat15valIngresoAnual(valTotAnual);
-                patente15milValActual.setPat15valActivos(valTotalActivos);
-                patente15milValActual.setPat15valPasivosCorriente(valPasivoCorriente);
-                patente15milValActual.setPat15valPasivosConting(valPasivoContingente);
-                patente15milValActual.setPat15valOtrasDeducciones(valOtrasDeduc);
-                patente15milValActual.setPat15valBaseImponible(valBaseImponible);
-                patente15milValActual.setPat15valTasaProc(valTasaProc);
-                patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
-                patente15milValActual.setPat15valSubtotal(valSubTotal);
-                patente15milValActual.setPat15valRecargos(valRecargos);
-                patente15milValActual.setPat15valTotal(valTotal);
                 unoPCinoPorMilServicio.editarPatenteValoracion15xMil(patente15milValActual);
                 addSuccessMessage("Patente 1.5 Mil Valoración Guardado");
                 patente15milValActual = new Patente15xmilValoracion();
@@ -242,13 +284,15 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
         this.patente15milValActual = patente15milValActual;
     }
 
-    public int getBuscNumPat() {
+    public String getBuscNumPat() {
         return buscNumPat;
     }
 
-    public void setBuscNumPat(int buscNumPat) {
+    public void setBuscNumPat(String buscNumPat) {
         this.buscNumPat = buscNumPat;
     }
+
+    
 
     public int getVerBuscaPatente() {
         return verBuscaPatente;
@@ -264,38 +308,6 @@ public class GestionDetPatenteUnoCincoporMilControlador extends BaseControlador 
 
     public void setNumPatente(String numPatente) {
         this.numPatente = numPatente;
-    }
-
-    public BigDecimal getValPasivoContingente() {
-        return valPasivoContingente;
-    }
-
-    public void setValPasivoContingente(BigDecimal valPasivoContingente) {
-        this.valPasivoContingente = valPasivoContingente;
-    }
-
-    public BigDecimal getValTotalActivos() {
-        return valTotalActivos;
-    }
-
-    public void setValTotalActivos(BigDecimal valTotalActivos) {
-        this.valTotalActivos = valTotalActivos;
-    }
-
-    public BigDecimal getValPasivoCorriente() {
-        return valPasivoCorriente;
-    }
-
-    public void setValPasivoCorriente(BigDecimal valPasivoCorriente) {
-        this.valPasivoCorriente = valPasivoCorriente;
-    }
-
-    public BigDecimal getValOtrasDeduc() {
-        return valOtrasDeduc;
-    }
-
-    public void setValOtrasDeduc(BigDecimal valOtrasDeduc) {
-        this.valOtrasDeduc = valOtrasDeduc;
     }
 
     public BigDecimal getValTasaProc() {

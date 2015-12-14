@@ -5,19 +5,75 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:psirec="http://java.sun.com/jsf/composite/psirec">
     <!--DETERMINACION DE PATERNTES-->
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlConTblAmortizacion" width="1000" columns="1" >
+                 <p:panel>
+                    <h:panelGrid id="TblAmortizaBuscaPatente" columns="2">
+                        <h:panelGrid>
+                            <p:commandButton value="#{txt.btn_buscar}" 
+                                             id="btnTblBusPat" 
+                                             action="#{gestionTblAmortizaControlador.buscarPatente()}" 
+                                             icon="ui-icon-disk"  
+                                             process="@this,TblAmortizaBuscaPatente" 
+                                             update=":frmPat,TblAmortizaBuscaPatente"
+                                             async="true"
+                                             global="false"
+                                             />  
+                            <p:commandButton value="#{txt.btn_nuevo}" 
+                                             id="btTblNuePat" 
+                                             action="#{gestionTblAmortizaControlador.inicializar()}" 
+                                             icon="ui-icon-disk"  
+                                             process="@this,TblAmortizaBuscaPatente" 
+                                             update=":frmPat,TblAmortizaBuscaPatente"
+                                             async="true"
+                                             global="false"
+                                             />    
+                        </h:panelGrid>
+                        <p:panel rendered="#{gestionTblAmortizaControlador.verBuscaPatente==1}" header="Búsqueda de Patente:">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca}: AE-MPM-"/>
+                                <p:inputText  id="txTblBusPatente"  value="#{gestionTblAmortizaControlador.buscNumPat}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="txtbusPatente"/>
+
+                                <p:commandButton value="#{txt.btn_aceptar}" 
+                                                 id="btnTblBusPatente" 
+                                                 action="#{gestionTblAmortizaControlador.cagarPatenteActual()}" 
+                                                 icon="ui-icon-disk"  
+                                                 process="@this,TblAmortizaBuscaPatente" 
+                                                 update=":frmPat:tabPrin:pnlPatTblNumero"
+                                                 async="true"
+                                                 global="false"
+                                                 />            
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
+                
+                
                 <p:panel header="#{txt.lbl_header_tbl_amortiza}">
+                    <p:panel>
+                                <h:panelGrid columns="4" id="pnlPatTblNumero">
+                                    <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_num_patente}"/>
+                                    <p:inputText  disabled="true" id="numTblPatente1" value="#{gestionTblAmortizaControlador.numPatente}"  
+                                                  size="40"/>
+                                    <p:message for="numTblPatente1"/>  
+                                    <psirec:panelInformativo  rendered="#{gestionTblAmortizaControlador.numPatente==null}" id="infTblPeriodo" background="#042B69" ancho="220" icono="fa-exclamation-triangle"
+                                                              titulo="#{txt.lbl_head_error_patente}" tamanioTitulo="15" colorTitulo="white"
+                                                              texto="#{txt.lbl_error_num_patente}" tamanioTexto="12" colorTexto="white"/>
+                                </h:panelGrid>
+                            </p:panel>
                     <h:panelGrid>
                         <h:panelGrid columns="3">
                             <p:outputLabel style="font-size: #{txt.font_size}" for="buttonAdju" value="#{txt.lbl_fecha_adjudicacion}"/>                               
-                            <p:calendar id="buttonAdju" value="#{gestionTblAmortizaControlador.fechaAdjudica}" showOn="buttonAdju" />
+                            <p:calendar id="buttonAdju" value="#{gestionTblAmortizaControlador.fechaAdjudica}" showOn="button" />
                             <p:message for="buttonAdju"/>
                             <p:outputLabel style="font-size: #{txt.font_size}" for="buttonVen" value="#{txt.lbl_fecha_vencimiento}"/>                               
-                            <p:calendar id="buttonVen" value="#{gestionTblAmortizaControlador.fechaVencmiento}" showOn="buttonVen" />
+                            <p:calendar id="buttonVen" value="#{gestionTblAmortizaControlador.fechaVencmiento}" showOn="button" />
                             <p:message for="buttonVen"/>
                         </h:panelGrid>
 

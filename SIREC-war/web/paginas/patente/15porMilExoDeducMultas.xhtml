@@ -11,36 +11,47 @@
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlCon15xMilExuDedMul" width="1000" columns="1" >
-                <h:panelGrid id="pnl15xMilExoBuscaPatente" columns="2">
-                    <p:column>
-                        <p:commandButton value="#{txt.btn_buscar}" 
-                                         id="btn15xMilExoBusPat" 
-                                         action="#{gestionExoDedMulUnoCincoPorMil.buscarPatente()}" 
-                                         icon="ui-icon-disk"  
-                                         process="@this,pnl15xMilExoBuscaPatente" 
-                                         update=":frmPat,pnl15xMilExoBuscaPatente,frmPat:msgs"
-                                         async="true"
-                                         global="false"
-                                         />                        
-                    </p:column>
-                    <p:panel rendered="#{gestionExoDedMulUnoCincoPorMil.verBuscaPatente==1}" header="Búsqueda de Patente:">
-                        <h:panelGrid columns="4">
-                            <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca}: AE-MPM-"/>
-                            <p:inputText  id="txtExo15xMilBusPatente"  value="#{gestionExoDedMulUnoCincoPorMil.buscNumPat}" 
-                                          maxlength="20" size="40"/>
-                            <p:message for="txtbusPatente"/>
-                            <p:commandButton value="#{txt.btn_aceptar}" 
-                                             id="btn15xMilExoBuscaPatente" 
-                                             action="#{gestionExoDedMulUnoCincoPorMil.cagarPatenteActual()}" 
+                <p:panel>
+                    <h:panelGrid id="pnl15xMilExoBuscaPatente" columns="2">
+                        <h:panelGrid>
+                            <p:commandButton value="#{txt.btn_buscar}" 
+                                             id="btn15xMilExoBusPat" 
+                                             action="#{gestionExoDedMulUnoCincoPorMil.buscarPatente()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnl15xMilExoBuscaPatente" 
-                                             update=":frmPat:tabPrin:pnlCon15xMilExoDedMulNumPat"
+                                             update=":frmPat,pnl15xMilExoBuscaPatente"
                                              async="true"
                                              global="false"
-                                             />            
+                                             />   
+                            <p:commandButton value="#{txt.btn_nuevo}" 
+                                             id="bt15xMilNuePat" 
+                                             action="#{gestionExoDedMulUnoCincoPorMil.inicializar()}" 
+                                             icon="ui-icon-disk"  
+                                             process="@this,pnl15xMilExoBuscaPatente" 
+                                             update=":frmPat,pnl15xMilExoBuscaPatente"
+                                             async="true"
+                                             global="false"
+                                             />    
                         </h:panelGrid>
-                    </p:panel>
-                </h:panelGrid>
+                        <p:panel rendered="#{gestionExoDedMulUnoCincoPorMil.verBuscaPatente==1}" header="Búsqueda de Patente:">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca}: AE-MPM-"/>
+                                <p:inputText  id="txtExo15xMilBusPatente"  value="#{gestionExoDedMulUnoCincoPorMil.buscNumPat}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="txtbusPatente"/>
+                                <p:commandButton value="#{txt.btn_aceptar}" 
+                                                 id="btn15xMilExoBuscaPatente" 
+                                                 action="#{gestionExoDedMulUnoCincoPorMil.cagarPatenteActual()}" 
+                                                 icon="ui-icon-disk"  
+                                                 process="@this,pnl15xMilExoBuscaPatente" 
+                                                 update=":frmPat:tabPrin:pnlCon15xMilExoDedMulNumPat"
+                                                 async="true"
+                                                 global="false"
+                                                 />                                       
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
                 <p:panel header="#{txt.lbl_header_Exo_Dec_Multas}">
                     <h:panelGrid columns="2">
                         <p:commandButton process="@this" action="#{gestionExoDedMulUnoCincoPorMil.cargarNumPatente()}" value="Ver N° Patente:" update=":frmPat:tabPrin:pnlCon15xMilExoDedMulNumPat"/>
@@ -50,9 +61,10 @@
                                 <p:inputText  disabled="true" id="numPatente15xMilExoDedMul" value="#{gestionExoDedMulUnoCincoPorMil.numPatente}"  
                                               size="40"/>
                                 <p:message for="numPatente15xMilExoDedMul"/>  
-                                <psirec:panelInformativo  rendered="#{gestionExoDedMulUnoCincoPorMil.numPatente==null}" id="inf15xMilExoDedMulNumPat" background="#042B69" ancho="220" icono="fa-exclamation-triangle"
+                                <psirec:panelInformativo  rendered="#{gestionExoDedMulUnoCincoPorMil.numPatente==null}" id="inf15xMilExoDedMulResult" background="#042B69" ancho="220" icono="fa-exclamation-triangle"
                                                           titulo="#{txt.lbl_head_error_patente}" tamanioTitulo="15" colorTitulo="white"
-                                                          texto="#{txt.lbl_error_num_patente}" tamanioTexto="12" colorTexto="white"/>
+                                                          texto="#{txt.lbl_sin_resultados}" tamanioTexto="12" colorTexto="white"/>
+
 
                             </h:panelGrid>
                         </p:panel>
@@ -75,7 +87,7 @@
 
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_enti_public}"/>
-                        <p:selectBooleanButton id="lblEntiPub" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextEntiPub}" onLabel="Obligado" offLabel="No Obligado" style="width:80px" />
+                        <p:selectBooleanButton id="lblEntiPub" value="#{gestionExoDedMulUnoCincoPorMil.patValEx15xMilActual.pat15valextEntiPub}" onLabel="Si" offLabel="No" style="width:80px" />
                         <p:message for="lblEntiPub"/>
 
 

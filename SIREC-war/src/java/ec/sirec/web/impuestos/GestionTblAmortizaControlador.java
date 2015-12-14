@@ -69,6 +69,9 @@ public class GestionTblAmortizaControlador extends BaseControlador {
     private int verArchivos;
     private Date fechaAdjudica;
     private Date fechaVencmiento;
+    private int verBuscaPatente;
+    private String buscNumPat;
+    private String numPatente;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -76,6 +79,9 @@ public class GestionTblAmortizaControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+             buscNumPat="";
+             numPatente="";
+            verBuscaPatente=0;
             listaFiles = new ArrayList<ParametrosFile>();
             listadoArchivos = new ArrayList<PatenteArchivo>();
              patenteArchivoActual=new PatenteArchivo();
@@ -98,8 +104,21 @@ public class GestionTblAmortizaControlador extends BaseControlador {
         verPanelDetalleImp = 1;
     }
 
-  
-
+  public void buscarPatente() {
+        try {
+            verBuscaPatente = 1;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+public void cagarPatenteActual() {
+        try {
+            patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
+            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
 //    public void guardaEmiPatente15xMil() {
 //        try {
 //            if (habilitaEdicion == false) {
@@ -290,6 +309,30 @@ public class GestionTblAmortizaControlador extends BaseControlador {
 
     public void setFechaVencmiento(Date fechaVencmiento) {
         this.fechaVencmiento = fechaVencmiento;
+    }
+
+    public int getVerBuscaPatente() {
+        return verBuscaPatente;
+    }
+
+    public void setVerBuscaPatente(int verBuscaPatente) {
+        this.verBuscaPatente = verBuscaPatente;
+    }
+
+    public String getBuscNumPat() {
+        return buscNumPat;
+    }
+
+    public void setBuscNumPat(String buscNumPat) {
+        this.buscNumPat = buscNumPat;
+    }
+
+    public String getNumPatente() {
+        return numPatente;
+    }
+
+    public void setNumPatente(String numPatente) {
+        this.numPatente = numPatente;
     }
 
 }

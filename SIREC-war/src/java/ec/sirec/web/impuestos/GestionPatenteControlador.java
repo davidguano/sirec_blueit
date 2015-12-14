@@ -115,6 +115,7 @@ public class GestionPatenteControlador extends BaseControlador {
             catastroPredialSelec = new CatastroPredial();
             catDetIdentEstadoActual = new CatalogoDetalle();
             catDetHorFuncionaActual = new CatalogoDetalle();
+            catDetEspTurisActual = new CatalogoDetalle();
             habilitaEditar = false;
             d1 = false;
             d2 = false;
@@ -147,7 +148,7 @@ public class GestionPatenteControlador extends BaseControlador {
         try {
             datoGlobalActual = new DatoGlobal();
             usuarioActual = new SegUsuario();
-            datoGlobalActual = patenteServicio.buscaMensajeTransaccion("Msj_Pat_In");
+            datoGlobalActual = patenteServicio.cargarObjPorNombre("Msj_Pat_In");
             usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -164,9 +165,10 @@ public class GestionPatenteControlador extends BaseControlador {
             if (habilitaEditar == false) {
 //                if (patenteServicio.existeCodigoPatente(patenteActual.getPatCodigo())) {
 //                    addWarningMessage("Existe Código");
-//                } 
-//                else {
-                patenteActual.setPatEstado("A");
+//                } else {
+                CatalogoDetalle objCatDetAux = new CatalogoDetalle();
+                objCatDetAux = catalogoDetalleServicio.buscarPorCodigoCatDet(catDetIdentEstadoActual.getCatdetCodigo());
+                patenteActual.setPatEstado(objCatDetAux.getCatdetCod());
                 patenteActual.setCatpreCodigo(catastroPredialActual);
                 patenteActual.setPatFuncLunes(d1);
                 patenteActual.setPatFuncMartes(d2);
@@ -197,6 +199,7 @@ public class GestionPatenteControlador extends BaseControlador {
                 addSuccessMessage("Patente Registrado");
                 patenteActual = new Patente();
                 limpiarObjetosBitacora();
+                objCatDetAux = null;
                 inicializar();
 //                }
             } else {

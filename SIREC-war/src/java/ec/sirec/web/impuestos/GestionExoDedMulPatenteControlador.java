@@ -64,8 +64,7 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     private DatoGlobal datoGlobalActual;
     private SegUsuario usuarioActual;
     private PatenteArchivo patenteArchivoActual;
-
-    private int buscNumPat;
+    private String buscNumPat;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -73,6 +72,8 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+            buscNumPat = "";
+            numPatente = "";
             patenteArchivoActual = new PatenteArchivo();
             adiDeductivoActual = new AdicionalesDeductivos();
             patenteActual = new Patente();
@@ -91,15 +92,6 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     }
 
     public GestionExoDedMulPatenteControlador() {
-    }
-
-    public void cargarNumPatente() {
-        patenteActual = (Patente) this.getSession().getAttribute("patente");
-        if (patenteActual == null) {
-            numPatente = null;
-        } else {
-            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
-        }
     }
 
     public void guardaPatenteValExtra() {
@@ -131,7 +123,6 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
     public void buscarPatente() {
         try {
             verBuscaPatente = 1;
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -139,8 +130,12 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
 
     public void cagarPatenteActual() {
         try {
-            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
-            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
+            if (patenteActual == null) {
+                numPatente = null;
+            } else {
+                numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -171,7 +166,7 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
         try {
             datoGlobalActual = new DatoGlobal();
             usuarioActual = new SegUsuario();
-            datoGlobalActual = patenteServicio.buscaMensajeTransaccion("Msj_Pat_In");
+            datoGlobalActual = patenteServicio.cargarObjPorNombre("Msj_Pat_In");
             usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -268,13 +263,16 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
 
     public void activPanelCargrArchivos() {
         cargarArchivos = 1;
-
     }
 
-    public void activaPanerVerArchivos() {
+    public void activaPanelVerArchivos() {
         try {
-            verArchivos = 1;
             listarArchivosPatente();
+            if (listadoArchivos.isEmpty()) {
+                verArchivos = 1;
+            } else {
+                verArchivos = 0;
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -353,11 +351,11 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
         this.verBuscaPatente = verBuscaPatente;
     }
 
-    public int getBuscNumPat() {
+    public String getBuscNumPat() {
         return buscNumPat;
     }
 
-    public void setBuscNumPat(int buscNumPat) {
+    public void setBuscNumPat(String buscNumPat) {
         this.buscNumPat = buscNumPat;
     }
 

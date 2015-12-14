@@ -12,6 +12,7 @@ import ec.sirec.ejb.entidades.PatenteValoracionExtras;
 import ec.sirec.ejb.servicios.PatenteServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +33,6 @@ public class GestionDetPatenteControlador extends BaseControlador {
     private PatenteServicio patenteServicio;
     private Patente patenteActual;
     private PatenteValoracion patenteValoracionActal;
-    private PatenteValoracionExtras patValorExtra;
     private int verPanelDetalleImp;
     private BigDecimal valPatrimonio;
     private BigDecimal valImpPatente;
@@ -41,12 +41,12 @@ public class GestionDetPatenteControlador extends BaseControlador {
     private BigDecimal valTotal;
     private BigDecimal valTasaProc;
     private BigDecimal valDeduciones;
-    private BigDecimal valActivos;
-    private BigDecimal valPasivos;
+    // private BigDecimal valActivos;
+    // private BigDecimal valPasivos;
     private boolean habilitaEdicion;
     private String numPatente;
     DatoGlobal datoGlobalActual;
-    private int buscNumPat;
+    private String buscNumPat;
     private int verBuscaPatente;
     private static final Logger LOGGER = Logger.getLogger(GestionDetPatenteControlador.class.getName());
 
@@ -56,8 +56,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
-            verBuscaPatente=0;
-            patValorExtra = new PatenteValoracionExtras();
+            verBuscaPatente = 0;
             inicializarValores();
             datoGlobalActual = new DatoGlobal();
             patenteActual = new Patente();
@@ -65,6 +64,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
             verPanelDetalleImp = 0;
             habilitaEdicion = false;
             numPatente = "";
+            buscNumPat = "";
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -88,21 +88,60 @@ public class GestionDetPatenteControlador extends BaseControlador {
 
     public void calcularValorPatrimonio() {
         try {
-            patenteValoracionActal = patenteServicio.buscaPatValoracion(patenteActual.getPatCodigo());
-            patValorExtra = patenteServicio.buscaPatValExtraPorPatValoracion(patenteValoracionActal.getPatvalCodigo());
-            valPatrimonio = BigDecimal.valueOf(valActivos.doubleValue() - valPasivos.doubleValue());
+            valPatrimonio = BigDecimal.valueOf(patenteValoracionActal.getPatvalActivos().doubleValue() - patenteValoracionActal.getPatvalPasivos().doubleValue());
             valPatrimonio = valPatrimonio.setScale(2, RoundingMode.HALF_UP);
-            calculaValorPatente();
+            patenteValoracionActal.setPatvalPatrimonio(valPatrimonio);
+            calculaImpuestoPatente();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
     public void calculaValorDeduccion() {
-        valDeduciones = patValorExtra.getPatenteBaseimpNegativa();
+        try {
+            BigDecimal valReduccion = null; //Valor Reduccion
+            BigDecimal valDatFalso = null; //Valor Falsedad Datos
+            BigDecimal valBaseImponible = null;
+            PatenteValoracion objPatValoracionAux = new PatenteValoracion();
+            objPatValoracionAux = patenteServicio.buscaPatValoracion(patenteActual.getPatCodigo());
+            PatenteValoracionExtras objPatValorExtAux = new PatenteValoracionExtras();
+            objPatValorExtAux = patenteServicio.buscaPatValExtraPorPatValoracion(objPatValoracionAux.getPatvalCodigo());
+            //Reduccin de impuesto Articulo 20----------------------------
+            if (objPatValorExtAux.getPatvalextReduccionMitad() == true) {
+                valReduccion = BigDecimal.valueOf(valImpPatente.doubleValue() / 2);
+            }
+            if (objPatValorExtAux.getPatvalextReduccion3eraparte() == true) {
+                valReduccion = BigDecimal.valueOf(valImpPatente.doubleValue() / 3);
+            }
+            //Exoneracion Artesano Calificado---------------------------
+            if (objPatValorExtAux.getPatvalextExonArtCalificado() == true) {
+                valImpPatente = BigDecimal.ZERO;
+                patenteValoracionActal.setPatvalImpuesto(valImpPatente);
+            }
+            //Falsedad de datos------------------------------------------
+            if (objPatValorExtAux.getPatentePorcDatosfalsos() != 0) {
+                DatoGlobal objDatglobAux = new DatoGlobal();
+                objDatglobAux = patenteServicio.cargarObjPorNombre("Val_sueldo_basico");
+                double valSueldoBasico = Double.parseDouble(objDatglobAux.getDatgloValor());
+                valDatFalso = BigDecimal.valueOf((valSueldoBasico) * ((double)objPatValorExtAux.getPatentePorcDatosfalsos() / 100));
+                objDatglobAux = new DatoGlobal();
+            }
+            //Evacion Tributaria-----------------------------------
+            if (objPatValorExtAux.getPatentePorcIngreso() != 0) {
+                valBaseImponible = BigDecimal.valueOf(((double)objPatValorExtAux.getPatentePorcIngreso() / 100) * (valPatrimonio.doubleValue()));
+            }
+            valDeduciones = BigDecimal.valueOf(valReduccion.doubleValue() + valImpPatente.doubleValue() + valDatFalso.doubleValue() + valBaseImponible.doubleValue());
+            valDeduciones.setScale(2, RoundingMode.HALF_UP);
+            patenteValoracionActal.setPatvalDeducciones(valDeduciones);
+            objPatValorExtAux = new PatenteValoracionExtras();
+            objPatValoracionAux = new PatenteValoracion();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
-    public void calculaValorPatente() {
+    public void calculaImpuestoPatente() {
         double impFracBasica = 0.00;
         double impExcede = 0.00;
         if (valPatrimonio.doubleValue() >= 0 && valPatrimonio.doubleValue() <= 50000) {
@@ -115,7 +154,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
         }
         if (valPatrimonio.doubleValue() >= 100000.01 && valPatrimonio.doubleValue() <= 250000) {
             impFracBasica = 385;
-            impExcede = (1 / 100);
+            impExcede = ((double)1 / 100);
 
         }
         if (valPatrimonio.doubleValue() >= 250000.01) {
@@ -124,24 +163,32 @@ public class GestionDetPatenteControlador extends BaseControlador {
         }
         valImpPatente = BigDecimal.valueOf((valPatrimonio.doubleValue() - impFracBasica) * impExcede);
         valImpPatente = valImpPatente.setScale(2, RoundingMode.HALF_UP);
+        patenteValoracionActal.setPatvalImpuesto(valImpPatente);
         calculaimpBomberos();
     }
 
     public void calculaimpBomberos() {
-        double cuantia = (10 / 100);
-        valImpBomberos = BigDecimal.valueOf(valImpPatente.doubleValue() * cuantia);
+        double valCuantia = 0.00;
+        System.out.println("valCuantia" +  valCuantia);
+        valCuantia = (double)10/100;
+         System.out.println("valCuantia Despues" +  valCuantia);
+        valImpBomberos = BigDecimal.valueOf(valImpPatente.doubleValue() * valCuantia);
         valSubTotal = valImpPatente.add(valImpBomberos);
         valImpBomberos = valImpBomberos.setScale(2, RoundingMode.HALF_UP);
         valSubTotal = valSubTotal.setScale(2, RoundingMode.HALF_UP);
+        patenteValoracionActal.setPatvalSubtotal(valSubTotal);
         calculaValorDeduccion();
         calculaTotal();
     }
 
     public void calculaTotal() {
         try {
-            datoGlobalActual = patenteServicio.buscaMensajeTransaccion("Val_tasa_procesamiento");
+            datoGlobalActual = patenteServicio.cargarObjPorNombre("Val_tasa_procesamiento");
             valTasaProc = BigDecimal.valueOf(Double.parseDouble(datoGlobalActual.getDatgloValor()));
+            patenteValoracionActal.setPatvalTasaProc(valTasaProc);
             valTotal = BigDecimal.valueOf(valSubTotal.doubleValue() - valTasaProc.doubleValue() - valDeduciones.doubleValue());
+            valTotal.setScale(2, RoundingMode.HALF_UP);
+            patenteValoracionActal.setPatvalTotal(valTotal);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -154,13 +201,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
 //                if (patenteServicio.existePatenteValoracionExtra(patenteValoracionActal.getPatvalCodigo())) {
 //                    addWarningMessage("Existe Código");
 //                } else {
-              //  patenteValoracionActal.setPatCodigo(patenteActual);
-                patenteValoracionActal.setPatvalPatrimonio(valPatrimonio);
-                patenteValoracionActal.setPatvalImpuesto(valImpPatente);
-                patenteValoracionActal.setPatvalSubtotal(valSubTotal);
-                patenteValoracionActal.setPatvalTasaProc(valTasaProc);
-                patenteValoracionActal.setPatvalDeducciones(valDeduciones);
-                patenteValoracionActal.setPatvalTotal(valTotal);
+                //  patenteValoracionActal.setPatCodigo(patenteActual);
                 patenteServicio.editarPatenteValoracion(patenteValoracionActal);
                 addSuccessMessage("Patente Valoración Guardado");
                 patenteValoracionActal = new PatenteValoracion();
@@ -187,16 +228,19 @@ public class GestionDetPatenteControlador extends BaseControlador {
 
     public void cagarPatenteActual() {
         try {
-            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
-            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
+            if (patenteActual == null) {
+                numPatente = null;
+            } else {
+                numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
+
     public void inicializarValores() {
-        valActivos = null;
-        valPasivos = null;
         valImpBomberos = null;
         valImpPatente = null;
         valSubTotal = null;
@@ -254,14 +298,6 @@ public class GestionDetPatenteControlador extends BaseControlador {
         this.valImpBomberos = valImpBomberos;
     }
 
-    public BigDecimal getValSubTotal() {
-        return valSubTotal;
-    }
-
-    public void setValSubTotal(BigDecimal valSubTotal) {
-        this.valSubTotal = valSubTotal;
-    }
-
     public String getNumPatente() {
         return numPatente;
     }
@@ -270,51 +306,11 @@ public class GestionDetPatenteControlador extends BaseControlador {
         this.numPatente = numPatente;
     }
 
-    public BigDecimal getValTotal() {
-        return valTotal;
-    }
-
-    public void setValTotal(BigDecimal valTotal) {
-        this.valTotal = valTotal;
-    }
-
-    public BigDecimal getValDeduciones() {
-        return valDeduciones;
-    }
-
-    public void setValDeduciones(BigDecimal valDeduciones) {
-        this.valDeduciones = valDeduciones;
-    }
-
-    public BigDecimal getValTasaProc() {
-        return valTasaProc;
-    }
-
-    public void setValTasaProc(BigDecimal valTasaProc) {
-        this.valTasaProc = valTasaProc;
-    }
-
-    public BigDecimal getValActivos() {
-        return valActivos;
-    }
-
-    public void setValActivos(BigDecimal valActivos) {
-        this.valActivos = valActivos;
-    }
-
-    public BigDecimal getValPasivos() {
-        return valPasivos;
-    }
-
-    public void setValPasivos(BigDecimal valPasivos) {
-        this.valPasivos = valPasivos;
-    }
-
-    public int getBuscNumPat() {
+    public String getBuscNumPat() {
         return buscNumPat;
     }
 
-    public void setBuscNumPat(int buscNumPat) {
+    public void setBuscNumPat(String buscNumPat) {
         this.buscNumPat = buscNumPat;
     }
 

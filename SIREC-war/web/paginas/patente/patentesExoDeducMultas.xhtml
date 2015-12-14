@@ -11,41 +11,49 @@
     <h:panelGrid>
         <center>
             <h:panelGrid id="pnlConExuDedMul" width="1000" columns="1" >
-                <h:panelGrid id="ExoDedBuscaPatente" columns="2">
-                    <p:column>
-                        <p:commandButton value="#{txt.btn_buscar}" 
-                                         id="btnBusPat" 
-                                         action="#{gestionExoDedMulPatenteControlador.buscarPatente()}" 
-                                         icon="ui-icon-disk"  
-                                         process="@this,ExoDedBuscaPatente" 
-                                         update=":frmPat,ExoDedBuscaPatente,frmPat:msgs"
-                                         async="true"
-                                         global="false"
-                                         />                        
-                    </p:column>
-                    <p:panel rendered="#{gestionExoDedMulPatenteControlador.verBuscaPatente==1}" header="Búsqueda de Patente:">
-                        <h:panelGrid columns="4">
-                            <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca} AE-MPM-"/>
-                            <p:inputText  id="txtbusPatente"  value="#{gestionExoDedMulPatenteControlador.buscNumPat}" 
-                                          maxlength="20" size="40"/>
-                            <p:message for="txtbusPatente"/>
-
-                            <p:commandButton value="#{txt.btn_aceptar}" 
-                                             id="btnBuscaPatente" 
-                                             action="#{gestionExoDedMulPatenteControlador.cagarPatenteActual()}" 
+                <p:panel>
+                    <h:panelGrid id="ExoDedBuscaPatente" columns="2">
+                        <h:panelGrid columns="1">
+                            <p:commandButton value="#{txt.btn_buscar}" 
+                                             id="btnBusPat" 
+                                             action="#{gestionExoDedMulPatenteControlador.buscarPatente()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,ExoDedBuscaPatente" 
-                                             update=":frmPat:tabPrin:pnlConExoDedMulNumPat"
+                                             update=":frmPat,ExoDedBuscaPatente,frmPat:msgs"
                                              async="true"
                                              global="false"
-                                             />            
+                                             />    
+                            <p:commandButton value="#{txt.btn_nuevo}" 
+                                             id="btNuePat" 
+                                             action="#{gestionExoDedMulPatenteControlador.inicializar()}" 
+                                             icon="ui-icon-disk"  
+                                             process="@this,ExoDedBuscaPatente" 
+                                             update=":frmPat,pnlConExoDedMulNumPat"
+                                             async="true"
+                                             global="false"
+                                             />                        
                         </h:panelGrid>
-
-                    </p:panel>
-                </h:panelGrid>
+                        <p:panel rendered="#{gestionExoDedMulPatenteControlador.verBuscaPatente==1}" header="Búsqueda de Patente:">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca} AE-MPM-"/>
+                                <p:inputText  id="txtbusPatente"  value="#{gestionExoDedMulPatenteControlador.buscNumPat}" 
+                                              maxlength="20" size="40"/>
+                                <p:message for="txtbusPatente"/>
+                                <p:commandButton value="#{txt.btn_aceptar}" 
+                                                 id="btnBuscaPatente" 
+                                                 action="#{gestionExoDedMulPatenteControlador.cagarPatenteActual()}" 
+                                                 icon="ui-icon-disk"  
+                                                 process="@this,ExoDedBuscaPatente" 
+                                                 update=":frmPat:tabPrin:pnlConExoDedMulNumPat"
+                                                 async="true"
+                                                 global="false"
+                                                 />            
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
                 <p:panel header="#{txt.lbl_header_Exo_Dec_Multas}">
-                    <h:panelGrid columns="2">
-                        <p:commandButton process="@this" action="#{gestionExoDedMulPatenteControlador.cargarNumPatente()}" value="Ver N° Patente:" update=":frmPat:tabPrin:pnlConExoDedMulNumPat"/>
+                    <h:panelGrid columns="1">
                         <p:panel>
                             <h:panelGrid columns="4" id="pnlConExoDedMulNumPat">
                                 <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_num_patente}"/>
@@ -54,8 +62,7 @@
                                 <p:message for="numPatenteExoDedMul"/>  
                                 <psirec:panelInformativo  rendered="#{gestionExoDedMulPatenteControlador.numPatente==null}" id="infExoDedMulNumPat" background="#042B69" ancho="220" icono="fa-exclamation-triangle"
                                                           titulo="#{txt.lbl_head_error_patente}" tamanioTitulo="15" colorTitulo="white"
-                                                          texto="#{txt.lbl_error_num_patente}" tamanioTexto="12" colorTexto="white"/>
-
+                                                          texto="#{txt.lbl_sin_resultados}" tamanioTexto="12" colorTexto="white"/>
                             </h:panelGrid>
                         </p:panel>
                     </h:panelGrid>
@@ -109,8 +116,8 @@
                         <p:inputText  id="valDatosFalsos"  value="#{gestionExoDedMulPatenteControlador.patValExActual.patentePorcDatosfalsos}" 
                                       maxlength="20" size="40"/>
                         <p:message for="valDatosFalsos"/>
-                        
-                        
+
+
                         <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_evacion_tribut}"/>
                         <p:selectOneMenu id="evaTRibutaria" value="#{gestionExoDedMulPatenteControlador.patValExActual.patenteEvasionTributaria}"  style="width:152px">
                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
@@ -132,10 +139,10 @@
                     <h:panelGrid columns="2" id="pnlConBotExoDeducMul">
                         <p:commandButton value="#{txt.btn_ver_documentos}" 
                                          id="btnVerDocu" 
-                                         action="#{gestionExoDedMulPatenteControlador.activaPanerVerArchivos()}" 
+                                         action="#{gestionExoDedMulPatenteControlador.activaPanelVerArchivos()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnlConBotExoDeducMul" 
-                                         update=":frmPat,pnlConExuDedMul,frmPat:msgs"
+                                         update=":frmPat:tabPrin:pnlConCargarFile"
                                          async="true"
                                          global="false"
                                          />
@@ -144,7 +151,7 @@
                                          action="#{gestionExoDedMulPatenteControlador.activPanelCargrArchivos()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnlConBotExoDeducMul" 
-                                         update=":frmPat,pnlConExuDedMul,frmPat:msgs"
+                                         update=":frmPat:tabPrin:pnlConCargarFile"
                                          async="true"
                                          global="false"
                                          />
@@ -207,8 +214,8 @@
                                     </p:confirmDialog>
                                 </p:panel>
                                 <h:panelGrid id="tblListArchvosExoDedmul">
-                                    <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionPatenteControlador.listadoArchivos.size()>0}">
-                                        <p:dataTable    paginator="true" rows="5" id="tablLisExoDedMul" value="#{gestionPatenteControlador.listadoArchivos}"  var="archivoColumna"   
+                                    <p:panel style="width: 750px" header="Archivos Cargados" rendered="#{gestionExoDedMulPatenteControlador.listadoArchivos.size()>0}">
+                                        <p:dataTable    paginator="true" rows="5" id="tablLisExoDedMul" value="#{gestionExoDedMulPatenteControlador.listadoArchivos}"  var="archivoColumna"   
                                                         selectionMode="single" rowKey="#{archivoColumna.patarcCodigo}"
                                                         styleClass="pdataTable_font"
                                                         currentPageReportTemplate="{currentPage} de {totalPages}">                              
@@ -218,8 +225,8 @@
 
                                             <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
                                                 <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
-                                                                 actionListener="#{gestionPatenteControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
-                                                                 process="@this" update=":frmPat:tabPrin:tablLisExoDedMul,:frmPat:tabPrin:tablLisExoDedMul:message" async="true" global="false">
+                                                                 actionListener="#{gestionExoDedMulPatenteControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
+                                                                 process="@this" update=":frmPat:tabPrin:tablLisExoDedMul,:frmPat:tabPrin:tablLisExoDedMul,frmPat:msgs" async="true" global="false">
                                                     <p:confirm header="Confirmación" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                             </p:column>  
@@ -254,9 +261,13 @@
                                     </p:column>
                                 </p:dataTable>     
                             </p:panel>
-                            </center>
-                        </h:panelGrid>
-                    
+                            <psirec:panelInformativo  rendered="#{gestionExoDedMulPatenteControlador.verArchivos==1}" id="infExoDedMulSinFiles" background="#042B69" ancho="220" icono="fa-exclamation-triangle"
+                                                      titulo="#{txt.lbl_head_error_patente}" tamanioTitulo="15" colorTitulo="white"
+                                                      texto="#{txt.lbl_sin_archivos}" tamanioTexto="12" colorTexto="white"/>
+
+                        </center>
+                    </h:panelGrid>
+
                 </h:panelGrid>
 
                 <h:panelGrid columns="2">

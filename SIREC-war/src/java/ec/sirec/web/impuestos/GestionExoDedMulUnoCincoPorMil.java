@@ -42,6 +42,7 @@ import org.primefaces.event.FileUploadEvent;
 @ManagedBean
 @ViewScoped
 public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
+
     @EJB
     private PatenteServicio patenteServicio;
 
@@ -56,7 +57,7 @@ public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
     private Patente patenteActual;
     private Patente15xmilValoracionExtras patValEx15xMilActual;
     private Patente15xmilValoracion patValo15xMilActal;
-    private String numPatente = "";
+    private String numPatente ;
     private boolean habilitaEdicion;
     private static final Logger LOGGER = Logger.getLogger(GestionExoDedMulUnoCincoPorMil.class.getName());
     private int verArchivos;
@@ -68,8 +69,9 @@ public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
     private DatoGlobal datoGlobalActual;
     private SegUsuario usuarioActual;
     private PatenteArchivo patenteArchivoActual;
-    private int buscNumPat;
+    private String  buscNumPat;
     private int verBuscaPatente;
+    private int verResultado;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -77,7 +79,9 @@ public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
-            buscNumPat = 0;
+            numPatente="";
+            buscNumPat="";
+            verResultado = 0;
             verBuscaPatente = 0;
             adiDeductivoActual = new AdicionalesDeductivos();
             patenteActual = new Patente();
@@ -117,8 +121,12 @@ public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
 
     public void cagarPatenteActual() {
         try {
-            patenteActual = patenteServicio.cargarObjPatente(buscNumPat);
-            numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
+            if (patenteActual == null) {
+                numPatente = null;
+            } else {
+                numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -355,20 +363,29 @@ public class GestionExoDedMulUnoCincoPorMil extends BaseControlador {
         this.listadoArchivos = listadoArchivos;
     }
 
-    public int getBuscNumPat() {
+    public String getBuscNumPat() {
         return buscNumPat;
     }
 
-    public void setBuscNumPat(int buscNumPat) {
+    public void setBuscNumPat(String buscNumPat) {
         this.buscNumPat = buscNumPat;
     }
 
+   
     public int getVerBuscaPatente() {
         return verBuscaPatente;
     }
 
     public void setVerBuscaPatente(int verBuscaPatente) {
         this.verBuscaPatente = verBuscaPatente;
+    }
+
+    public int getVerResultado() {
+        return verResultado;
+    }
+
+    public void setVerResultado(int verResultado) {
+        this.verResultado = verResultado;
     }
 
 }

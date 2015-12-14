@@ -21,7 +21,7 @@
                         </h:panelGrid>
                         <h:panelGrid columns="6">
                             <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_clave_catastrat}"/>
-                            <p:selectOneMenu   required="true" id="cmbCatastro" 
+                            <p:selectOneMenu  requiredMessage="! Debe seleccionar una opción !" required="true" id="cmbCatastro" 
                                                value="#{gestionPatenteControlador.catastroPredialSelec}" style="width:250px"
                                                converter="#{catastroPredialConverter}" var="t">
                                 <f:selectItem  itemLabel="Seleccione..." itemValue=""/> 
@@ -37,7 +37,7 @@
                             <p:message for="cmbCatastro"/>
 
                             <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_estado}"/>
-                            <p:selectOneMenu   required="true" id="cmbIdentEstado" 
+                            <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !"  required="true" id="cmbIdentEstado" 
                                                value="#{gestionPatenteControlador.catDetIdentEstadoActual}" style="width:250px"
                                                converter="#{catalogoDetalleConverter}" var="t">
                                 <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -75,7 +75,7 @@
                                 <p:message for="compPnl1_5"/>
 
                                 <p:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_parroquia}"/>
-                                <p:selectOneMenu disabled="#{gestionPatenteControlador.habilitaCamposPropietario}"  required="true" id="cmbPropParroquia" 
+                                <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !" disabled="#{gestionPatenteControlador.habilitaCamposPropietario}"  required="true" id="cmbPropParroquia" 
                                                    value="#{gestionPatenteControlador.catDetParroquia}" style="width:250px"
                                                    converter="#{catalogoDetalleConverter}" var="t">
                                     <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -135,7 +135,7 @@
                 <p:panel>
                     <h:panelGrid columns="6">
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_establecimiento}"/>
-                        <p:selectOneMenu   required="true" id="cmbEstablecimiento" 
+                        <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !"  required="true" id="cmbEstablecimiento" 
                                            value="#{gestionPatenteControlador.catDetEstablecimientoActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -150,7 +150,7 @@
                         <p:message for="cmbEstablecimiento"/>
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_tipo_empresa}"/>
-                        <p:selectOneMenu   required="true" id="cmbTipEmpresa" 
+                        <p:selectOneMenu  requiredMessage="! Debe seleccionar una opción !" required="true" id="cmbTipEmpresa" 
                                            value="#{gestionPatenteControlador.catDetTipoEmpresActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -165,7 +165,7 @@
                         <p:message for="cmbTipEmpresa"/>
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_tipo_local}"/>
-                        <p:selectOneMenu   required="true" id="cmbTipLocal" 
+                        <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !"  required="true" id="cmbTipLocal" 
                                            value="#{gestionPatenteControlador.catDetTipoLocalActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -180,7 +180,7 @@
                         <p:message for="cmbTipLocal"/>
 
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_tipo_actividad_economica}"/>
-                        <p:selectOneMenu   required="true" id="cmbTipActividadEco" 
+                        <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !"  required="true" id="cmbTipActividadEco" 
                                            value="#{gestionPatenteControlador.catDetTipActEcoActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -222,7 +222,7 @@
                     </h:panelGrid>
                     <h:panelGrid columns="6">
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_horario_funcionamiento}"/>
-                        <p:selectOneMenu   required="true" id="cmbHorarioFun" 
+                        <p:selectOneMenu  requiredMessage="! Debe seleccionar una opción !" required="true" id="cmbHorarioFun" 
                                            value="#{gestionPatenteControlador.catDetHorFuncionaActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -291,7 +291,7 @@
                     </h:panelGrid>
                     <h:panelGrid columns="3">
                         <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_especialidad}"/>
-                        <p:selectOneMenu   required="true" id="cmbEspTuris" 
+                        <p:selectOneMenu requiredMessage="! Debe seleccionar una opción !"  required="true" id="cmbEspTuris" 
                                            value="#{gestionPatenteControlador.catDetEspTurisActual}" style="width:250px"
                                            converter="#{catalogoDetalleConverter}" var="t">
                             <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
@@ -460,7 +460,8 @@
                                  async="true"
                                  global="false"
                                  />
-            </h:panelGrid>                    
+            </h:panelGrid>    
+           
         </center>
     </h:panelGrid>
 
