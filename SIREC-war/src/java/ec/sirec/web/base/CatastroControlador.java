@@ -12,6 +12,7 @@ import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
 import ec.sirec.ejb.entidades.Propietario;
+import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class CatastroControlador extends BaseControlador {
     private CatastroPredialServicio catastroServicio;
 
     private CatastroPredial catastroPredialActual;
+    private Propietario propietarioActual;
     private CatastroPredialAreas catastroPredialAreaBloqueActual;
     private List<CatastroPredialAreas> listaCatastroPredialAreasBloque;
 
@@ -115,6 +117,7 @@ public class CatastroControlador extends BaseControlador {
     public void inicializar() {
         try {
             catastroPredialActual = new CatastroPredial();
+            propietarioActual=new Propietario();
             catastroPredialAreaBloqueActual = new CatastroPredialAreas();
             listaCatastroPredialAreasBloque = new ArrayList<CatastroPredialAreas>();
             listaUsuSuelo = new ArrayList<CatastroPredialUsosuelo>();
@@ -192,6 +195,29 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void guardarPropietario(){
+        try{
+            if(catastroPredialActual.getCatpreCodigo()!=null && propietarioActual.getUsuIdentificacion()!=null){
+                PropietarioPredio pp=new PropietarioPredio();
+                pp.setProCi(propietarioActual);
+                pp.setCatpreCodigo(catastroPredialActual);
+                catastroServicio.guardarPropietarioPredio(pp);
+                catastroServicio.cargarListaPropietariosPredio(catastroPredialActual);
+            }else{
+                
+            }
+        }catch(Exception ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    public void eliminarPropietario(PropietarioPredio vpp){
+        try{
+            catastroServicio.eliminarPropietarioPredio(vpp);
+        }catch(Exception ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void guardarRegistrodeArea() {
         try {
@@ -247,6 +273,7 @@ public class CatastroControlador extends BaseControlador {
             if (codNac != null && codLoc != null) {
                 catastroPredialActual = catastroServicio.buscarCatastroPorCodigosClave(codNac, codLoc);
                 if (catastroPredialActual != null) {
+                    catastroServicio.cargarListaPropietariosPredio(catastroPredialActual);
                     listaCatastroPredialAreasBloque = catastroServicio.listarAreasPorCatastro(catastroPredialActual.getCatpreCodigo());
                     recuperarDatosDeCatastroInfraestructura();
                     listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastro(catastroPredialActual);
@@ -263,11 +290,13 @@ public class CatastroControlador extends BaseControlador {
 
     public void obtenerPropietario() {
         try {
-            String ci = catastroPredialActual.getProCi().getProCi();
+            String ci = propietarioActual.getProCi();
             if (!ci.isEmpty()) {
-                Propietario prop = catastroServicio.buscarPropietarioPorCi(ci);
-                if (prop != null) {
-                    catastroPredialActual.setProCi(prop);
+                propietarioActual = catastroServicio.buscarPropietarioPorCi(ci);
+                if (propietarioActual != null) {
+                    //
+                }else{
+                    propietarioActual=new Propietario();
                 }
             }
         } catch (Exception ex) {
@@ -864,4 +893,13 @@ public class CatastroControlador extends BaseControlador {
         this.listaOpcEdifGrupo5_9 = listaOpcEdifGrupo5_9;
     }
 
+    public Propietario getPropietarioActual() {
+        return propietarioActual;
+    }
+
+    public void setPropietarioActual(Propietario propietarioActual) {
+        this.propietarioActual = propietarioActual;
+    }
+    
+    
 }

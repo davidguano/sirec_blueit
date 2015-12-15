@@ -304,7 +304,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                 CatastroPredial CP = listaCatastroPredialTablaValoracion.get(i);
                 eVal.setCatpreCodigo(CP.getCatpreCodigo());
                 eVal.setCatpreClaveCatastal(CP.getCatpreCodNacional() + CP.getCatpreCodLocal());
-                eVal.setProCi(CP.getProCi());
+                eVal.setProCi(catastroPredialServicio.obtenerPropietarioPrincipalPredio(CP.getCatpreCodigo()));
                 eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
                 eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());
                 eVal.setCatastroPredialValoracion(catastroPredialValoracionServicio.buscarPorCatastroPredial(CP));

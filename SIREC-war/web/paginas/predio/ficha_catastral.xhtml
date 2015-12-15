@@ -92,7 +92,7 @@
                                                          columns="3">
 
                                                 <p:outputLabel value="CI/RUC:" for="propCi"/>
-                                                <p:inputText id="propCi" value="#{catastroControlador.catastroPredialActual.proCi.proCi}" 
+                                                <p:inputText id="propCi" value="#{catastroControlador.propietarioActual.proCi}" 
                                                              required="true"
                                                              maxlength="13"
                                                              size="10"
@@ -104,43 +104,43 @@
                                                                  update="pnlPropietario"/>
 
                                                 <p:outputLabel value="Tipo Persona:"/>
-                                                <p:outputLabel value="Natural" rendered="#{catastroControlador.catastroPredialActual.proCi.proTipoPersona=='N'}"/>
-                                                <p:outputLabel value="Juridica" rendered="#{catastroControlador.catastroPredialActual.proCi.proTipoPersona=='J'}"/>
-                                                <f:verbatim rendered="#{catastroControlador.catastroPredialActual.proCi.proTipoPersona==null}"/>
+                                                <p:outputLabel value="Natural" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"/>
+                                                <p:outputLabel value="Juridica" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='J'}"/>
+                                                <f:verbatim rendered="#{catastroControlador.propietarioActual.proTipoPersona==null}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Apellidos y Nombres:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proApellidos} #{catastroControlador.catastroPredialActual.proCi.proNombres}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proApellidos} #{catastroControlador.propietarioActual.proNombres}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Fecha de Nacimiento:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proFechaNacimiento}">
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proFechaNacimiento}">
                                                     <f:convertDateTime pattern="yyyy-MM-dd"/>
                                                 </p:outputLabel>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Razon Social:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proRazonSocial}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proRazonSocial}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Ciudad:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.catdetCiudad.catdetTexto}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.catdetCiudad.catdetTexto}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Direccion:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proDireccion}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proDireccion}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Telefono:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proTelefono}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proTelefono}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Correo:"/>
-                                                <p:outputLabel value="#{catastroControlador.catastroPredialActual.proCi.proCorreo}"/>
+                                                <p:outputLabel value="#{catastroControlador.propietarioActual.proCorreo}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Tiene Discapacidad:"/>
-                                                <p:selectBooleanCheckbox value="#{catastroControlador.catastroPredialActual.proCi.proDiscapacidad}"
+                                                <p:selectBooleanCheckbox value="#{catastroControlador.propietarioActual.proDiscapacidad}"
                                                                          disabled="true"/>
                                                 <f:verbatim/>
 
