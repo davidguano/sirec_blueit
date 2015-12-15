@@ -276,7 +276,6 @@ public class GestionExoDedMulPatenteControlador extends BaseControlador {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
-
     }
 
     public PatenteValoracionExtras getPatValExActual() {

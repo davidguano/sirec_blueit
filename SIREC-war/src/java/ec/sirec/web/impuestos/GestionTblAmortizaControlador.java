@@ -6,6 +6,7 @@
 package ec.sirec.web.impuestos;
 
 import ec.sirec.ejb.entidades.CatalogoDetalle;
+import ec.sirec.ejb.entidades.DatoGlobal;
 
 import ec.sirec.ejb.entidades.Patente;
 import ec.sirec.ejb.entidades.Patente15xmilValoracion;
@@ -14,13 +15,13 @@ import ec.sirec.ejb.entidades.PatenteArchivo;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.SegUsuario;
 
-
 import ec.sirec.ejb.servicios.PatenteArchivoServicio;
 import ec.sirec.ejb.servicios.PatenteServicio;
 import ec.sirec.ejb.servicios.PropietarioServicio;
 import ec.sirec.web.base.BaseControlador;
 import ec.sirec.web.util.ParametrosFile;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -43,18 +44,18 @@ import org.primefaces.event.FileUploadEvent;
 @ManagedBean
 @ViewScoped
 public class GestionTblAmortizaControlador extends BaseControlador {
+
     @EJB
     private PatenteArchivoServicio patenteArchivoServicio;
 
-    
     @EJB
     private PropietarioServicio propietarioServicio;
- 
+
     @EJB
     private PatenteServicio patenteServicio;
-    
-   
+
     private Patente patenteActual;
+    private DatoGlobal datoGlobalActual;
     private SegUsuario usuarioActual;
     private Propietario propietarioActual;
     private Patente15xmilValoracion patente15milValActual;
@@ -72,6 +73,7 @@ public class GestionTblAmortizaControlador extends BaseControlador {
     private int verBuscaPatente;
     private String buscNumPat;
     private String numPatente;
+    private int cargarArchivos;
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -79,17 +81,18 @@ public class GestionTblAmortizaControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
-             buscNumPat="";
-             numPatente="";
-            verBuscaPatente=0;
+            buscNumPat = "";
+            numPatente = "";
+            verBuscaPatente = 0;
+            cargarArchivos = 0;
             listaFiles = new ArrayList<ParametrosFile>();
             listadoArchivos = new ArrayList<PatenteArchivo>();
-             patenteArchivoActual=new PatenteArchivo();
+            patenteArchivoActual = new PatenteArchivo();
             usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
             patenteActual = new Patente();
             patente15milValActual = new Patente15xmilValoracion();
             verPanelDetalleImp = 0;
-            habilitaEdicion = false;          
+            habilitaEdicion = false;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -98,20 +101,19 @@ public class GestionTblAmortizaControlador extends BaseControlador {
     public GestionTblAmortizaControlador() {
     }
 
-    
-
     public void activaPanelDetalleImpuestos() {
         verPanelDetalleImp = 1;
     }
 
-  public void buscarPatente() {
+    public void buscarPatente() {
         try {
             verBuscaPatente = 1;
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
-public void cagarPatenteActual() {
+
+    public void cagarPatenteActual() {
         try {
             patenteActual = patenteServicio.cargarObjPatente(Integer.parseInt(buscNumPat));
             numPatente = "AE-MPM-" + patenteActual.getPatCodigo();
@@ -119,29 +121,67 @@ public void cagarPatenteActual() {
             LOGGER.log(Level.SEVERE, null, e);
         }
     }
-//    public void guardaEmiPatente15xMil() {
-//        try {
-//            if (habilitaEdicion == false) {
-////////                if (patenteServicio.existePatente15milValoracion(patente15milValActual.getPat15valCodigo())) {
-////////                    addWarningMessage("Existe Código");
-////////                } else {
-//////////                    patente15milValActual.setPat15valBaseImponible(valBaseImponible);
-//////////                    patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
-//////////                    patente15milValActual.setPat15valSubtotal(valSubTotal);
-//////////                    patenteServicio.crearPatente15milValoracion(patente15milValActual);
-////////                    addSuccessMessage("Patente Valoración 1.5xmil Guardado");
-////////                    patente15milValActual = new Patente15xmilValoracion();
-////////                }
-//            } else {
-//                ///   patenteServicio.editarPatente15milValoracion(patente15milValActual);
-//                addSuccessMessage("Patente Valoración  Actualizado");
-//                patente15milValActual = new Patente15xmilValoracion();
-//                habilitaEdicion = false;
-//            }
-//        } catch (Exception e) {
-//            LOGGER.log(Level.SEVERE, null, e);
-//        }
-//    }
+
+    public void activaPanelVerArchivos() {
+        try {
+            listarArchivosPatenteTA();
+            if (listadoArchivos.isEmpty()) {
+                verArchivos = 1;
+            } else {
+                verArchivos = 0;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void activPanelCargrArchivos() {
+        cargarArchivos = 1;
+    }
+
+    public void listarArchivosPatenteTA() throws Exception {
+        listadoArchivos = patenteArchivoServicio.listarArchivoPatentePorTipo(patenteActual.getPatCodigo(), "TA");
+    }
+
+    public void cargaObjetosBitacora() {
+        try {
+            datoGlobalActual = new DatoGlobal();
+            usuarioActual = new SegUsuario();
+            datoGlobalActual = patenteServicio.cargarObjPorNombre("Msj_Pat_In");
+            usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void guardaTablaAmortizacion() {
+        try {
+            if (habilitaEdicion == false) {
+//                if (patenteServicio.existePatente15milValoracion(patente15milValActual.getPat15valCodigo())) {
+//                    addWarningMessage("Existe Código");
+//                } else {
+//                    patente15milValActual.setPat15valBaseImponible(valBaseImponible);
+//                    patente15milValActual.setPat15valImpuesto(valImpuesto15xMil);
+//                    patente15milValActual.setPat15valSubtotal(valSubTotal);
+//                    patenteServicio.crearPatente15milValoracion(patente15milValActual);
+                cargaObjetosBitacora();
+                guardarArchivos();
+                patenteActual.setPatFechaAdjudicacion(fechaAdjudica);
+                patenteActual.setPatFechaVencimiento(fechaVencmiento);
+                patenteServicio.editarPatente(patenteActual);
+                addSuccessMessage("Tabla de Amortización Guardado");
+                patente15milValActual = new Patente15xmilValoracion();
+//                }
+            } else {
+//                   patenteServicio.editarPatente15milValoracion(patente15milValActual);
+                addSuccessMessage("Patente Valoración  Actualizado");
+                patente15milValActual = new Patente15xmilValoracion();
+                habilitaEdicion = false;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
 
     public void guardarArchivos() {
         Iterator<ParametrosFile> itera = listaFiles.iterator();
@@ -152,9 +192,9 @@ public void cagarPatenteActual() {
                 patArchivo.setPatCodigo(patenteActual);
                 patArchivo.setPatarcNombre(elemento.getName());
                 patArchivo.setPatarcData(elemento.getData());
-                patArchivo.setPatarcTipo("EX"); //Archivo de Patentes
+                patArchivo.setPatarcTipo("TA"); //Archivo de Patentes
                 patArchivo.setUsuIdentificacion(usuarioActual);
-            //    patArchivo.setUltaccDetalle(datoGlobalActual.getDatgloDescripcion());
+                //    patArchivo.setUltaccDetalle(datoGlobalActual.getDatgloDescripcion());
                 patArchivo.setUltaccMarcatiempo(java.util.Calendar.getInstance().getTime());
                 patenteArchivoServicio.guardarArchivo(patArchivo);
             }

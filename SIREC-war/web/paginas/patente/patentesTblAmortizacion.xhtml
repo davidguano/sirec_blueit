@@ -79,7 +79,7 @@
 
                         <h:panelGrid columns="3">
                             <p:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_deuda_ini}"/>
-                            <p:inputText   id="txtDeInicial" value="#{gestionTblAmortizaControlador.patenteActual.patAreaLocal}"  
+                            <p:inputText   id="txtDeInicial" value="#{gestionTblAmortizaControlador.patenteActual.patDeudaInicial}"  
                                            size="40"   />
                             <p:message for="txtDeInicial"/>  
                         </h:panelGrid>  
@@ -88,7 +88,7 @@
                         <h:panelGrid columns="2">
                             <p:commandButton value="#{txt.btn_visualizar_archivo}" 
                                              id="btnVerFile" 
-                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.activaPanelVerArchivos()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -97,16 +97,18 @@
                                              />
                             <p:commandButton value="#{txt.bnt_carga_archivo}" 
                                              id="btnCargaFile" 
-                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.activPanelCargrArchivos()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
                                              async="true"
                                              global="false"
                                              />
+                        </h:panelGrid>
+                        <h:panelGrid>
                             <p:commandButton value="#{txt.btn_guardar}" 
                                              id="btnSave" 
-                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.guardaTablaAmortizacion()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -115,7 +117,7 @@
                                              />
                             <p:commandButton value="#{txt.btn_cancelar}" 
                                              id="btnCancel" 
-                                             action="#{gestionTblAmortizaControlador.calcularValorPatrimonio()}" 
+                                             action="#{gestionTblAmortizaControlador.inicializar()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlConTblAmortizacion" 
                                              update=":frmPat:tabPrin:pnlConTblAmortizacion,:frmPat:msgs"
@@ -126,8 +128,8 @@
                     </h:panelGrid>
                 </p:panel>
             </h:panelGrid>  
-            <h:panelGrid id="pnlCargarFileAmortiza">
-                <p:panel header="Archivo" style="font-size: #{txt.font_size}">
+            <h:panelGrid id="pnlCargarFileAmortiza" width="1000">
+                <p:panel header="Archivo" style="font-size: #{txt.font_size}" >
                     <h:panelGrid>
                         <p:panel header="Adjuntar Documentos" style="font-size: #{txt.font_size}">
                             <h:panelGrid columns="3">
@@ -191,7 +193,7 @@
                                         <h:outputText value="#{archivoColumna.patarcNombre}" style="font-size:12px;" />
                                     </p:column> 
 
-                                    <p:column headerText="#{txt.eliminar_btn}" style="width:50px;text-align: center;font-size:12px;" >
+                                    <p:column headerText="#{txt.lbl_eliminar}" style="width:50px;text-align: center;font-size:12px;" >
                                         <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
                                                          actionListener="#{gestionTblAmortizaControlador.confirmaEliminarPatArchivo(archivoColumna)}" 
                                                          process="@this" update=":frmPat:tabPrin:tablLisAmortiza,:frmPat:tabPrin:tablLisAmortiza:message" async="true" global="false">
