@@ -86,7 +86,8 @@ public class GestionDecTributaria extends BaseControlador {
     public void cargarInfoPropietario() {
         try {
             propietarioActual = propietarioServicio.buscarPropietario(usuarioActual.getUsuIdentificacion());
-            catastroPredialActual = catastroPredialServicio.cargarObjCatPorPropietario(propietarioActual.getProCi());
+            //cambiar metodo: un propietario tiene varios catastros , utilizar metodo listarPropietariosPredioPorPropietario
+            //catastroPredialActual = catastroPredialServicio.cargarObjCatPorPropietario(propietarioActual.getProCi());
             patenteActual = patenteServicio.cargarObjPatentePorCatastro(catastroPredialActual.getCatpreCodigo());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
