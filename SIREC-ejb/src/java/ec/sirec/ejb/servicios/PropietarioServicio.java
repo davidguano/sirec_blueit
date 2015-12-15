@@ -7,6 +7,7 @@
 package ec.sirec.ejb.servicios;
 
 import ec.sirec.ejb.entidades.CatalogoDetalle;
+import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.facade.PropietarioFacade;
@@ -57,6 +58,11 @@ public class PropietarioServicio {
      public List<PropietarioPredio> listarPropietariosPredio(Integer idCatastroPre) throws Exception{
          return propietarioPredioDao.listarPorCampoOrdenada("PropietarioPredio", "catpreCodigo.catpreCodigo", idCatastroPre, "propreCodigo", "asc");
      }
+     
+     public List<PropietarioPredio> listarPropietariosPredioPorPropietario(Propietario prop) throws Exception{
+         return propietarioPredioDao.listarPorCampoOrdenada("PropietarioPredio", "proCi", prop, "propreCodigo", "asc");
+     }
+     
      public Propietario obtenerPropietarioPrincipalPredio(Integer idCatastroPre) throws Exception{
          Propietario p=new Propietario();
          List<PropietarioPredio> lstpp=new ArrayList<PropietarioPredio>();
