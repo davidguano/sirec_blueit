@@ -7,6 +7,7 @@
 package ec.sirec.ejb.entidades;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -24,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -162,9 +164,6 @@ public class CatastroPredial implements Serializable {
     @JoinColumn(name = "usu_identificacion", referencedColumnName = "usu_identificacion")
     @ManyToOne(optional = false)
     private SegUsuario usuIdentificacion;
-    @JoinColumn(name = "pro_ci", referencedColumnName = "pro_ci")
-    @ManyToOne(optional = false)
-    private Propietario proCi;
     @JoinColumn(name = "catdet_fuente_informacion", referencedColumnName = "catdet_codigo")
     @ManyToOne
     private CatalogoDetalle catdetFuenteInformacion;
@@ -225,10 +224,12 @@ public class CatastroPredial implements Serializable {
     @JoinColumn(name = "catdet_caracteristicas_suelo", referencedColumnName = "catdet_codigo")
     @ManyToOne
     private CatalogoDetalle catdetCaracteristicasSuelo;
+    @Transient
+    private List<PropietarioPredio> listaPropietariosPredio;
     
 
     public CatastroPredial() {
-        proCi=new Propietario();
+        listaPropietariosPredio=new ArrayList<PropietarioPredio>();
         catdetTipoProp1=new CatalogoDetalle();
         catdetTipoProp2=new CatalogoDetalle();
         catdetTipoVia=new CatalogoDetalle();
@@ -618,13 +619,6 @@ public class CatastroPredial implements Serializable {
         this.usuIdentificacion = usuIdentificacion;
     }
 
-    public Propietario getProCi() {
-        return proCi;
-    }
-
-    public void setProCi(Propietario proCi) {
-        this.proCi = proCi;
-    }
 
     public CatalogoDetalle getCatdetFuenteInformacion() {
         if(catdetFuenteInformacion==null){
@@ -845,6 +839,16 @@ public class CatastroPredial implements Serializable {
         this.catdetCaracteristicasSuelo = catdetCaracteristicasSuelo;
     }
 
+    public List<PropietarioPredio> getListaPropietariosPredio() {
+        return listaPropietariosPredio;
+    }
+
+    public void setListaPropietariosPredio(List<PropietarioPredio> listaPropietariosPredio) {
+        this.listaPropietariosPredio = listaPropietariosPredio;
+    }
+
+    
+    
    
     @Override
     public int hashCode() {

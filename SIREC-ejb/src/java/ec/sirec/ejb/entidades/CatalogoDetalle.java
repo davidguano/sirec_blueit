@@ -51,6 +51,8 @@ public class CatalogoDetalle implements Serializable {
     private Integer catdetOrden;
     @Column(name = "catdet_estado")
     private Boolean catdetEstado;
+    @Column(name = "catdet_valor")
+    private Integer catdetValor;
     @JoinColumn(name = "cat_codigo", referencedColumnName = "cat_codigo")
     @ManyToOne(optional = false)
     private Catalogo catCodigo;
@@ -113,6 +115,14 @@ public class CatalogoDetalle implements Serializable {
 
     public void setCatCodigo(Catalogo catCodigo) {
         this.catCodigo = catCodigo;
+    }
+
+    public Integer getCatdetValor() {
+        return catdetValor;
+    }
+
+    public void setCatdetValor(Integer catdetValor) {
+        this.catdetValor = catdetValor;
     }
 
    

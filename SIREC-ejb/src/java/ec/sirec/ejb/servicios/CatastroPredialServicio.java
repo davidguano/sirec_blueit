@@ -12,6 +12,7 @@ import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
 import ec.sirec.ejb.entidades.Propietario;
+import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.facade.CatastroPredialAreasFacade;
 import ec.sirec.ejb.facade.CatastroPredialEdificacionFacade;
 import ec.sirec.ejb.facade.CatastroPredialFacade;
@@ -121,6 +122,27 @@ public class CatastroPredialServicio {
         controlDetCatalogosNulos(vcatastro);
         catastroPredialDao.editar(vcatastro);
     }
+    
+    //PROPIETARIOS:
+    public void cargarListaPropietariosPredio(CatastroPredial catPred) throws Exception{
+        if(catPred!=null){
+            if(catPred.getCatpreCodigo()!=null){
+                List<PropietarioPredio> lstPP=propietarioServicio.listarPropietariosPredio(catPred.getCatpreCodigo());
+                if(!lstPP.isEmpty()){
+                    catPred.setListaPropietariosPredio(lstPP);
+                }
+            }
+        }
+    }
+    public void guardarPropietarioPredio(PropietarioPredio vPP) throws Exception{
+         propietarioServicio.guardarPropietarioPredio(vPP);
+     }
+     public void eliminarPropietarioPredio(PropietarioPredio vPP) throws Exception{
+         propietarioServicio.eliminarPropietarioPredio(vPP);
+     }
+     public Propietario obtenerPropietarioPrincipalPredio(Integer idCatastroPre) throws Exception{
+         return propietarioServicio.obtenerPropietarioPrincipalPredio(idCatastroPre);
+     }
 
     //INFRAESTRUCTURA
     public void guardarItemsInfraestructura(CatastroPredial vcatastro, int vitem, List<CatastroPredialInfraestructura> lstItems) throws Exception {

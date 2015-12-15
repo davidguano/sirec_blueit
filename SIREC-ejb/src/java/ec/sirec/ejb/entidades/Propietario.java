@@ -83,8 +83,6 @@ public class Propietario implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proCi")
     private List<RecaudacionCab> recaudacionCabList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proCi")
-    private List<CatastroPredial> catastroPredialList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "proCi")
     private List<Cementerio> cementerioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proCi")
     private List<Servicios> serviciosList;
@@ -208,13 +206,6 @@ public class Propietario implements Serializable {
         this.recaudacionCabList = recaudacionCabList;
     }
 
-    public List<CatastroPredial> getCatastroPredialList() {
-        return catastroPredialList;
-    }
-
-    public void setCatastroPredialList(List<CatastroPredial> catastroPredialList) {
-        this.catastroPredialList = catastroPredialList;
-    }
 
     public List<Cementerio> getCementerioList() {
         return cementerioList;
