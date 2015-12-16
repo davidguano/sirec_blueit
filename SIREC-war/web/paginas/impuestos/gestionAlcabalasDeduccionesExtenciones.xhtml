@@ -9,15 +9,38 @@
                 
                 <center>
                     <h:panelGrid id="panelContieneAplicacion2" width="1000" columns="1" >                                                 
-                            <p:panel header="#{txt.INGRESO}">                                
+                        <p:panel header="#{txt.DEDUCCIONES}">                                
                                 <h:panelGrid columns="2">
-                                    
+                                    <p:selectManyCheckbox id="cmbDec" value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosDeduccionesSeleccion}"
+                                                  layout="grid" columns="1"
+                                                  style="width:500px" 
+                                                  > 
+                                <f:selectItems var="tipo" 
+                                               value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosDeducciones}" 
+                                               itemLabel="#{tipo.adidedDescripcion}" 
+                                               itemValue="#{tipo.adidedCodigo}"/> 
+                            </p:selectManyCheckbox>
                                 </h:panelGrid>                                                                                                       
                                 
                                 </p:panel>
                             
+                        <p:panel header="#{txt.EXONERACIONES}">                                
+                                <h:panelGrid columns="2">
+                                    <p:selectManyCheckbox id="cmbExc" value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosExcencionesSeleccion}"
+                                                  layout="grid" columns="1"
+                                                  style="width:500px" 
+                                                  > 
+                                <f:selectItems var="tipo" 
+                                               value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosExcenciones}" 
+                                               itemLabel="#{tipo.adidedDescripcion}" 
+                                               itemValue="#{tipo.adidedCodigo}"/> 
+                            </p:selectManyCheckbox>
+                                </h:panelGrid>                                                                                                       
+                                
+                                </p:panel>
+                       
                            
                                                                                                                                                  
                   </h:panelGrid>
                 </center>
-</html>    
+</html>        

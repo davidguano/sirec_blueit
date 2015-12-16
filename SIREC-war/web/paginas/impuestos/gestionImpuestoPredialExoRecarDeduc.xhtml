@@ -97,8 +97,8 @@
                                                      id="btnVerDoc" 
                                                      action="#{gestionImpuestoPredialControlador.listarArchivos()}" 
                                                      icon="ui-icon-disk"  
-                                                     process="@this" 
-                                                     update=":frmImpPredial:tabImpPred:pnllstArch"
+                                                     process="@this,pnlCC" 
+                                                     update=":frmImpPredial:tabImpPred:pnllstArch,:frmImpPredial:msgs"
                                                      async="true"
                                                      global="false"
                                                      />
