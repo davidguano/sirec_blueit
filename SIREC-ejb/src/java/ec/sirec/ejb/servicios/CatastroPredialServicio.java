@@ -473,6 +473,13 @@ public class CatastroPredialServicio {
     public List<CatastroPredial> listarCatastroXCodigo(Integer codigo) throws Exception {
         return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catpreCodigo", codigo, "catpreCodigo", "asc");
     }
-
+    
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_SubGrupo2(CatastroPredial vcatastro) throws Exception {
+        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "2", "catpreediCodigo", "asc");
+    }
+    
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_SubGrupo3(CatastroPredial vcatastro) throws Exception {
+        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "3", "catpreediCodigo", "asc");
+    }
  
 }

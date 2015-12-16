@@ -5,13 +5,14 @@
  */
 package ec.sirec.ejb.servicios;
 
+import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.facade.PredioArchivoFacade;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
 /**
  *
@@ -52,6 +53,9 @@ public class PredioArchivoServicio {
     
         public List<PredioArchivo> listarArchivos(SegUsuario usuario) throws Exception {
         return predioArchivoDao.listarPorCampoOrdenada(ENTIDAD_PREDIO_ARCHIVO, "usuIdentificacion", usuario, "ultaccMarcatiempo", "asc");
+    }
+    public List<PredioArchivo> listarArchivosXImpuesto(CatastroPredial catastro, String tipoImp) throws Exception {
+        return predioArchivoDao.listarPor2CamposOrdenada(ENTIDAD_PREDIO_ARCHIVO, "catpreCodigo", catastro, "prearcTipo", tipoImp, "ultaccMarcatiempo", "asc");
     }
 
 //    public boolean existeAplicacion(Integer vApli) throws Exception {

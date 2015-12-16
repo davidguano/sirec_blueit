@@ -31,8 +31,7 @@ public class AdicionalesDeductivosFacade extends AbstractFacade<AdicionalesDeduc
         super(AdicionalesDeductivos.class);
     }
     
-    
-     public BigDecimal obteneValorXAdicional(Object vvalor1, Object vvalor2, Object vvalor3) throws Exception {
+    public BigDecimal obteneValorXAdicional(Object vvalor1, Object vvalor2, Object vvalor3) throws Exception {
         String sql = " select sum(d.adidedValorfijo) from CatastroPredial c, CatastroPredialValoracion v, CpValoracionExtras e, AdicionalesDeductivos d"
                 + " where c.catpreCodigo=:vvalor1 and "
                 + " c.catpreCodigo=v.catpreCodigo and "
