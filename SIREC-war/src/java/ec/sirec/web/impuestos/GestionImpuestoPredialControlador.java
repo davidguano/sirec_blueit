@@ -8,6 +8,7 @@ package ec.sirec.web.impuestos;
 import ec.sirec.ejb.clases.EjecutarValoracion;
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
 import ec.sirec.ejb.entidades.CatastroPredial;
+import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.PredioArchivo;
@@ -67,6 +68,9 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private List<CatastroPredial> listaCatastroPredialClavesCatastrales;
     private List<EjecutarValoracion> listaEjecutarValoracion;
     private EjecutarValoracion ejecutarValoracionAcual;
+    private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_1;
+    private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_2;
+    private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_3;
 
     private PredioArchivo predioArchivo;
     private CatastroPredial catastroPredialActual;
@@ -146,16 +150,21 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     }
 
     public void listarArchivos() {
-        try {
-            listaPredioArchivo = new ArrayList<PredioArchivo>();
-            listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
-
+        try {            
+            if (catastroPredialActual != null) {                
+                listaPredioArchivo = new ArrayList<PredioArchivo>();
+               // listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
+               listaPredioArchivo = predioArchivoServicio.listarArchivosXImpuesto(catastroPredialActual, "PR");                                
+            }else{
+                listaPredioArchivo = new ArrayList<PredioArchivo>();
+                addWarningMessage("Eliga la clave Catastral!"); 
+            
+            }                        
             System.out.println("s:  " + listaPredioArchivo.size());
 
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-
     }
 
     public void eliminarArchivo(PredioArchivo archivo) {
@@ -213,10 +222,73 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ioex);
         }
     }
+    
+     public void valoracionConstruccion() {
+         try { 
+          listaCatastroPredialEdificacion1_1 = new ArrayList<CatastroPredialEdificacion>();                      
+          listaCatastroPredialEdificacion1_1 = catastroPredialServicio.listarEdificacionesGrupo1_1(catastroPredialActual);
+           
+          List <Integer>  vidaUtil = new ArrayList<Integer>();
+          
+             for (int i = 0; i < listaCatastroPredialEdificacion1_1.size(); i++) {
+                 CatastroPredialEdificacion CPEdif = listaCatastroPredialEdificacion1_1.get(i);
+                 try {
+                   //  System.out.println("valor: " + CPEdif.getCatdetCodigo().getCatdetValor());
+                     vidaUtil.add(CPEdif.getCatdetCodigo().getCatdetValor());
+                 } catch (NullPointerException nex) {
+                     vidaUtil.add(0);
+                     // LOGGER.log(Level.SEVERE, null, nex);
+                 }
+             }
+          
+          listaCatastroPredialEdificacion1_2 = new ArrayList<CatastroPredialEdificacion>();                      
+          listaCatastroPredialEdificacion1_2 = catastroPredialServicio.listarEdificacionesGrupo1_SubGrupo2(catastroPredialActual);           
+          List <Integer> Edad = new ArrayList<Integer>();  
+          for (int i = 0; i < listaCatastroPredialEdificacion1_2.size(); i++) {
+                 CatastroPredialEdificacion CPEdif = listaCatastroPredialEdificacion1_2.get(i);
+                 try {
+                    // System.out.println("valor: " + CPEdif.getCatdetCodigo().getCatdetValor());
+                     Edad.add(CPEdif.getCatpreediValor());
+                 } catch (NullPointerException nex) {
+                     Edad.add(0);
+                     // LOGGER.log(Level.SEVERE, null, nex);
+                 }
+          }
+          
+          listaCatastroPredialEdificacion1_3 = new ArrayList<CatastroPredialEdificacion>();                      
+          listaCatastroPredialEdificacion1_3 = catastroPredialServicio.listarEdificacionesGrupo1_SubGrupo3(catastroPredialActual);           
+          List <String> estadoCons = new ArrayList<String>();  
+          for (int i = 0; i < listaCatastroPredialEdificacion1_3.size(); i++) {
+                 CatastroPredialEdificacion CPEdif = listaCatastroPredialEdificacion1_3.get(i);
+                 try {
+                    // System.out.println("valor: " + CPEdif.getCatdetCodigo().getCatdetValor());
+                     estadoCons.add(CPEdif.getCatdetCodigo().getCatdetTexto());
+                 } catch (NullPointerException nex) {
+                     estadoCons.add("");
+                     // LOGGER.log(Level.SEVERE, null, nex);
+                 }
+          }
+          
+          List <Double> FactorDepreciacion = new ArrayList<Double>();
+          
+          for (int i = 0; i < vidaUtil.size(); i++) {                 
+             FactorDepreciacion.add(((double)Edad.get(i)/(double)vidaUtil.get(i))*100); 
+              //System.out.println("FactorFF: "+FactorDepreciacion.get(i)); 
+          }
+          
+          
+          
+          
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void guardarAdicionalesDeductivos() {
         try {
 
+           valoracionConstruccion();
+            
             adicionalesDeductivosActual = new AdicionalesDeductivos();
             catastroPredialValoracionActual = new CatastroPredialValoracion();
 

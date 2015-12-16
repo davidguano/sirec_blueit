@@ -13,6 +13,7 @@ import ec.sirec.ejb.entidades.CatastroPredialAlcabalaValoracion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.PredioArchivo;
+import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
@@ -51,7 +52,7 @@ public class GestionAlcabalasControlador extends BaseControlador {
      * Creates a new instance of GestionConceptoControlador
      */
     //LOGGER 
-    private static final Logger LOGGER = Logger.getLogger(GestionAlcabalasControlador.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GestionAlcabalas.class.getName());
     // VARIABLES Y ATRIBUTOS
 
      private SegUsuario usuarioActual;
@@ -63,11 +64,15 @@ public class GestionAlcabalasControlador extends BaseControlador {
      private List<CatalogoDetalle> listaCatalogoDetalleConcepto;
      private CatastroPredialValoracion catastroPredialValoracionActual;
      
-     
+    private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones;
+    private List<String> listaAdicionalesDeductivosDeduccionesSeleccion;
+    private List<AdicionalesDeductivos> listaAdicionalesDeductivosExcenciones;
+    private List<String> listaAdicionalesDeductivosExcencionesSeleccion;
      
      private AdicionalesDeductivos adicionalesDeductivosActual;
      private CpValoracionExtras cpValoracionExtrasActual;
      private StreamedContent archivo;
+     private Propietario propietario;
      
     
     // SERVICIOS
@@ -103,6 +108,8 @@ public class GestionAlcabalasControlador extends BaseControlador {
             listarCatastroPredial();            
             obtenerUsuario();    
             listarConceptos();
+            
+             listarCatalogosDetalle();
                       
             // listaPredioArchivo =new ArrayList<PredioArchivo>();
              
@@ -112,7 +119,7 @@ public class GestionAlcabalasControlador extends BaseControlador {
     }
     
     public void obtenerUsuario(){
-    usuarioActual = new SegUsuario (); 
+     usuarioActual = new SegUsuario (); 
      usuarioActual = (SegUsuario) getSession().getAttribute("usuario");           
            //System.out.println(usuarioActual.getUsuIdentificacion());         
     }
@@ -147,10 +154,16 @@ public class GestionAlcabalasControlador extends BaseControlador {
        try {
            
           catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());
-          //catastroPredialActual.setCatpreAreaTotal(catastroPredialActual.getCatpreAreaTotal()+catastroPredialActual.getCatpreAreaTotalCons());                              
+          catastroPredialActual.setCatpreAreaTotal(catastroPredialActual.getCatpreAreaTotalEsc()+catastroPredialActual.getCatpreAreaTotalCons());                              
           
-           catastroPredialValoracionActual = new CatastroPredialValoracion();
-           catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+          propietario = new Propietario();
+          propietario = catastroPredialServicio.obtenerPropietarioPrincipalPredio(catastroPredialActual.getCatpreCodigo());
+           System.out.println("s: "+propietario.getProCi());
+         System.out.println("m: "+ propietario.getProNombres());
+          
+          catastroPredialValoracionActual = new CatastroPredialValoracion();
+          catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+          
           
          } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -193,7 +206,17 @@ public class GestionAlcabalasControlador extends BaseControlador {
        }
       
       
-      
+      public void listarCatalogosDetalle() {
+        try {
+            listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
+            listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D", "AL");
+            listaAdicionalesDeductivosExcenciones = new ArrayList<AdicionalesDeductivos>();
+            listaAdicionalesDeductivosExcenciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E", "AL");
+            
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
       
       
       
@@ -288,9 +311,9 @@ public class GestionAlcabalasControlador extends BaseControlador {
 //          try {
 //      if(listaPredioArchivo.size()>0){
 //            
-//         for (int i = 0; i < listaAdicionalesDeductivosRecargosSeleccion.size(); i++) {
+//         for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
 //             cpValoracionExtrasActual = new CpValoracionExtras();
-//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosRecargosSeleccion.get(i)));             
+//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));             
 //             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
 //             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
 //             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
@@ -299,9 +322,9 @@ public class GestionAlcabalasControlador extends BaseControlador {
 //             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
 //         }
 //         
-//         for (int i = 0; i < listaAdicionalesDeductivosExoneracionesSeleccion.size(); i++) {
+//         for (int i = 0; i < listaAdicionalesDeductivosExcencionesSeleccion.size(); i++) {
 //             cpValoracionExtrasActual = new CpValoracionExtras();
-//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosExoneracionesSeleccion.get(i)));             
+//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosExcencionesSeleccion.get(i)));             
 //             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
 //             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
 //             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
@@ -402,6 +425,46 @@ public class GestionAlcabalasControlador extends BaseControlador {
 
     public void setCatastroPredialValoracionActual(CatastroPredialValoracion catastroPredialValoracionActual) {
         this.catastroPredialValoracionActual = catastroPredialValoracionActual;
+    }
+
+    public List<AdicionalesDeductivos> getListaAdicionalesDeductivosDeducciones() {
+        return listaAdicionalesDeductivosDeducciones;
+    }
+
+    public void setListaAdicionalesDeductivosDeducciones(List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones) {
+        this.listaAdicionalesDeductivosDeducciones = listaAdicionalesDeductivosDeducciones;
+    }
+
+    public List<String> getListaAdicionalesDeductivosDeduccionesSeleccion() {
+        return listaAdicionalesDeductivosDeduccionesSeleccion;
+    }
+
+    public void setListaAdicionalesDeductivosDeduccionesSeleccion(List<String> listaAdicionalesDeductivosDeduccionesSeleccion) {
+        this.listaAdicionalesDeductivosDeduccionesSeleccion = listaAdicionalesDeductivosDeduccionesSeleccion;
+    }
+
+    public List<AdicionalesDeductivos> getListaAdicionalesDeductivosExcenciones() {
+        return listaAdicionalesDeductivosExcenciones;
+    }
+
+    public void setListaAdicionalesDeductivosExcenciones(List<AdicionalesDeductivos> listaAdicionalesDeductivosExcenciones) {
+        this.listaAdicionalesDeductivosExcenciones = listaAdicionalesDeductivosExcenciones;
+    }
+
+    public List<String> getListaAdicionalesDeductivosExcencionesSeleccion() {
+        return listaAdicionalesDeductivosExcencionesSeleccion;
+    }
+
+    public void setListaAdicionalesDeductivosExcencionesSeleccion(List<String> listaAdicionalesDeductivosExcencionesSeleccion) {
+        this.listaAdicionalesDeductivosExcencionesSeleccion = listaAdicionalesDeductivosExcencionesSeleccion;
+    }
+
+    public Propietario getPropietario() {
+        return propietario;
+    }
+
+    public void setPropietario(Propietario propietario) {
+        this.propietario = propietario;
     }
     
     
