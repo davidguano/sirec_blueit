@@ -71,6 +71,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_1;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_2;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_3;
+    private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion2;
 
     private PredioArchivo predioArchivo;
     private CatastroPredial catastroPredialActual;
@@ -276,7 +277,26 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
               //System.out.println("FactorFF: "+FactorDepreciacion.get(i)); 
           }
           
-          
+          listaCatastroPredialEdificacion2 = new ArrayList<CatastroPredialEdificacion>();                      
+          listaCatastroPredialEdificacion2 = catastroPredialServicio.listarEdificacionesGrupo2(catastroPredialActual);
+          for (int i = 0; i < listaCatastroPredialEdificacion2.size(); i++) {
+                 CatastroPredialEdificacion CPEdif = listaCatastroPredialEdificacion2.get(i);
+                 
+                 if(i==0){
+                 
+                 }else{
+                 
+                 }
+                 
+                 
+                 try {
+                    // System.out.println("valor: " + CPEdif.getCatdetCodigo().getCatdetValor());
+                     estadoCons.add(CPEdif.getCatdetCodigo().getCatdetTexto());
+                 } catch (NullPointerException nex) {
+                     estadoCons.add("");
+                     // LOGGER.log(Level.SEVERE, null, nex);
+                 }
+          }
           
           
         } catch (Exception ex) {
