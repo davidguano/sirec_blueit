@@ -9,7 +9,7 @@
                 
                 <center>
                     <h:panelGrid id="panelContieneAplicacion2" width="1000" columns="1" >                                                 
-                        <p:panel header="#{txt.DEDUCCIONES}">                                
+                        <p:panel id="pnlDed" header="#{txt.DEDUCCIONES}">                                
                                 <h:panelGrid columns="2">
                                     <p:selectManyCheckbox id="cmbDec" value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosDeduccionesSeleccion}"
                                                   layout="grid" columns="1"
@@ -24,7 +24,7 @@
                                 
                                 </p:panel>
                             
-                        <p:panel header="#{txt.EXONERACIONES}">                                
+                        <p:panel id="pnlEx" header="#{txt.EXONERACIONES}">                                
                                 <h:panelGrid columns="2">
                                     <p:selectManyCheckbox id="cmbExc" value="#{gestionAlcabalasControlador.listaAdicionalesDeductivosExcencionesSeleccion}"
                                                   layout="grid" columns="1"
@@ -39,7 +39,69 @@
                                 
                                 </p:panel>
                        
-                           
+                        <p:panel id="pnlDoc" header="#{txt.DOCUMENTOS}">
+                        
+                               <p:fileUpload fileUploadListener="#{gestionAlcabalasControlador.handleFileUpload}"  
+                                                      mode="advanced"
+                                                      dragDropSupport="false"
+                                                      multiple="true"  
+                                                      update=":frmAlcabalas:msgs,:frmAlcabalas:tabAlca:pnllstArch"
+                                                      sizeLimit="10000000000"
+                                                      allowTypes="/(\.|\/)(pdf|xls|xlsx|jpg)$/"
+                                                      invalidSizeMessage="El archivo debe ser maximo 1MB"
+                                                      label="Seleccione el Documento" 
+                                                      uploadLabel="Cargar"
+                                                      cancelLabel="Cancelar"
+                                                      process="@this,">                                                                                                                                        
+                                        </p:fileUpload>
+                            
+                            
+                             <br/>
+                                <p:commandButton value="#{txt.VER_dOC_btn}" 
+                                                     id="btnVerDoc" 
+                                                     action="#{gestionAlcabalasControlador.listarArchivos()}" 
+                                                     icon="ui-icon-disk"  
+                                                     process="@this" 
+                                                     update=":frmAlcabalas:tabAlca:pnllstArch,:frmAlcabalas:msgs"
+                                                     async="true"
+                                                     global="false"
+                                                     />
+                            <p:panel id="pnllstArch">                                
+                                <p:dataTable id="lstArch" value="#{gestionAlcabalasControlador.listaAlcabalasArchivo}"  var="archivo"  >
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Lista de Archivos" style="font-size:12px;"/>
+                                        </f:facet>
+                                        <p:column headerText="Tipo" width="50">
+                                            <h:outputText value="#{archivo.prearcTipo}" style="font-size:12px;" />
+                                        </p:column>
+                                        <p:column headerText="Nombre del Archivo" width="150">
+                                            <h:outputText value="#{archivo.prearcNombre}" style="font-size:12px;" />
+                                        </p:column>
+                                        <p:column headerText="Fecha de Creación" width="105">
+                                            <h:outputText value="#{archivo.ultaccMarcatiempo}" style="font-size:12px;"/>
+                                        </p:column>
+                                       <p:column headerText="Descargar" width="100">
+                                           <p:commandButton id="downloadLink" value="Descargar" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"   
+                                                             icon="ui-icon-arrowthick-1-s">  
+                                                <p:fileDownload value="#{gestionAlcabalasControlador.startDownload(archivo)}" />  
+                                            </p:commandButton>          
+                                        </p:column>                                           
+                                        <p:column headerText="Eliminar" width="50">
+                                            <p:commandButton icon="ui-icon-trash" action="#{gestionAlcabalasControlador.eliminarArchivo(archivo)}" 
+                                                             update=":frmAlcabalas:tabAlca:pnllstArch,:frmAlcabalas:msgs"
+                                                             process="@this" global="false" async="true"  ajax="true" >
+                                                <p:confirm header="Confirmacion" message="Desea eliminar el Archivo?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="drop">
+                                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button"  styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </p:column>
+                                    </p:dataTable>
+                                
+                                </p:panel>
+                        </p:panel>
+                                
                                                                                                                                                  
                   </h:panelGrid>
                 </center>

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +74,8 @@ public class GestionAlcabalasControlador extends BaseControlador {
      private CpValoracionExtras cpValoracionExtrasActual;
      private StreamedContent archivo;
      private Propietario propietario;
+     private List<PredioArchivo> listaAlcabalasArchivo;
+     private PredioArchivo predioArchivo;
      
     
     // SERVICIOS
@@ -238,13 +241,19 @@ public class GestionAlcabalasControlador extends BaseControlador {
       
       
        public void listarArchivos(){
-       try {
-//           listaPredioArchivo = new ArrayList<PredioArchivo>();
-//           listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
-//           
-//           System.out.println("s:  "+listaPredioArchivo.size());
-           
-           } catch (Exception ex) {
+       try {            
+            if (catastroPredialActual != null) {                
+                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
+               // listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
+               listaAlcabalasArchivo = predioArchivoServicio.listarArchivosXImpuesto(catastroPredialActual, "AL");                                
+            }else{
+                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
+                addWarningMessage("Eliga la clave Catastral!"); 
+            
+            }                        
+            //System.out.println("s:  " + listaPredioArchivo.size());
+
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
            
@@ -265,16 +274,16 @@ public class GestionAlcabalasControlador extends BaseControlador {
        public void handleFileUpload(FileUploadEvent event){
            
             try {
-//      predioArchivo = new PredioArchivo();            
-//      predioArchivo.setPrearcNombre(event.getFile().getFileName());
-//      predioArchivo.setCatpreCodigo(catastroPredialActual); 
-//      predioArchivo.setPrearcData(event.getFile().getContents());
-//      predioArchivo.setPrearcTipo("PR");      
-//      predioArchivo.setUsuIdentificacion(usuarioActual);
-//      predioArchivo.setUltaccDetalle("");
-//      predioArchivo.setUltaccMarcatiempo(new Date());
-//      
-    //  predioArchivoServicio.crearPredioArchivo(predioArchivo);            
+      predioArchivo = new PredioArchivo();            
+      predioArchivo.setPrearcNombre(event.getFile().getFileName());
+      predioArchivo.setCatpreCodigo(catastroPredialActual); 
+      predioArchivo.setPrearcData(event.getFile().getContents());
+      predioArchivo.setPrearcTipo("AL");      
+      predioArchivo.setUsuIdentificacion(usuarioActual);
+      predioArchivo.setUltaccDetalle("Documento justificativo de la deducción o exención - Alcabala");
+      predioArchivo.setUltaccMarcatiempo(new Date());
+      
+      predioArchivoServicio.crearPredioArchivo(predioArchivo);            
       
         FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -465,6 +474,14 @@ public class GestionAlcabalasControlador extends BaseControlador {
 
     public void setPropietario(Propietario propietario) {
         this.propietario = propietario;
+    }
+
+    public List<PredioArchivo> getListaAlcabalasArchivo() {
+        return listaAlcabalasArchivo;
+    }
+
+    public void setListaAlcabalasArchivo(List<PredioArchivo> listaAlcabalasArchivo) {
+        this.listaAlcabalasArchivo = listaAlcabalasArchivo;
     }
     
     
