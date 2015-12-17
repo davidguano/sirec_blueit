@@ -7,9 +7,11 @@
 package ec.sirec.ejb.facade;
 
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +29,14 @@ public class CatastroPredialEdificacionFacade extends AbstractFacade<CatastroPre
 
     public CatastroPredialEdificacionFacade() {
         super(CatastroPredialEdificacion.class);
+    }
+    
+    public List<CatastroPredialEdificacion> listarPor2CamposOrdenadaMenosSanitaria(String ventidad, String vcampo1, Object vvalor1, String vcampo2, Object vvalor2, String vcampoOrd, String vforma) throws Exception {
+        String sql = "select e from " + ventidad + " e where e." + vcampo1 + " =:vvalor1 and e." + vcampo2 + "=:vvalor2 and e.catpreediSubgrupo <> '1' order by e." + vcampoOrd + " " + vforma;
+        Query q = getEntityManager().createQuery(sql);
+        q.setParameter("vvalor1", vvalor1).setParameter("vvalor2", vvalor2);
+        return q.getResultList();
+
     }
     
 }

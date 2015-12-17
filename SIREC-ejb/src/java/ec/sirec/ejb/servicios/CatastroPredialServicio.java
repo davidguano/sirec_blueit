@@ -486,4 +486,11 @@ public class CatastroPredialServicio {
         return catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "2", "catpreediCodigo", "asc");
     }
  
+      public List<CatastroPredialEdificacion> listarEdificacionesGrupo3(CatastroPredial vcatastro) throws Exception {
+        return catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "3", "catpreediCodigo", "asc");
+    }
+     
+        public List<CatastroPredialEdificacion> listarEdificacionesGrupo4(CatastroPredial vcatastro) throws Exception {
+        return catastroPredialEdificacionDao.listarPor2CamposOrdenadaMenosSanitaria("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediCodigo", "asc");
+    }
 }
