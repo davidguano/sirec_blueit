@@ -493,4 +493,8 @@ public class CatastroPredialServicio {
         public List<CatastroPredialEdificacion> listarEdificacionesGrupo4(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor2CamposOrdenadaMenosSanitaria("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediCodigo", "asc");
     }
+        
+    public List<CatalogoDetalle> listarTipoDeTarifa() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_TARIF");
+    }    
 }
