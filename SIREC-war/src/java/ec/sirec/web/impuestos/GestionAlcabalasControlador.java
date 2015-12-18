@@ -5,13 +5,13 @@
  */
 package ec.sirec.web.impuestos;
 
-
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
 import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialAlcabalaValoracion;
+import ec.sirec.ejb.entidades.CatastroPredialPlusvaliaValoracion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
-import ec.sirec.ejb.entidades.CpValoracionExtras;
+import ec.sirec.ejb.entidades.CpAlcabalaValoracionExtras;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.SegUsuario;
@@ -20,11 +20,13 @@ import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
 import ec.sirec.ejb.servicios.CatastroPredialAlcabalaValoracionServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
+import ec.sirec.ejb.servicios.CpAlcabalaValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +39,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
@@ -56,210 +59,208 @@ public class GestionAlcabalasControlador extends BaseControlador {
     private static final Logger LOGGER = Logger.getLogger(GestionAlcabalas.class.getName());
     // VARIABLES Y ATRIBUTOS
 
-     private SegUsuario usuarioActual;
-     private CatastroPredial catastroPredialActual;
-     private CatastroPredialAlcabalaValoracion catastroPredialAlcabalaValoracion;
-     private CatalogoDetalle catalogoDetalleConcepto;
-    
-     private List<CatastroPredial> listaCatastroPredial;
-     private List<CatalogoDetalle> listaCatalogoDetalleConcepto;
-     private CatastroPredialValoracion catastroPredialValoracionActual;
-     
+    private SegUsuario usuarioActual;
+    private CatastroPredial catastroPredialActual;
+    private CatastroPredialAlcabalaValoracion catastroPredialAlcabalaValoracion;
+    private CatalogoDetalle catalogoDetalleConcepto;
+
+    private List<CatastroPredial> listaCatastroPredial;
+    private List<CatalogoDetalle> listaCatalogoDetalleConcepto;
+    private CatastroPredialValoracion catastroPredialValoracionActual;
+
     private List<AdicionalesDeductivos> listaAdicionalesDeductivosDeducciones;
     private List<String> listaAdicionalesDeductivosDeduccionesSeleccion;
     private List<AdicionalesDeductivos> listaAdicionalesDeductivosExcenciones;
     private List<String> listaAdicionalesDeductivosExcencionesSeleccion;
-     
-     private AdicionalesDeductivos adicionalesDeductivosActual;
-     private CpValoracionExtras cpValoracionExtrasActual;
-     private StreamedContent archivo;
-     private Propietario propietario;
-     private List<PredioArchivo> listaAlcabalasArchivo;
-     private PredioArchivo predioArchivo;
-     
+
+    private AdicionalesDeductivos adicionalesDeductivosActual;
+    private CpAlcabalaValoracionExtras cpAlcabalaValoracionExtrasActual;
+    private StreamedContent archivo;
+    private Propietario propietario;
+    private List<PredioArchivo> listaAlcabalasArchivo;
+    private PredioArchivo predioArchivo;
+
+    /// ATRIBUTOS PLUSVALIA
     
-    // SERVICIOS
+    private List<CatalogoDetalle> listaTipoDeTarifa;
+    private CatastroPredialPlusvaliaValoracion catastroPredialPlusvaliaValoracion;
+    
+    // SERVICIOS ALCABALA
     @EJB
     private CatastroPredialServicio catastroPredialServicio;
     @EJB
-    private CatalogoDetalleServicio catalogoDetalleServicio; 
+    private CatalogoDetalleServicio catalogoDetalleServicio;
     @EJB
     private CatastroPredialValoracionServicio catastroPredialValoracionServicio;
     @EJB
     private CatastroPredialAlcabalaValoracionServicio catastroPredialAlcabalaValoracionServicio;
-     
-     
     @EJB
-    private AdicionalesDeductivosServicio adicionalesDeductivosServicio;     
+    private CpAlcabalaValoracionExtrasServicio cpAlcabalaValoracionExtrasServicio;
     @EJB
-    private PredioArchivoServicio predioArchivoServicio;   
-    //@EJB
-    //private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
+    private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
     @EJB
-    private CpValoracionExtrasServicio cpValoracionExtrasServicio;
+    private PredioArchivoServicio predioArchivoServicio;
     
-     
+    /// SERVICIOS PLUSVALIA
+    
+    
+    
 
     @PostConstruct
     public void inicializar() {
-        try {      
-            
+        try {
             catastroPredialAlcabalaValoracion = new CatastroPredialAlcabalaValoracion();
-            catastroPredialActual = new CatastroPredial();  
+            catastroPredialActual = new CatastroPredial();
             catalogoDetalleConcepto = new CatalogoDetalle();
-            
-            listarCatastroPredial();            
-            obtenerUsuario();    
+            listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
+            predioArchivo = new PredioArchivo();
+            listarCatastroPredial();
+            obtenerUsuario();
             listarConceptos();
+            listarCatalogosDetalle();
             
-             listarCatalogosDetalle();
-                      
-            // listaPredioArchivo =new ArrayList<PredioArchivo>();
-             
+            // INICIALIZAR PLUSVALIA
+            catastroPredialPlusvaliaValoracion = new CatastroPredialPlusvaliaValoracion();
+            
+            listarTipoTarifa();
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void obtenerUsuario(){
-     usuarioActual = new SegUsuario (); 
-     usuarioActual = (SegUsuario) getSession().getAttribute("usuario");           
-           //System.out.println(usuarioActual.getUsuIdentificacion());         
+
+    public void obtenerUsuario() {
+        usuarioActual = new SegUsuario();
+        usuarioActual = (SegUsuario) getSession().getAttribute("usuario");
+        //System.out.println(usuarioActual.getUsuIdentificacion());         
     }
 
     public GestionAlcabalasControlador() {
     }
 
-      public void listarCatastroPredial(){
-       try {
-           listaCatastroPredial = new ArrayList<CatastroPredial>();
-          listaCatastroPredial = catastroPredialServicio.listarClaveCatastral();
-           
+    public void listarCatastroPredial() {
+        try {
+            listaCatastroPredial = new ArrayList<CatastroPredial>();
+            listaCatastroPredial = catastroPredialServicio.listarClaveCatastral();
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-      }
-      
-       public void listarConceptos(){
-       try {
-           
-           listaCatalogoDetalleConcepto = new ArrayList<CatalogoDetalle>();           
-           listaCatalogoDetalleConcepto = catalogoDetalleServicio.listarPorNemonicoCatalogo("CONCEPTOS");
-          
-          
-           
+    }
+
+    public void listarConceptos() {
+        try {
+
+            listaCatalogoDetalleConcepto = new ArrayList<CatalogoDetalle>();
+            listaCatalogoDetalleConcepto = catalogoDetalleServicio.listarPorNemonicoCatalogo("CONCEPTOS");
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-      }
-       
-      public void obtenerCamposCatPredial(){
-       try {
-           
-          catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());
-          catastroPredialActual.setCatpreAreaTotal(catastroPredialActual.getCatpreAreaTotalEsc()+catastroPredialActual.getCatpreAreaTotalCons());                              
-          
-          propietario = new Propietario();
-          propietario = catastroPredialServicio.obtenerPropietarioPrincipalPredio(catastroPredialActual.getCatpreCodigo());
-           System.out.println("s: "+propietario.getProCi());
-         System.out.println("m: "+ propietario.getProNombres());
-          
-          catastroPredialValoracionActual = new CatastroPredialValoracion();
-          catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
-          
-          
-         } catch (Exception ex) {
+    }
+
+    public void obtenerCamposCatPredial() {
+        try {
+
+            catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());
+            catastroPredialActual.setCatpreAreaTotal(catastroPredialActual.getCatpreAreaTotalEsc() + catastroPredialActual.getCatpreAreaTotalCons());
+
+            propietario = new Propietario();
+            propietario = catastroPredialServicio.obtenerPropietarioPrincipalPredio(catastroPredialActual.getCatpreCodigo());
+            System.out.println("s: " + propietario.getProCi());
+            System.out.println("m: " + propietario.getProNombres());
+
+            catastroPredialValoracionActual = new CatastroPredialValoracion();
+            catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-      }
+    }
+
+    public BigDecimal valorMayorBaseImponible() {
+        BigDecimal baseImponible = new BigDecimal(BigInteger.ONE);
+        try {
+            if (catastroPredialValoracionActual.getCatprevalAvaluoTot().compareTo(catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa()) == -1) {
+                baseImponible = catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa();
+            } else {
+                baseImponible = catastroPredialValoracionActual.getCatprevalAvaluoTot();
+            }
+        catastroPredialPlusvaliaValoracion.setCatprepluvalPrecioventa(baseImponible); 
+        
+            System.out.println("");
+            
+      } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return baseImponible;
+    }
     
-      public void calcularDeterminacion(){
-       try {
-           
-           BigDecimal baseImponible;
-           if ( catastroPredialValoracionActual.getCatprevalAvaluoTerr().compareTo(catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa()) ==-1 ){               
-               baseImponible = catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa();	
-           }else{
-               baseImponible = catastroPredialValoracionActual.getCatprevalAvaluoTerr();
-           }           
-           BigDecimal impuesto = baseImponible.multiply(new BigDecimal(1)).divide(new BigDecimal(100)); 
-           BigDecimal conProv = baseImponible.multiply(new BigDecimal(0.01)).divide(new BigDecimal(100)); 
+    public void calcularDeterminacion() {
+        try {
+
+            BigDecimal baseImponible = valorMayorBaseImponible();
+//            if (catastroPredialValoracionActual.getCatprevalAvaluoTerr().compareTo(catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa()) == -1) {
+//                baseImponible = catastroPredialAlcabalaValoracion.getCatprealcvalPrecioventa();
+//            } else {
+//                baseImponible = catastroPredialValoracionActual.getCatprevalAvaluoTerr();
+//            }
+            BigDecimal impuesto = baseImponible.multiply(new BigDecimal(1)).divide(new BigDecimal(100));
+            BigDecimal conProv = baseImponible.multiply(new BigDecimal(0.01)).divide(new BigDecimal(100));
            //conProv = conProv.setScale(2, RoundingMode.CEILING);
-           
-           catastroPredialAlcabalaValoracion.setCatprealcvalBaseimp(baseImponible);
-           catastroPredialAlcabalaValoracion.setCatprealcvalImpuesto(impuesto);
-           catastroPredialAlcabalaValoracion.setCatprealcvalConsejoProv(conProv); 
-           catastroPredialAlcabalaValoracion.setCatprealcvalTasaProc(new BigDecimal(2)); 
-           catastroPredialAlcabalaValoracion.setCatprealcvalTotal(impuesto.add(conProv).add(catastroPredialAlcabalaValoracion.getCatprealcvalTasaProc()).setScale(2, RoundingMode.CEILING)); 
-                                 
-       } catch (Exception ex) {
+
+            catastroPredialAlcabalaValoracion.setCatprealcvalBaseimp(baseImponible);
+            catastroPredialAlcabalaValoracion.setCatprealcvalImpuesto(impuesto);
+            catastroPredialAlcabalaValoracion.setCatprealcvalConsejoProv(conProv);
+            catastroPredialAlcabalaValoracion.setCatprealcvalTasaProc(new BigDecimal(2));
+            catastroPredialAlcabalaValoracion.setCatprealcvalTotal(impuesto.add(conProv).add(catastroPredialAlcabalaValoracion.getCatprealcvalTasaProc()).setScale(2, RoundingMode.CEILING));
+
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-      }
-      
-       public void guardarAlcabala(){
-           try{
-               
-            catastroPredialAlcabalaValoracion.setCatpreCodigo(catastroPredialActual); 
-           catastroPredialAlcabalaValoracionServicio.crearCatastroPredialAlcabalaValoracion(catastroPredialAlcabalaValoracion);
+    }
+
+    public void guardarAlcabala() {
+        try {
+
+            catastroPredialAlcabalaValoracion.setCatpreCodigo(catastroPredialActual);
+            catastroPredialAlcabalaValoracionServicio.crearCatastroPredialAlcabalaValoracion(catastroPredialAlcabalaValoracion);
             addSuccessMessage("Guardado Exitosamente!");
-           } catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-       }
-      
-      
-      public void listarCatalogosDetalle() {
+    }
+
+    public void listarCatalogosDetalle() {
         try {
             listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
             listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D", "AL");
             listaAdicionalesDeductivosExcenciones = new ArrayList<AdicionalesDeductivos>();
             listaAdicionalesDeductivosExcenciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E", "AL");
-            
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-       
-       
-      
-      
-      
-      
-      
-      
-       public void listarArchivos(){
-       try {            
-            if (catastroPredialActual != null) {                
-                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
-               // listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
-               listaAlcabalasArchivo = predioArchivoServicio.listarArchivosXImpuesto(catastroPredialActual, "AL");                                
-            }else{
-                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
-                addWarningMessage("Eliga la clave Catastral!"); 
-            
-            }                        
-            //System.out.println("s:  " + listaPredioArchivo.size());
 
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-           
-      }
-      
-        public void eliminarArchivo(PredioArchivo archivo) {
+    }
+
+    public void listarArchivos() {
+        try {
+            if (catastroPredialActual != null) {
+                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
+                listaAlcabalasArchivo = predioArchivoServicio.listarArchivosXImpuesto(catastroPredialActual, "AL");
+            } else {
+                listaAlcabalasArchivo = new ArrayList<PredioArchivo>();
+                addWarningMessage("Eliga la clave Catastral!");
+
+            }
+        } catch (Exception ex) {
+            addWarningMessage("Eliga la clave Catastral!");
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void eliminarArchivo(PredioArchivo archivo) {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             predioArchivoServicio.eliminarPredioArchivo(archivo);
@@ -270,116 +271,145 @@ public class GestionAlcabalasControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-       
-       public void handleFileUpload(FileUploadEvent event){
-           
-            try {
-      predioArchivo = new PredioArchivo();            
-      predioArchivo.setPrearcNombre(event.getFile().getFileName());
-      predioArchivo.setCatpreCodigo(catastroPredialActual); 
-      predioArchivo.setPrearcData(event.getFile().getContents());
-      predioArchivo.setPrearcTipo("AL");      
-      predioArchivo.setUsuIdentificacion(usuarioActual);
-      predioArchivo.setUltaccDetalle("Documento justificativo de la deducción o exención - Alcabala");
-      predioArchivo.setUltaccMarcatiempo(new Date());
-      
-      predioArchivoServicio.crearPredioArchivo(predioArchivo);            
-      
-        FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-         listarArchivos();
-        
-        
-         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
-      
-    public void startDownload(PredioArchivo archivo) {
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
-                .getExternalContext().getResponse();
+
+    public void handleFileUpload(FileUploadEvent event) {
+
         try {
-            response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment;filename=" + archivo.getPrearcNombre());
-            response.getOutputStream().write(archivo.getPrearcData());
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
-            FacesContext.getCurrentInstance().responseComplete();
-        } catch (IOException ioex) {
-            LOGGER.log(Level.SEVERE, null, ioex);
-        }
-    }   
-    
-    
-    public void guardarAdicionalesDeductivos(){        
-     try {
-                   
-//       adicionalesDeductivosActual = new AdicionalesDeductivos();               
-//       catastroPredialValoracionActual = new CatastroPredialValoracion();
-//          try {
-//      if(listaPredioArchivo.size()>0){
-//            
-//         for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
-//             cpValoracionExtrasActual = new CpValoracionExtras();
-//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));             
-//             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
-//             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
-//             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
-////            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-////            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
-//             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
-//         }
-//         
-//         for (int i = 0; i < listaAdicionalesDeductivosExcencionesSeleccion.size(); i++) {
-//             cpValoracionExtrasActual = new CpValoracionExtras();
-//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosExcencionesSeleccion.get(i)));             
-//             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
-//             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
-//             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
-////            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-////            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
-//             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
-//         }
-//
-//         for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
-//             cpValoracionExtrasActual = new CpValoracionExtras();
-//             adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));             
-//             catastroPredialValoracionActual = catastroPredialValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
-//             cpValoracionExtrasActual.setCatprevalCodigo(catastroPredialValoracionActual);
-//             cpValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
-////            cpValoracionExtrasActual.setCpvalextBase(BigDecimal.ONE); 
-////            cpValoracionExtrasActual.setCpvalextValor(BigDecimal.ZERO);             
-//             cpValoracionExtrasServicio.crearCpValoracionExtras(cpValoracionExtrasActual);
-//         }
-//         
-//          addSuccessMessage("Guardado Exitosamente!");
-//          
-//         
-//         }else{
-//          addSuccessMessage("No existen documentos cargados!");
-//          
-////          FacesMessage msg = new FacesMessage("No se han cargado documentos!");
-////        FacesContext.getCurrentInstance().addMessage(null, msg);
-//      
-//      }
-//         } catch (NullPointerException exNull) {
-//           // LOGGER.log(Level.SEVERE, null, exNull);
-//             addSuccessMessage("No se han cargado documentos!");
-////              FacesMessage msg = new FacesMessage("No se han cargado documentos!");
-////        FacesContext.getCurrentInstance().addMessage(null, msg);
-//        }
+            predioArchivo = new PredioArchivo();
+            predioArchivo.setPrearcNombre(event.getFile().getFileName());
+            predioArchivo.setCatpreCodigo(catastroPredialActual);
+            predioArchivo.setPrearcData(event.getFile().getContents());
+            predioArchivo.setPrearcTipo("AL");
+            predioArchivo.setUsuIdentificacion(usuarioActual);
+            predioArchivo.setUltaccDetalle("Documento justificativo de la deducción o exención - Alcabala");
+            predioArchivo.setUltaccMarcatiempo(new Date());
+
+            predioArchivoServicio.crearPredioArchivo(predioArchivo);
+
+            FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+            listarArchivos();
+
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-         
         }
-        
     }
-       
-    // METODOS
 
-   
+//    public void startDownload(PredioArchivo archivo) {
+//        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
+//                .getExternalContext().getResponse();
+//        try {
+//            response.setContentType("application/pdf");
+//            response.setHeader("Content-Disposition", "attachment;filename=" + archivo.getPrearcNombre());
+//            response.getOutputStream().write(archivo.getPrearcData());
+//            response.getOutputStream().flush();
+//            response.getOutputStream().close();
+//            FacesContext.getCurrentInstance().responseComplete();
+//        } catch (IOException ioex) {
+//            System.out.println("kkkkkkkkkjdjdjdjd");
+//            LOGGER.log(Level.SEVERE, null, ioex);            
+//        }
+//    }   
+    public void descargarArchivo(PredioArchivo patArchivoActual) {
+        predioArchivo = patArchivoActual;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("datoArchivo", patArchivoActual.getPrearcData());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("nombreArchivo", patArchivoActual.getPrearcNombre());
+    }
 
+     //Se descarga archivo por medio de  Servlet
+    public String download() {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-disposition", "attachment; filename=\"" + "c://subido" + predioArchivo.getPrearcNombre() + "\"");
+        try {
+            ServletOutputStream os = response.getOutputStream();
+            os.write(predioArchivo.getPrearcData());
+            os.flush();
+            os.close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public void guardarDeduccionesExcenciones() {
+        try {
+
+            adicionalesDeductivosActual = new AdicionalesDeductivos();
+            //catastroPredialValoracionActual = new CatastroPredialValoracion();
+
+            if (catastroPredialActual != null) {
+                try {
+                    if (listaAlcabalasArchivo.size() > 0) {
+
+                        catastroPredialAlcabalaValoracion = catastroPredialAlcabalaValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+                        if (catastroPredialAlcabalaValoracion != null) {
+
+                            for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
+                                cpAlcabalaValoracionExtrasActual = new CpAlcabalaValoracionExtras();
+                                adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosDeduccionesSeleccion.get(i)));
+                                cpAlcabalaValoracionExtrasActual.setCatprealcvalCodigo(catastroPredialAlcabalaValoracion);
+                                cpAlcabalaValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
+                                cpAlcabalaValoracionExtrasActual.setCpalcvalextBase(BigDecimal.ZERO);
+                                cpAlcabalaValoracionExtrasActual.setCpalcvalextValor(BigDecimal.ZERO);
+                                cpAlcabalaValoracionExtrasServicio.crearCpAlcabalaValoracionExtras(cpAlcabalaValoracionExtrasActual);
+                            }
+
+                            for (int i = 0; i < listaAdicionalesDeductivosExcencionesSeleccion.size(); i++) {
+                                cpAlcabalaValoracionExtrasActual = new CpAlcabalaValoracionExtras();
+                                adicionalesDeductivosActual = adicionalesDeductivosServicio.buscarAdicionesDeductivosXCodigo(Integer.parseInt(listaAdicionalesDeductivosExcencionesSeleccion.get(i)));
+                                cpAlcabalaValoracionExtrasActual.setCatprealcvalCodigo(catastroPredialAlcabalaValoracion);
+                                cpAlcabalaValoracionExtrasActual.setAdidedCodigo(adicionalesDeductivosActual);
+                                cpAlcabalaValoracionExtrasActual.setCpalcvalextBase(BigDecimal.ZERO);
+                                cpAlcabalaValoracionExtrasActual.setCpalcvalextValor(BigDecimal.ZERO);
+                                cpAlcabalaValoracionExtrasServicio.crearCpAlcabalaValoracionExtras(cpAlcabalaValoracionExtrasActual);
+                            }
+
+                            addSuccessMessage("Guardado Exitosamente!");
+
+                        } else {
+                            addErrorMessage("No existe Determinacion del Alcabala");
+
+                        }
+
+                    } else {
+                        addSuccessMessage("No se han cargado documentos!");
+                    }
+                } catch (NullPointerException exNull) {
+                    // LOGGER.log(Level.SEVERE, null, exNull);
+                    addSuccessMessage("No se han cargado documentos!");
+//              FacesMessage msg = new FacesMessage("No se han cargado documentos!");
+//        FacesContext.getCurrentInstance().addMessage(null, msg);
+                }
+            } else {
+                addErrorMessage("No existe Clave Catastral");
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    //////////////////////////////////// METODOS PLUSVALIA  ////////////////////////////////////
+    
+    
+    
+    public void listarTipoTarifa() {
+        
+        try {
+           listaTipoDeTarifa = new ArrayList<CatalogoDetalle>();
+           listaTipoDeTarifa = catastroPredialServicio.listarTipoDeTarifa();
+            
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    
+
+    ////////////////////////////////////// METODOS SET Y GET ALCABALA  ////////////////////////////////////
+    
     public StreamedContent getArchivo() {
         return archivo;
     }
@@ -484,5 +514,22 @@ public class GestionAlcabalasControlador extends BaseControlador {
         this.listaAlcabalasArchivo = listaAlcabalasArchivo;
     }
     
-    
+     ////////////////////////////////////// METODOS SET Y GET PLUSVALIA  ////////////////////////////////////
+
+    public List<CatalogoDetalle> getListaTipoDeTarifa() {
+        return listaTipoDeTarifa;
+    }
+
+    public void setListaTipoDeTarifa(List<CatalogoDetalle> listaTipoDeTarifa) {
+        this.listaTipoDeTarifa = listaTipoDeTarifa;
+    }
+
+    public CatastroPredialPlusvaliaValoracion getCatastroPredialPlusvaliaValoracion() {
+        return catastroPredialPlusvaliaValoracion;
+    }
+
+    public void setCatastroPredialPlusvaliaValoracion(CatastroPredialPlusvaliaValoracion catastroPredialPlusvaliaValoracion) {
+        this.catastroPredialPlusvaliaValoracion = catastroPredialPlusvaliaValoracion;
+    }
+
 }

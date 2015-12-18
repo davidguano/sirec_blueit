@@ -35,6 +35,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -217,20 +218,45 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         }
     }
 
-    public void startDownload(PredioArchivo archivo) {
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
-                .getExternalContext().getResponse();
-        try {
-            response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment;filename=" + archivo.getPrearcNombre());
-            response.getOutputStream().write(archivo.getPrearcData());
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
-            FacesContext.getCurrentInstance().responseComplete();
-        } catch (IOException ioex) {
-            LOGGER.log(Level.SEVERE, null, ioex);
-        }
+    //Preparamos archivo para descarga
+    
+       public void descargarArchivo(PredioArchivo patArchivoActual) {
+        predioArchivo  = patArchivoActual;        
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("datoArchivo", patArchivoActual.getPrearcData());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("nombreArchivo", patArchivoActual.getPrearcNombre());
     }
+     
+     //Se descarga archivo por medio de  Servlet
+
+    public String download() {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-disposition", "attachment; filename=\"" + "c://subido" + predioArchivo.getPrearcNombre() + "\"");
+        try {
+            ServletOutputStream os = response.getOutputStream();
+            os.write(predioArchivo.getPrearcData());
+            os.flush();
+            os.close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+    
+//    public void startDownload(PredioArchivo archivo) {
+//        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
+//                .getExternalContext().getResponse();
+//        try {
+//            response.setContentType("application/pdf");
+//            response.setHeader("Content-Disposition", "attachment;filename=" + archivo.getPrearcNombre());
+//            response.getOutputStream().write(archivo.getPrearcData());
+//            response.getOutputStream().flush();
+//            response.getOutputStream().close();
+//            FacesContext.getCurrentInstance().responseComplete();
+//        } catch (IOException ioex) {
+//            LOGGER.log(Level.SEVERE, null, ioex);
+//        }
+//    }
     
      public void valoracionConstruccion() {
          try {                           
