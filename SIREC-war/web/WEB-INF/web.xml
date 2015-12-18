@@ -45,6 +45,31 @@
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
+    <!-- Servlet que permite mostrar un archivo en pdf-->
+    <servlet>
+        <servlet-name>ReporteServlet</servlet-name>
+        <servlet-class>ec.sirec.web.util.servlet.ReporteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteServlet</servlet-name>
+        <url-pattern>/ReporteServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReporteServletXLS</servlet-name>
+        <servlet-class>ec.sirec.web.util.servlet.ReporteServletXLS</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteServletXLS</servlet-name>
+        <url-pattern>/ReporteServletXLS</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReporteServletCSV</servlet-name>
+        <servlet-class>ec.sirec.web.util.servlet.ReporteServletCSV</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteServletCSV</servlet-name>
+        <url-pattern>/ReporteServletCSV</url-pattern>
+    </servlet-mapping>
     <mime-mapping>
         <extension>eot</extension>
         <mime-type>application/vnd.ms-fontobject</mime-type>
