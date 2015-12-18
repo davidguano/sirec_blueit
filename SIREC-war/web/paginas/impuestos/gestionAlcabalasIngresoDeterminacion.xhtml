@@ -73,8 +73,10 @@
                                             />
                                 
                                 <p:outputLabel value="#{txt.precio_de_venta}"/>
-                                <p:inputText id="alPrec" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}"
-                                            />
+                                <p:inputText id="alPrec" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}">
+                                    <p:ajax event="keyup" listener="#{gestionAlcabalasControlador.valorMayorBaseImponible}"  update=":frmAlcabalas:tabAlca:panelPlusvalia"
+                                         process="@this" async="true" global="false"/>  
+                                </p:inputText>
                                 
                                 <p:outputLabel value="#{txt.concepto}"/>
                                 <p:selectOneMenu id="alConc" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catdetConcepto}" style="width:154px"
@@ -142,4 +144,4 @@
                                 </p:panel>                                                                                                                                                 
                   </h:panelGrid>
                 </center>
-</html>    
+</html> 

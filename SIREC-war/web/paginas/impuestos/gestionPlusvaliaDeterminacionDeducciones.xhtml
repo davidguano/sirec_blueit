@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+                
+                <center>
+                    <h:panelGrid id="panelPlusvalia" width="1000" columns="1" >                                                 
+                        <p:panel id="pnlDet" header="#{txt.DETERMINACION}">                                
+                                <h:panelGrid columns="2">
+                                    
+                                     <p:outputLabel value="TIPO DE TARIFA"/>
+                                    
+                                     <p:selectOneMenu id="pComTT" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catdetTipoTarifa}" style="width:154px"
+                                                         converter="#{catalogoDetalleConverter}" var="t">
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                                            <f:selectItems var="tipo" 
+                                                           value="#{gestionAlcabalasControlador.listaTipoDeTarifa}" 
+                                                           itemLabel="#{tipo.catdetTexto}" 
+                                                           itemValue="#{tipo}"/> 
+                                            <p:column width="200" style="white-space: normal">  
+                                                <h:outputText escape="false" value="#{t.catdetTexto}" style="font-size: 10px"/> 
+                                            </p:column>                                                                             
+                                        </p:selectOneMenu> 
+                                     
+                                     <p:outputLabel value="FECHA DE ÚLTIMA ESCRITURA" style="font-size: #{txt.font_size}"/>                                                                                                  
+                                     <p:calendar id="fecUlEsc" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalFechaUltescr}" />
+                                     
+                                     <p:outputLabel value="PRECIO DE VENTA ACTUAL"/>
+                                     <p:inputText id="pPrecAct" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventa}"
+                                                  disabled="true"/>
+                                     <p:outputLabel value="PRECIO DE VENTA ANTERIOR"/>
+                                     <p:inputText id="pPrecAnt" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventaAnt}"
+                                                  />
+                                     
+                                </h:panelGrid>                                                                                                       
+                                
+                                </p:panel>
+                            
+                      
+                       
+                       
+                                
+                                                                                                                                           
+                  </h:panelGrid>
+                </center>
+</html>        

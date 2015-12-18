@@ -14,13 +14,16 @@
                 <center>
                     <p:tabView id="tabAlca" style="font-size:12px">
                         <p:ajax event="tabChange" />
-
+                       
                         <p:tab title="#{txt.INGRESO_DETERMINACION_ALCABALAS}">
                             <ui:include src="gestionAlcabalasIngresoDeterminacion.xhtml" />
                         </p:tab>
                         <p:tab title="#{txt.DEDUCCIONES_EXTENCIONES_ALCABALAS}">
                              <ui:include src="gestionAlcabalasDeduccionesExtenciones.xhtml" />                            
-                        </p:tab>                       
+                        </p:tab>   
+                         <p:tab title="PLUSVALÍAS: DETERMINACIÓN Y DEDUCCIONES">
+                             <ui:include src="gestionPlusvaliaDeterminacionDeducciones.xhtml" />                            
+                        </p:tab>                                                
                     </p:tabView>
 
                 </center>

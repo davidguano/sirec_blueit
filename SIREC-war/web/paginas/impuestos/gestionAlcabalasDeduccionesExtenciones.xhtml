@@ -67,7 +67,8 @@
                                                      global="false"
                                                      />
                             <p:panel id="pnllstArch">                                
-                                <p:dataTable id="lstArch" value="#{gestionAlcabalasControlador.listaAlcabalasArchivo}"  var="archivo"  >
+                                <p:dataTable id="lstArch" value="#{gestionAlcabalasControlador.listaAlcabalasArchivo}"  var="archivo"  
+                                             rowKey="#{archivo.prearcCodigo}">
                                         <f:facet name="header">
                                             <p:outputLabel value="Lista de Archivos" style="font-size:12px;"/>
                                         </f:facet>
@@ -81,10 +82,10 @@
                                             <h:outputText value="#{archivo.ultaccMarcatiempo}" style="font-size:12px;"/>
                                         </p:column>
                                        <p:column headerText="Descargar" width="100">
-                                           <p:commandButton id="downloadLink" value="Descargar" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"   
-                                                             icon="ui-icon-arrowthick-1-s">  
-                                                <p:fileDownload value="#{gestionAlcabalasControlador.startDownload(archivo)}" />  
-                                            </p:commandButton>          
+                                           <center>
+                                               <p:commandButton icon="fa fa-download fa-lg" async="true" global="false" process="@this" actionListener="#{gestionAlcabalasControlador.descargarArchivo(archivo)}" oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/DescargarArchivos','DescargarArchivos')">                                        
+                                               </p:commandButton>
+                                    </center>         
                                         </p:column>                                           
                                         <p:column headerText="Eliminar" width="50">
                                             <p:commandButton icon="ui-icon-trash" action="#{gestionAlcabalasControlador.eliminarArchivo(archivo)}" 
@@ -102,7 +103,15 @@
                                 </p:panel>
                         </p:panel>
                                 
-                                                                                                                                                 
+                              <p:commandButton value="#{txt.guardar_btn}" 
+                                                     id="btnGuardarDedEx"  
+                                                     action="#{gestionAlcabalasControlador.guardarDeduccionesExcenciones()}" 
+                                                     icon="ui-icon-disk"  
+                                                     process="@this, pnllstArch, pnlDed, pnlEx" 
+                                                     update=":frmAlcabalas:msgs"
+                                                     async="true"
+                                                     global="false"
+                                                     />                                                                                                                    
                   </h:panelGrid>
                 </center>
 </html>        

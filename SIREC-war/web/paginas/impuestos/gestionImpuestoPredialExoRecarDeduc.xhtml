@@ -119,10 +119,17 @@
                                             <h:outputText value="#{archivo.ultaccMarcatiempo}" style="font-size:12px;"/>
                                         </p:column>
                                         <p:column headerText="Descargar" width="100">
-                                           <p:commandButton id="downloadLink" value="Descargar" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"   
+                                            <center>
+                                               <p:commandButton icon="fa fa-download fa-lg" async="true" global="false" process="@this" actionListener="#{gestionImpuestoPredialControlador.descargarArchivo(archivo)}" oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/DescargarArchivos','DescargarArchivos')">
+                                        
+                                               </p:commandButton>
+                                    </center> 
+                                           <!--
+                                            <p:commandButton id="downloadLink" value="Descargar" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"   
                                                              icon="ui-icon-arrowthick-1-s">  
                                                 <p:fileDownload value="#{gestionImpuestoPredialControlador.startDownload(archivo)}" />  
-                                            </p:commandButton>          
+                                            </p:commandButton>     
+                                           -->
                                         </p:column>                                           
                                         <p:column headerText="Eliminar" width="50">
                                             <p:commandButton icon="ui-icon-trash" action="#{gestionImpuestoPredialControlador.eliminarArchivo(archivo)}" 
