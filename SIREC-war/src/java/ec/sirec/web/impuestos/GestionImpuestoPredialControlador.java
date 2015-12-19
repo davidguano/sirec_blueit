@@ -14,6 +14,7 @@ import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.FittoCorvini;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.RecaudacionCab;
+import ec.sirec.ejb.entidades.RecaudacionDet;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
@@ -22,6 +23,7 @@ import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.FittoCorviniServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.ejb.servicios.RecaudacionCabServicio;
+import ec.sirec.ejb.servicios.RecaudacionDetServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -92,6 +94,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private BigDecimal totalTotal;
     private FittoCorvini fittoCorvini;
     private RecaudacionCab recaudacioCab;
+    private RecaudacionDet recaudacionDet;
 
     // SERVICIOS
     @EJB
@@ -108,6 +111,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private FittoCorviniServicio fittoCorviniServicio;
     @EJB
     private RecaudacionCabServicio recaudacionCabServicio;
+    @EJB
+    private RecaudacionDetServicio recaudacionDetServicio;
 
     @PostConstruct
     public void inicializar() {
@@ -648,6 +653,16 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                  recaudacioCab.setRecEstado("A");
                  recaudacioCab.setUsuIdentificacion(usuarioActual);                  
                  recaudacionCabServicio.crearRecaudacionCab(recaudacioCab);
+                 
+                 recaudacionDet = new RecaudacionDet();
+                 recaudacionDet.setRecCodigo(recaudacioCab); 
+                 recaudacionDet.setRecdetTipo("PR"); 
+                 recaudacionDet.setRecdetReferencia("OK");
+                 recaudacionDet.setRecdetValor(eje.getTotalRegistro());                  
+                 recaudacionDetServicio.crearRecaudacionDet(recaudacionDet);
+                 
+                 addSuccessMessage("Emisión Realizada"); 
+                 
              }
                                     
         } catch (Exception ex) {
