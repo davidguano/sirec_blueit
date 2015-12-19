@@ -177,12 +177,8 @@ public class NavegacionControlador extends BaseControlador {
             DefaultMenuItem predial = new DefaultMenuItem("Predial");
             predial.setIcon("ui-icon-person");
             predial.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','gestionImpuestoPredial')}");
-            subMenuImpuestos.addElement(predial);
-            DefaultMenuItem plusvalia = new DefaultMenuItem("Plusvalia");
-            plusvalia.setIcon("ui-icon-person");
-            plusvalia.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
-            subMenuImpuestos.addElement(plusvalia);
-            DefaultMenuItem alcabala = new DefaultMenuItem("Alcabala");
+            subMenuImpuestos.addElement(predial);           
+            DefaultMenuItem alcabala = new DefaultMenuItem("Alcabala y Plusvalia");
             alcabala.setIcon("ui-icon-person");
             alcabala.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','gestionAlcabalas')}");
             subMenuImpuestos.addElement(alcabala);

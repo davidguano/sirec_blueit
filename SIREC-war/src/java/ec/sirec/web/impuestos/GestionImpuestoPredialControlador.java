@@ -13,6 +13,7 @@ import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
 import ec.sirec.ejb.entidades.FittoCorvini;
 import ec.sirec.ejb.entidades.PredioArchivo;
+import ec.sirec.ejb.entidades.RecaudacionCab;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
@@ -20,6 +21,7 @@ import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.FittoCorviniServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
+import ec.sirec.ejb.servicios.RecaudacionCabServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -89,6 +91,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private String criterio;
     private BigDecimal totalTotal;
     private FittoCorvini fittoCorvini;
+    private RecaudacionCab recaudacioCab;
 
     // SERVICIOS
     @EJB
@@ -103,6 +106,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private CatastroPredialValoracionServicio catastroPredialValoracionServicio;
     @EJB
     private FittoCorviniServicio fittoCorviniServicio;
+    @EJB
+    private RecaudacionCabServicio recaudacionCabServicio;
 
     @PostConstruct
     public void inicializar() {
@@ -632,6 +637,25 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
         }
     }
 
+    public void emision() {
+        try {
+             for (int i = 0; i < listaEjecutarValoracion.size(); i++) {
+                 recaudacioCab = new RecaudacionCab();
+                 EjecutarValoracion eje = listaEjecutarValoracion.get(i);
+                 recaudacioCab.setProCi(eje.getProCi()); 
+                 recaudacioCab.setRecFecha(new Date()); 
+                 recaudacioCab.setRecTotal(eje.getTotalRegistro());
+                 recaudacioCab.setRecEstado("A");
+                 recaudacioCab.setUsuIdentificacion(usuarioActual);                  
+                 recaudacionCabServicio.crearRecaudacionCab(recaudacioCab);
+             }
+                                    
+        } catch (Exception ex) {
+                      
+            //LOGGER.log(Level.SEVERE, null, ex);         
+        }
+    }
+    
     // METODOS
     public List<AdicionalesDeductivos> getListaAdicionalesDeductivosRecargos() {
         return listaAdicionalesDeductivosRecargos;

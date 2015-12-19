@@ -109,7 +109,21 @@
                     <p:commandButton value="#{txt.PRE_EMISION_btn}" 
                                      id="btnPreEmi" ajax="false">
                         <p:dataExporter type="xlsx" target="lstVals" fileName="Pre_Emision_Valoracion" postProcessor="#{gestionImpuestoPredialControlador.postProcessXLS}"/>
-                    </p:commandButton>                                                                                                        
+                    </p:commandButton>   
+                    
+                    <p:commandButton value="#{txt.EMISION_btn}" 
+                                     id="btnEmi"
+                                     ajax="false"                                     
+                                     action="#{gestionImpuestoPredialControlador.emision()}"                                      
+                                     icon="ui-icon-disk"  
+                                     process="@this, panelIngreso" 
+                                     update=":frmImpPredial:tabImpPred:pnllstVal"
+                                     async="true"
+                                     global="false"
+                                     >
+                        <p:dataExporter type="xlsx" target="lstVals" fileName="Emision_Valoracion" postProcessor="#{gestionImpuestoPredialControlador.postProcessXLS}"/>
+                    </p:commandButton>  
+                    
                 </p:panel>                                                                                                                                                                                                                                                 
             </p:panel>                                                                                                                                                                                                     
         </h:panelGrid>

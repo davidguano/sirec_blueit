@@ -33,17 +33,69 @@
                                      <p:inputText id="pPrecAct" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventa}"
                                                   disabled="true"/>
                                      <p:outputLabel value="PRECIO DE VENTA ANTERIOR"/>
-                                     <p:inputText id="pPrecAnt" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventaAnt}"
-                                                  />
+                                     <p:inputText  id="pPrecAnt" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventaAnt}">
+                                                   <p:ajax event="blur" listener="#{gestionAlcabalasControlador.calularDiferenciaBruta}"  update=":frmAlcabalas:tabAlca:pDifBruta,pMej,pDifNeta"
+                                         process="@this,pPrecAnt,pPrecAct" async="true" global="false"/>  
+                                     </p:inputText>
                                      
+                                      <p:outputLabel value="DIFERENCIA BRUTA"/>
+                                      <p:inputText id="pDifBruta" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalDifBruta}"
+                                                  disabled="true"/>
+                                      
+                                       <p:outputLabel value="MENOS VALORES DE CONTRIBUCIÓN POR MEJORAS"/>
+                                       <p:inputText id="pMej" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalValorContrmej}"
+                                                  disabled="true"/>
+                                      
+                                        <p:outputLabel value="DIFERENCIA NETA"/>
+                                        <p:inputText id="pDifNeta" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalDifNeta}"
+                                                  disabled="true"/>
+                                        
+                                        <p:outputLabel value="AÑOS TRANSCURRIDOS EN TRANSFERENCIA DE DOMINIO"/>
+                                        <p:inputText id="pAnosTrans" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalAniosTransf}"
+                                                      >
+                                             <p:ajax event="blur" listener="#{gestionAlcabalasControlador.calularValorAniosTranDominio()}"  update=":frmAlcabalas:tabAlca:pValAnosTrans,pDifFinal,pRebDes,pValRebDes,pBasImp,pImpuesto,pProc"
+                                         process="@this,pDifNeta, pComTT" async="true" global="false"/> 
+                                        </p:inputText>
+                                        
+                                        <p:outputLabel value="VALOR POR AÑOS TRANSCURRIDOS EN TRANSFERENCIA DE DOMINIO"/>
+                                        <p:inputText id="pValAnosTrans" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalAniosTransfVal}"
+                                                  disabled="true"/>
+                                        
+                                        <p:outputLabel value="DIFERENCIA"/>
+                                        <p:inputText id="pDifFinal" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalDifFinal}"
+                                                  disabled="true"/>
+                                                                                
+                                        <p:outputLabel value="REBAJA POR DESVALORIZACIÓN"/>
+                                        <p:inputText id="pRebDes" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPorcRebaja}"
+                                                 disabled="true" />
+                                        <p:outputLabel value="VALOR REBAJA POR DESVALORIZACIÓN"/>
+                                        <p:inputText id="pValRebDes" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalValorRebaja}"
+                                                disabled="true"  />
+                                        
+                                        <p:outputLabel value="BASE IMPONIBLE"/>
+                                        <p:inputText id="pBasImp" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalBaseimp}"
+                                                 disabled="true" />
+                                        <p:outputLabel value="IMPUESTO"/>
+                                        <p:inputText id="pImpuesto" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalImpuesto}"
+                                            disabled="true"/>
+                                     
+                                        <p:outputLabel value="PROCESAMIENTO"/>
+                                        <p:inputText id="pProc" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalTasaproc}"
+                                            disabled="true"/>
+                                        
                                 </h:panelGrid>                                                                                                       
                                 
                                 </p:panel>
                             
-                      
-                       
-                       
-                                
+                       <p:commandButton value="#{txt.guardar_btn}" 
+                                                     id="btnGuardarPlus" 
+                                                     action="#{gestionAlcabalasControlador.guardarPlusvalia()}" 
+                                                     icon="ui-icon-disk"  
+                                                     process="@this,pnlDet" 
+                                                     update=":frmAlcabalas:msgs"
+                                                     async="true"
+                                                     global="false"
+                                                     />                                                                              
                                                                                                                                            
                   </h:panelGrid>
                 </center>

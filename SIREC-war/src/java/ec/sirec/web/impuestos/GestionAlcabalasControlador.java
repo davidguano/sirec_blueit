@@ -18,6 +18,7 @@ import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
 import ec.sirec.ejb.servicios.CatastroPredialAlcabalaValoracionServicio;
+import ec.sirec.ejb.servicios.CatastroPredialPlusvaliaValoracionServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpAlcabalaValoracionExtrasServicio;
@@ -56,7 +57,7 @@ public class GestionAlcabalasControlador extends BaseControlador {
      * Creates a new instance of GestionConceptoControlador
      */
     //LOGGER 
-    private static final Logger LOGGER = Logger.getLogger(GestionAlcabalas.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GestionAlcabalasControlador.class.getName());
     // VARIABLES Y ATRIBUTOS
 
     private SegUsuario usuarioActual;
@@ -103,7 +104,8 @@ public class GestionAlcabalasControlador extends BaseControlador {
     
     /// SERVICIOS PLUSVALIA
     
-    
+    @EJB
+    private CatastroPredialPlusvaliaValoracionServicio catastroPredialPlusvaliaValoracionServicio;
     
 
     @PostConstruct
@@ -222,7 +224,6 @@ public class GestionAlcabalasControlador extends BaseControlador {
 
     public void guardarAlcabala() {
         try {
-
             catastroPredialAlcabalaValoracion.setCatpreCodigo(catastroPredialActual);
             catastroPredialAlcabalaValoracionServicio.crearCatastroPredialAlcabalaValoracion(catastroPredialAlcabalaValoracion);
             addSuccessMessage("Guardado Exitosamente!");
@@ -394,19 +395,75 @@ public class GestionAlcabalasControlador extends BaseControlador {
     
     
     
-    public void listarTipoTarifa() {
-        
+    public void listarTipoTarifa() {        
         try {
            listaTipoDeTarifa = new ArrayList<CatalogoDetalle>();
-           listaTipoDeTarifa = catastroPredialServicio.listarTipoDeTarifa();
+           listaTipoDeTarifa = catastroPredialServicio.listarTipoDeTarifa();            
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void calularDiferenciaBruta() {        
+        try {
+            catastroPredialPlusvaliaValoracion.setCatprepluvalDifBruta(catastroPredialPlusvaliaValoracion.getCatprepluvalPrecioventa().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalPrecioventaAnt())); 
+            
+            // valor quemado para pruebas 
+            // extraer valor
+            catastroPredialPlusvaliaValoracion.setCatprepluvalValorContrmej(new BigDecimal(2000));             
+            calularDiferenciaNeta();
             
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
+    public void calularDiferenciaNeta() {        
+        try {
+            catastroPredialPlusvaliaValoracion.setCatprepluvalDifNeta(catastroPredialPlusvaliaValoracion.getCatprepluvalDifBruta().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalValorContrmej()));                                                  
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
     
+    public void calularValorAniosTranDominio() {        
+        try {                                  
+            catastroPredialPlusvaliaValoracion.setCatprepluvalAniosTransfVal(new BigDecimal(catastroPredialPlusvaliaValoracion.getCatprepluvalAniosTransf()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalDifNeta().multiply(new BigDecimal(0.05))));            
+            catastroPredialPlusvaliaValoracion.setCatprepluvalDifFinal(catastroPredialPlusvaliaValoracion.getCatprepluvalDifNeta().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalAniosTransfVal()));                         
+            calularRebajaDesvalorizacionBaseImpImpuesto();
+            
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
     
+public void calularRebajaDesvalorizacionBaseImpImpuesto() {        
+        try {                                  
+            // valor quemado porcentaje rebaja
+            catastroPredialPlusvaliaValoracion.setCatprepluvalPorcRebaja(50); 
+            catastroPredialPlusvaliaValoracion.setCatprepluvalValorRebaja(new BigDecimal(catastroPredialPlusvaliaValoracion.getCatprepluvalPorcRebaja()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal()));
+            catastroPredialPlusvaliaValoracion.setCatprepluvalBaseimp(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalValorRebaja()));                                                 
+           // catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo());            
+           // System.out.println("nM: "+catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor());            
+            catastroPredialPlusvaliaValoracion.setCatprepluvalImpuesto(new BigDecimal(catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()));             
+            catastroPredialPlusvaliaValoracion.setCatprepluvalTasaproc(new BigDecimal(2)); 
+            
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void guardarPlusvalia() {
+        try {
+          
+            catastroPredialPlusvaliaValoracion.setCatpreCodigo(catastroPredialActual);             
+            catastroPredialPlusvaliaValoracionServicio.crearCatastroPredialPlusvaliaValoracion(catastroPredialPlusvaliaValoracion); 
+            
+            addSuccessMessage("Guardado Exitosamente!");
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 
     ////////////////////////////////////// METODOS SET Y GET ALCABALA  ////////////////////////////////////
     
