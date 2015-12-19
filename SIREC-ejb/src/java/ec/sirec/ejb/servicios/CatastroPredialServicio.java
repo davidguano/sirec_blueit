@@ -497,4 +497,9 @@ public class CatastroPredialServicio {
     public List<CatalogoDetalle> listarTipoDeTarifa() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_TARIF");
     }    
+    
+     public CatalogoDetalle cargarObjetoCatalogoDetalle(int codCatDet) throws Exception {
+        return catalogoDetalleServicio.buscarPorCodigoCatDet(codCatDet);
+    }
+    
 }
