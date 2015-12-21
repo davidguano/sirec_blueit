@@ -10,31 +10,31 @@
         <ui:define name="contenido">
             <!--FICHA DE PATENTE-->
             <h:form id="frmPat">   
-               <p:growl id="msgs" showDetail="true" sticky="true" autoUpdate="true" showSummary="false"/> 
+               <p:growl id="msgs" showDetail="true"   /> 
                 <center>
                     <p:tabView id="tabPrin" style="font-size:12px">
-                        <p:ajax event="tabChange" process="@this,tabPrin" immediate="true" async="true"   listener="#{gestionPatenteControlador.onTabChange}" update=":frmPat:msgs"/>
+                        <p:ajax event="tabChange"/>
 
-                        <p:tab title="IDENTIFICACIÓN" id="patRegFicha">
+                   <p:tab title="IDENTIFICACIÓN" id="patRegFicha">
                             <ui:include src="patenteFichaReg.xhtml" />
-                        </p:tab>
+                        </p:tab> 
                         <p:tab title="EXONERACIONES, DEDUCCIONES Y MULTAS DE PATENTES" id="exoDedMulPat">
                             <ui:include src="patentesExoDeducMultas.xhtml" />
-                        </p:tab>
+                        </p:tab> 
                         <p:tab title="DETERMINACIÓN PATENTES" id="patDet">
                             <ui:include src="patentesDeterminacion.xhtml" />
-                        </p:tab>
+                        </p:tab> 
                         <p:tab title="INGRESO DE TABLA DE AMORTIZACIÓN" >
                             <ui:include src="patentesTblAmortizacion.xhtml" />
-                        </p:tab>
+                        </p:tab>  
                          <p:tab title="EXONERACIONES Y MULTAS 1.5 POR MIL" >
                             <ui:include src="15porMilExoDeducMultas.xhtml" />
-                        </p:tab>
+                        </p:tab> 
                         <p:tab title="DETERMINACIÓN 1.5 POR MIL" >
                             <ui:include src="15porMilDeterminacion.xhtml" />
-                        </p:tab>
+                        </p:tab>  
                         <p:tab title="EMISIÓN DE PATENTES y 1.5 POR MIL" >
-                            <ui:include src="patentesEmision.xhtml" /> 
+                           <ui:include src="patentesEmision.xhtml" />
                         </p:tab>
                     </p:tabView>
                 </center>

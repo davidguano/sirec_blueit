@@ -12,55 +12,58 @@
             <h:form id="frmDecTrib">   
                 <p:growl id="msgs" showDetail="true"/>
                 <center>
-                    <h:panelGrid id="pnlContieneDecTrib" width="1000" columns="1" >
-                        <p:panel header="#{txt.lbl_header_dec_tributaria}">
+                    <h:panelGrid id="pnlContieneDecTrib" width="1000" columns="1" > 
+                        <p:panel header="#{txt.lbl_header_dec_tributaria}" style="width: 99% !important; font-size: 12px !important;">
                             <h:panelGrid columns="1">
                                 <h:panelGrid columns="3">
                                     <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_actividad_economica}"/>
-                                    <p:selectOneMenu   required="true" id="cmbActEcon" 
-                                                       value="#{gestionDecTributaria.catDetaActEconomicaActual}" style="width:250px"
-                                                       converter="#{catastroPredialConverter}" var="t">
+                                    <p:selectOneMenu  requiredMessage="! Debe seleccionar una opción !" required="true" id="cmbActEcon" 
+                                                      value="#{gestionDecTributariaControlador.catDetTipActEconActual}" style="width:250px"
+                                                      converter="#{catalogoDetalleConverter}" var="t">
                                         <f:selectItem  itemLabel="Seleccione..." itemValue=""/> 
                                         <f:selectItems var="tipTem"  
-                                                       value="#{gestionDecTributaria.listCatDetActEconomica}" 
+                                                       value="#{gestionDecTributariaControlador.listCatDetTipEcoActual}" 
                                                        itemLabel="#{tipTem.catdetTexto}" 
                                                        itemValue="#{tipTem}"/> 
-                                        
+                                        <p:ajax   listener="#{gestionDecTributariaControlador.cargarInfoPatentePropietario()}"  update="panlDatosPatentePropietario" />
                                         <p:column width="200" style="white-space: normal">  
                                             <h:outputText escape="false" value="#{t.catdetTexto}" style="font-size: 10px"/> 
                                         </p:column> 
                                     </p:selectOneMenu>                               
                                     <p:message for="cmbActEcon"/>
                                 </h:panelGrid>
-                                <h:panelGrid columns="6">
+                                <h:panelGrid  id="panlDatosPatentePropietario">
+                                    <h:panelGrid columns="6">
                                     <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_nom_razon_social}"/>
-                                    <p:inputText  disabled="true" id="txtRazonSocial" value="#{gestionDecTributaria.propietarioActual.proRazonSocial}"  
+                                    <p:inputText  disabled="true" id="txtRazonSocial" value="#{gestionDecTributariaControlador.propietarioActual.proRazonSocial}"  
                                                   size="40"/>
                                     <p:message for="txtRazonSocial"/>
 
-                                    <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_obl_lleva_contab}"/>
-                                    <p:inputText  disabled="true" id="txtOblLlevaCont" value="#{gestionDecTributaria.patenteActual.patObligadoCont}"  
-                                                  size="40"/>
-                                    <p:message for="txtOblLlevaCont"/>
+                                    <p:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_obl_lleva_contab}"/>
+                                    <p:selectBooleanButton id="compPnl1_19" value="#{gestionDecTributariaControlador.patenteActual.patObligadoCont}" onLabel="Si" offLabel="No" style="width:60px" />
+                                    <p:message for="compPnl1_19"/>
+                                    </h:panelGrid>
+                                
+                                <h:panelGrid columns="3">
 
                                     <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_ruc}"/>
-                                    <p:inputText  disabled="true" id="txtRuc" value="#{gestionDecTributaria.propietarioActual.proCi}"  
+                                    <p:inputText  disabled="true" id="txtRuc" value="#{gestionDecTributariaControlador.propietarioActual.proCi}"  
                                                   size="40"/>
                                     <p:message for="txtRuc"/>
 
                                     <p:outputLabel style="font-size: #{txt.font_size};" value="#{txt.lbl_inic_act_economica}"/>
-                                    <p:inputText  disabled="true" id="txtIniActEcon" value="#{gestionDecTributaria.patenteActual.patInicioActEco}"  
+                                    <p:inputText  disabled="true" id="txtIniActEcon" value="#{gestionDecTributariaControlador.patenteActual.patInicioActEco}"  
                                                   size="40"/>
                                     <p:message for="txtIniActEcon"/>
 
 
                                     <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_tipo_declara}"/>
                                     <p:selectOneMenu   required="true" id="cmbTipoDeclara" 
-                                                       value="#{gestionDecTributaria.catDeTipoDeclaracion}" style="width:250px"
+                                                       value="#{gestionDecTributariaControlador.catDeTipoDeclaracion}" style="width:250px"
                                                        converter="#{catalogoDetalleConverter}" var="t">
                                         <f:selectItem  itemLabel="Seleccione..." itemValue="" /> 
                                         <f:selectItems var="cmbTipoDeclara"  
-                                                       value="#{gestionDecTributaria.lisCatDeTipoDeclara}" 
+                                                       value="#{gestionDecTributariaControlador.lisCatDeTipoDeclara}" 
                                                        itemLabel="#{tipTem.catdetTexto}" 
                                                        itemValue="#{tipTem}"/> 
                                         <p:column width="200" style="white-space: normal">  
@@ -68,29 +71,30 @@
                                         </p:column> 
                                     </p:selectOneMenu>                               
                                     <p:message for="cmbTipoDeclara"/>
-
+                                </h:panelGrid> 
+                                    </h:panelGrid>
                                 <h:panelGrid columns="6">
-                        <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_balance}"/>
+                                    <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_balance}"/>
 
-                        <p:selectOneMenu id="cmbAnioBalance" value="#{gestionDetPatenteUnoCincoporMilControlador.patente15milValActual.pat15valAnioBalance}" style="width:152px">
-                            <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
-                            <f:selectItem itemLabel="2015" itemValue="#{2015}" />
-                        </p:selectOneMenu>
-                        <p:message for="cmbAnioBalance"/>
+                                    <p:selectOneMenu id="cmbAnioBalance" value="#{gestionDetPatenteUnoCincoporMilControlador.patente15milValActual.pat15valAnioBalance}" style="width:152px">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                                        <f:selectItem itemLabel="2015" itemValue="#{2015}" />
+                                    </p:selectOneMenu>
+                                    <p:message for="cmbAnioBalance"/>
 
-                        <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_declaracion}"/>
-                        <p:selectOneMenu id="cmbAclaraAnio" value="#{gestionDetPatenteUnoCincoporMilControlador.patente15milValActual.pat15valAnioDecla}" style="width:152px">
-                            <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
-                            <f:selectItem itemLabel="2015" itemValue="#{2015}" />
-                        </p:selectOneMenu>
-                        <p:message for="cmbAclaraAnio"/>
-                    </h:panelGrid>
-                                    
-                                                                   
+                                    <h:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_anio_declaracion}"/>
+                                    <p:selectOneMenu id="cmbAclaraAnio" value="#{gestionDetPatenteUnoCincoporMilControlador.patente15milValActual.pat15valAnioDecla}" style="width:152px">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
+                                        <f:selectItem itemLabel="2015" itemValue="#{2015}" />
+                                    </p:selectOneMenu>
+                                    <p:message for="cmbAclaraAnio"/> 
                                 </h:panelGrid>
+
+
+
                                 <h:panelGrid columns="3">
                                     <p:outputLabel style="font-size: #{txt.font_size}" value="#{txt.lbl_nombre_comercial}"/>
-                                    <p:inputText  id="compPnl1_4"  value="#{gestionDecTributaria.patenteActual.patNombreComercial}" 
+                                    <p:inputText  id="compPnl1_4"  value="#{gestionDecTributariaControlador.patenteActual.patNombreComercial}" 
                                                   maxlength="20" size="40"/>
                                     <p:message for="compPnl1_4"/>
                                 </h:panelGrid>
@@ -99,135 +103,75 @@
                         <p:panel>
                             <h:panelGrid   columns="6" >
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_activo_corriente}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtActCorr"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtActCorr"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtActCorr"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_activo_no_corriente}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtActNoCorr"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtActNoCorr"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtActNoCorr"/>
                             </h:panelGrid>
 
                             <h:panelGrid  columns="3" >
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total_activos}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtTotAct"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtTotAct"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtTotAct"/>
                             </h:panelGrid>
 
                             <h:panelGrid   columns="6" >
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_pasivo_corriente}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtPasCorr"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtPasCorr"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtPasCorr"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_pasivo_no_corriente}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtPasNoCorr"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtPasNoCorr"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtPasNoCorr"/>
                             </h:panelGrid>
 
                             <h:panelGrid   columns="3" >
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_pasivo_contingente}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtPasconti"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtPasconti"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtPasconti"/>
 
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total_pasivos}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtTotPasivos"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtTotPasivos"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtTotPasivos"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_patrimonio}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtPatrimonio"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtPatrimonio"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtPatrimonio"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_total_anual}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtTotAnual"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtTotAnual"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtTotAnual"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_utilidad_bruta}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtUtiBrut"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtUtiBrut"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtUtiBrut"/>
 
                                 <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_perdida}"/>
-                                <p:inputText maxlength="20" size="40"   id="txtPerdids"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
+                                <p:inputText maxlength="20" size="40"   id="txtPerdids"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
                                              />
                                 <p:message  for="txtPerdids"/>
                             </h:panelGrid>
                         </p:panel>
                         <p:panel header="#{txt.lbl_header_tabla_porcentaje}">
 
-                        </p:panel>
-                    </h:panelGrid>
-
-                    <h:panelGrid columns="1">
-                        <p:commandButton value="#{txt.btn_calcula}" 
-                                         id="btnCalcular" 
-                                         action="#{gestionDecTributaria.guardarPatente()}" 
-                                         icon="ui-icon-disk"  
-                                         process="@this,pnlContieneDecTrib" 
-                                         update=""
-                                         async="true"
-                                         global="false"
-                                         />
-                    </h:panelGrid>   
-                    <h:panelGrid columns="2">
-                        <p:panel header="#{txt.lbl_header_dec_trib_patente}">
-                            <h:panelGrid columns="3">
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_impuesto}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblImpuesto"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblImpuesto"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total_deduc}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblTotDeduc"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblTotDeduc"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_bomberos}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblBombreos"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblBombreos"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_tasa_procesamiento}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblTasaProces"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblTasaProces"/>
-                            </h:panelGrid>
-                        </p:panel>
-                        <p:panel header="#{txt.lbl_header_dec_15porMil}">
-                            <h:panelGrid columns="3">
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_impuesto}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblImpuesto1"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblImpuesto1"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_tasa_procesamiento}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblTasaProces1"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblTasaProces1"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_recargos}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblRecargos"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblRecargos"/>
-
-                                <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total}"/>
-                                <p:inputText maxlength="20" size="20"   id="lblTotal1"  value="#{gestionDecTributaria.patenteActual.patPlaca}" 
-                                             />
-                                <p:message  for="lblTotal1"/>
-                            </h:panelGrid>
-                        </p:panel>
+                        </p:panel> 
                         <h:panelGrid columns="1">
-                            <p:commandButton value="#{txt.btn_imprimir}" 
-                                             id="btnImpr" 
-                                             action="#{gestionDecTributaria.guardarPatente()}" 
+                            <p:commandButton value="#{txt.btn_calcula}" 
+                                             id="btnCalcular" 
+                                             action="#{gestionDecTributariaControlador.guardarPatente()}" 
                                              icon="ui-icon-disk"  
                                              process="@this,pnlContieneDecTrib" 
                                              update=""
@@ -235,6 +179,65 @@
                                              global="false"
                                              />
                         </h:panelGrid>   
+                        <h:panelGrid columns="2">
+                            <p:panel header="#{txt.lbl_header_dec_trib_patente}" style="width: 99% !important; font-size: 12px !important;">
+                                <h:panelGrid columns="3">
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_impuesto}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblImpuesto"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblImpuesto"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total_deduc}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblTotDeduc"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblTotDeduc"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_bomberos}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblBombreos"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblBombreos"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_tasa_procesamiento}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblTasaProces"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblTasaProces"/>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel header="#{txt.lbl_header_dec_15porMil}" style="width: 99% !important; font-size: 12px !important;">
+                                <h:panelGrid columns="3">
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_impuesto}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblImpuesto1"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblImpuesto1"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_tasa_procesamiento}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblTasaProces1"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblTasaProces1"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_recargos}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblRecargos"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblRecargos"/>
+
+                                    <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_total}"/>
+                                    <p:inputText maxlength="20" size="20"   id="lblTotal1"  value="#{gestionDecTributariaControlador.patenteActual.patPlaca}" 
+                                                 />
+                                    <p:message  for="lblTotal1"/>
+                                </h:panelGrid>
+                            </p:panel>
+                            <h:panelGrid columns="1">
+                                <p:commandButton value="#{txt.btn_imprimir}" 
+                                                 id="btnImpr" 
+                                                 action="#{gestionDecTributariaControlador.guardarPatente()}" 
+                                                 icon="ui-icon-disk"  
+                                                 process="@this,pnlContieneDecTrib" 
+                                                 update=""
+                                                 async="true"
+                                                 global="false"
+                                                 />
+                            </h:panelGrid>   
+                        </h:panelGrid> 
                     </h:panelGrid>
                 </center>
             </h:form>

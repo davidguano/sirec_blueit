@@ -263,8 +263,12 @@ public class GestionPatenteControlador extends BaseControlador {
     public void cargarInformacionPropietario() throws Exception {
         try {
             catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialSelec.getCatpreCodigo());
-            propietarioActual = propietarioServicio.buscarPropietario(propietarioServicio.obtenerPropietarioPrincipalPredio(catastroPredialActual.getCatpreCodigo()).getProCi());
-            catDetParroquia = catalogoDetalleServicio.buscarPorCodigoCatDet(propietarioActual.getCatdetCiudad().getCatdetCodigo());
+            propietarioActual = propietarioServicio.buscarPropietarioPorCatastro(catastroPredialActual.getCatpreCodigo());
+            if (propietarioActual == null) {
+                addWarningMessage("No se encontraron resultados");
+            } else {
+                catDetParroquia = catalogoDetalleServicio.buscarPorCodigoCatDet(propietarioActual.getCatdetCiudad().getCatdetCodigo());
+            }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -275,7 +279,7 @@ public class GestionPatenteControlador extends BaseControlador {
 
             propietarioActual.setCatdetCiudad(catDetParroquia);
             propietarioServicio.editarPropietario(propietarioActual);
-            propietarioActual = propietarioServicio.buscarPropietario(propietarioServicio.obtenerPropietarioPrincipalPredio(catastroPredialActual.getCatpreCodigo()).getProCi());
+            propietarioActual = propietarioServicio.buscarPropietarioPorCatastro(catastroPredialActual.getCatpreCodigo());
             addSuccessMessage("Propietario Actualizado");
             habilitaCamposPropietario = true;
         } catch (Exception ex) {

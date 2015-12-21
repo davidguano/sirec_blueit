@@ -14,11 +14,13 @@ import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.SegUsuario;
 import ec.sirec.ejb.servicios.CatalogoDetalleServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
+import ec.sirec.ejb.servicios.DeclaracionTributariaServicio;
 import ec.sirec.ejb.servicios.PatenteServicio;
 import ec.sirec.ejb.servicios.PropietarioServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +35,9 @@ import javax.faces.bean.ViewScoped;
  */
 @ManagedBean
 @ViewScoped
-public class GestionDecTributaria extends BaseControlador {
+public class GestionDecTributariaControlador extends BaseControlador {
+    @EJB
+    private DeclaracionTributariaServicio declaracionTributariaServicio;
 
     @EJB
     private CatastroPredialServicio catastroPredialServicio;
@@ -43,6 +47,7 @@ public class GestionDecTributaria extends BaseControlador {
 
     @EJB
     private CatalogoDetalleServicio catalogoDetalleServicio;
+    
 
     @EJB
     private PatenteServicio patenteServicio;
@@ -53,11 +58,11 @@ public class GestionDecTributaria extends BaseControlador {
     private Patente15xmilValoracion patente15milValActual;
     private int verPanelDetalleImp;
     private boolean habilitaEdicion;
-    private CatalogoDetalle catDetaActEconomicaActual;
+    private CatalogoDetalle catDetTipActEconActual;
      private CatalogoDetalle catDeTipoDeclaracion;
-    private List<CatalogoDetalle> listCatDetActEconomica;
+    private List<CatalogoDetalle> listCatDetTipEcoActual;
     private List<CatalogoDetalle> lisCatDeTipoDeclara;
-    private static final Logger LOGGER = Logger.getLogger(GestionDecTributaria.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GestionDecTributariaControlador.class.getName());
 
     /**
      * Creates a new instance of GestionDetPatenteControlador
@@ -66,13 +71,16 @@ public class GestionDecTributaria extends BaseControlador {
     public void inicializar() {
         try {
             catDeTipoDeclaracion= new CatalogoDetalle();
+            catDetTipActEconActual=new CatalogoDetalle();
             catastroPredialActual = new CatastroPredial();
             usuarioActual = (SegUsuario) this.getSession().getAttribute("usuario");
+            propietarioActual=propietarioServicio.buscarPropietario(usuarioActual.getUsuIdentificacion());
+            listarActividadEconomica();
             patenteActual = new Patente();
             patente15milValActual = new Patente15xmilValoracion();
             verPanelDetalleImp = 0;
             habilitaEdicion = false;
-            listarActividadEconomica();
+            
             listarTipoDeclaracion();
 
         } catch (Exception ex) {
@@ -80,15 +88,17 @@ public class GestionDecTributaria extends BaseControlador {
         }
     }
 
-    public GestionDecTributaria() {
+    public GestionDecTributariaControlador() {
     }
 
-    public void cargarInfoPropietario() {
+    public void cargarInfoPatentePropietario() {
         try {
-            propietarioActual = propietarioServicio.buscarPropietario(usuarioActual.getUsuIdentificacion());
+                                  System.err.println("Entro al metodo");
+            patenteActual=patenteServicio.buscaParPrRucActEco(propietarioActual.getProCi(),catDetTipActEconActual.getCatdetCodigo());
+//            propietarioActual = propietarioServicio.buscarPropietario(usuarioActual.getUsuIdentificacion());
             //cambiar metodo: un propietario tiene varios catastros , utilizar metodo listarPropietariosPredioPorPropietario
             //catastroPredialActual = catastroPredialServicio.cargarObjCatPorPropietario(propietarioActual.getProCi());
-            patenteActual = patenteServicio.cargarObjPatentePorCatastro(catastroPredialActual.getCatpreCodigo());
+//            patenteActual = patenteServicio.cargarObjPatentePorCatastro(catastroPredialActual.getCatpreCodigo());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -100,7 +110,7 @@ public class GestionDecTributaria extends BaseControlador {
     }
 
     public void listarActividadEconomica() throws Exception {
-        listCatDetActEconomica = catalogoDetalleServicio.listarPorNemonicoCatalogo("ACT_ECONOMICA");
+       listCatDetTipEcoActual=declaracionTributariaServicio.buscarCatalogoDetallePorRuc(usuarioActual.getUsuIdentificacion());
     }
      public void listarTipoDeclaracion() throws Exception {
         lisCatDeTipoDeclara = catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_DCLARA");
@@ -154,21 +164,24 @@ public class GestionDecTributaria extends BaseControlador {
         this.patente15milValActual = patente15milValActual;
     }
 
-    public CatalogoDetalle getCatDetaActEconomicaActual() {
-        return catDetaActEconomicaActual;
+    public CatalogoDetalle getCatDetTipActEconActual() {
+        return catDetTipActEconActual;
     }
 
-    public void setCatDetaActEconomicaActual(CatalogoDetalle catDetaActEconomicaActual) {
-        this.catDetaActEconomicaActual = catDetaActEconomicaActual;
+    public void setCatDetTipActEconActual(CatalogoDetalle catDetTipActEconActual) {
+        this.catDetTipActEconActual = catDetTipActEconActual;
     }
 
-    public List<CatalogoDetalle> getListCatDetActEconomica() {
-        return listCatDetActEconomica;
+    public List<CatalogoDetalle> getListCatDetTipEcoActual() {
+        return listCatDetTipEcoActual;
     }
 
-    public void setListCatDetActEconomica(List<CatalogoDetalle> listCatDetActEconomica) {
-        this.listCatDetActEconomica = listCatDetActEconomica;
+    public void setListCatDetTipEcoActual(List<CatalogoDetalle> listCatDetTipEcoActual) {
+        this.listCatDetTipEcoActual = listCatDetTipEcoActual;
     }
+
+    
+
 
     public Propietario getPropietarioActual() {
         return propietarioActual;

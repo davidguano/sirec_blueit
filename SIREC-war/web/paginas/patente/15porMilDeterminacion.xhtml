@@ -19,7 +19,7 @@
                                          action="#{gestionDetPatenteUnoCincoporMilControlador.buscarPatente()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnl15xMiDeterBuscaPatente" 
-                                         update=":frmPat,pnl15xMiDeterBuscaPatente,frmPat:msgs"
+                                         update=":frmPat,pnl15xMiDeterBuscaPatente"
                                          async="true"
                                          global="false"
                                          />  
@@ -28,7 +28,7 @@
                                          action="#{gestionDetPatenteUnoCincoporMilControlador.inicializar()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnl15xMiDeterBuscaPatente" 
-                                         update=":frmPat,pnl15xMiDeterBuscaPatente,frmPat:msgs"
+                                         update=":frmPat,pnl15xMiDeterBuscaPatente"
                                          async="true"
                                          global="false"
                                          />                        
@@ -38,7 +38,7 @@
                             <p:outputLabel  style="font-size: #{txt.font_size}" value="#{txt.lbl_ingre_valor_busca}: AE-MPM-"/>
                             <p:inputText  id="txtExo15xMilDeterPatente"  value="#{gestionDetPatenteUnoCincoporMilControlador.buscNumPat}" 
                                           maxlength="20" size="40"/>
-                            <p:message for="txtbusPatente"/>
+                            <p:message for="txtExo15xMilDeterPatente"/>
                             <p:commandButton value="#{txt.btn_aceptar}" 
                                              id="btn15xMilDeterBuscaPatente" 
                                              action="#{gestionDetPatenteUnoCincoporMilControlador.cagarPatenteActual()}" 
@@ -73,7 +73,7 @@
                                          action="#{gestionPatenteControlador.guardarPatente()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnlConPatPorMil" 
-                                         update=":frmPat:tabPrin:pnlConPatPorMil,frmPat:msgs"
+                                         update=":frmPat:tabPrin:pnlConPatPorMil"
                                          async="true"
                                          global="false"
                                          />
@@ -136,7 +136,7 @@
                                          action="#{gestionDetPatenteUnoCincoporMilControlador.calcularBaseImponible()}" 
                                          icon="ui-icon-disk"  
                                          process="@this,pnlConPatPorMil" 
-                                         update=":frmPat:tabPrin:pnlConCalculos15xMilDet,pnlConCalculos15xMilDet1,:frmPat:msgs"
+                                         update=":frmPat:tabPrin:pnlConCalculos15xMilDet,pnlConCalculos15xMilDet1"
                                          async="true"
                                          global="false"
                                          />

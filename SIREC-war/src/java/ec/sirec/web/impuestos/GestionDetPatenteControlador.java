@@ -201,7 +201,7 @@ public class GestionDetPatenteControlador extends BaseControlador {
 //                if (patenteServicio.existePatenteValoracionExtra(patenteValoracionActal.getPatvalCodigo())) {
 //                    addWarningMessage("Existe Código");
 //                } else {
-                //  patenteValoracionActal.setPatCodigo(patenteActual);
+                patenteValoracionActal.setPatCodigo(patenteActual);
                 patenteServicio.editarPatenteValoracion(patenteValoracionActal);
                 addSuccessMessage("Patente Valoración Guardado");
                 patenteValoracionActal = new PatenteValoracion();
