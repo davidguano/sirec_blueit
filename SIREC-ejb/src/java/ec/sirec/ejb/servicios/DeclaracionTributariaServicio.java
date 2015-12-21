@@ -5,6 +5,7 @@
  */
 package ec.sirec.ejb.servicios;
 
+import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.SegRol;
 import ec.sirec.ejb.facade.CatalogoDetalleFacade;
 import ec.sirec.ejb.facade.SegRolFacade;
@@ -25,7 +26,10 @@ public class DeclaracionTributariaServicio {
     private String ENTIDAD_CATALOGO_DETALLE="";
 
      
- 
+  public List<CatalogoDetalle> buscarCatalogoDetallePorRuc(String ruc) throws Exception{
+    return catalogoDetalleDao.buscaCatDetPorRuc(ruc);
+    }
+  
     
 
 //    public String creaRol(SegRol codRol) throws Exception {

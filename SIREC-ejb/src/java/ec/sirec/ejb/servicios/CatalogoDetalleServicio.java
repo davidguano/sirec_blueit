@@ -33,4 +33,5 @@ public class CatalogoDetalleServicio {
     public  CatalogoDetalle buscarPorCodigoCatDet(int codCatDet) throws Exception{
     return catalogoDetalleDao.buscarPorCampo(ENTIDAD_CAT_DETALLE, "catdetCodigo", codCatDet);
     }
+    
 }

@@ -64,6 +64,8 @@ public class PatenteValoracion implements Serializable {
     private BigDecimal patvalTasaProc;
     @Column(name = "patval_total")
     private BigDecimal patvalTotal;
+     @Column(name = "patval_tasa_bomb")
+    private BigDecimal patvalTasaBomb;
     @JoinColumn(name = "pat_codigo", referencedColumnName = "pat_codigo")
     @ManyToOne(optional = false)
     private Patente patCodigo;
@@ -172,6 +174,14 @@ public class PatenteValoracion implements Serializable {
 
     public void setPatCodigo(Patente patCodigo) {
         this.patCodigo = patCodigo;
+    }
+
+    public BigDecimal getPatvalTasaBomb() {
+        return patvalTasaBomb;
+    }
+
+    public void setPatvalTasaBomb(BigDecimal patvalTasaBomb) {
+        this.patvalTasaBomb = patvalTasaBomb;
     }
 
     public List<PatenteValoracionExtras> getPatenteValoracionExtrasList() {

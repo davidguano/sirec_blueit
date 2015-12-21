@@ -87,8 +87,16 @@ public class PatenteServicio {
     public DatoGlobal cargarObjPorNombre(String nombre) throws Exception {
         return datoGlobalDao.buscarPorCampo(ENTIDAD_DATO_GLOBAL, "datgloNombre", nombre);
     }
-//*****************************Metodos Exoneracion Deduccion y Multas de Patente*************************
 
+    public List<Object[]> listarEmisionPatente(int codPatente) {
+        return patenteDao.listaDatosEmisionPat(codPatente);
+    }
+
+    public Patente buscaParPrRucActEco(String cedula, int actEcon) throws Exception {
+        return patenteDao.buscaPatentePorRucActEcon(cedula, actEcon);
+    }
+
+//*****************************Metodos Exoneracion Deduccion y Multas de Patente*************************
     public String crearPatenteValoracionExtra(PatenteValoracionExtras patvalexCodigo) throws Exception {
         patenteValoracionExtrasDao.crear(patvalexCodigo);
         return "se ha creado la patente val  ext" + patvalexCodigo;
