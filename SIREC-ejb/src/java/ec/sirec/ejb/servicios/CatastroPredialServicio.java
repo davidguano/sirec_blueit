@@ -11,6 +11,7 @@ import ec.sirec.ejb.entidades.CatastroPredialAreas;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
+import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.facade.CatastroPredialAreasFacade;
@@ -46,6 +47,8 @@ public class CatastroPredialServicio {
     private CatastroPredialUsosueloFacade catastroPredialUsoSueloDao;
     @EJB
     private CatastroPredialEdificacionFacade catastroPredialEdificacionDao;
+    @EJB
+    private CatastroPredialValoracionServicio valoracionPredioServicio;
 
     private final String ENTIDAD_CATASTRO = "CatastroPredial";
 
@@ -60,6 +63,16 @@ public class CatastroPredialServicio {
     public CatastroPredial buscarCatastroPorCodigosClave(String vcodigoNacional, String vcodigoLocal) throws Exception {
         return catastroPredialDao.buscarPor2Campos(ENTIDAD_CATASTRO, "catpreCodNacional", vcodigoNacional, "catpreCodLocal", vcodigoLocal);
     }
+    public List<CatastroPredial> listarCatastroPorCedulaPropietario(String vcedula) throws Exception {
+        List<CatastroPredial> lstC=new ArrayList<CatastroPredial>();
+        List<PropietarioPredio> lstPP= propietarioServicio.listarPropietariosPredioPorCedulaPropietario(vcedula);
+        if(!lstPP.isEmpty()){
+            for(PropietarioPredio pp:lstPP){
+                lstC.add(pp.getCatpreCodigo());
+            }
+        }
+        return lstC;
+    }
 
     public boolean existeCatastroPorCodigosClave(String vcodigoNacional, String vcodigoLocal) throws Exception {
         return catastroPredialDao.existePor2Campos(ENTIDAD_CATASTRO, "catpreCodNacional", vcodigoNacional, "catpreCodLocal", vcodigoLocal);
@@ -72,6 +85,15 @@ public class CatastroPredialServicio {
     public void guardarCatastroPredial(CatastroPredial vcatastro) throws Exception {
         controlDetCatalogosNulos(vcatastro);
         catastroPredialDao.crear(vcatastro);
+    }
+
+    public CatastroPredialValoracion obtenerValoracionPredio(CatastroPredial vcatastro) throws Exception {
+        CatastroPredialValoracion val = valoracionPredioServicio.buscarPorCatastroPredial(vcatastro);
+        if (val == null) {
+            return new CatastroPredialValoracion();
+        } else {
+            return val;
+        }
     }
 
     public void controlDetCatalogosNulos(CatastroPredial vcatastro) {
@@ -116,104 +138,156 @@ public class CatastroPredialServicio {
                 vcatastro.setCatdetLocalizacion(null);
             }
         }
+        if (vcatastro.getCatdetTipoNegocio() != null) {
+            if (vcatastro.getCatdetTipoNegocio().getCatdetCodigo() == null) {
+                vcatastro.setCatdetTipoNegocio(null);
+            }
+        }
+        if (vcatastro.getCatdetTipoFuncNegocio() != null) {
+            if (vcatastro.getCatdetTipoFuncNegocio().getCatdetCodigo() == null) {
+                vcatastro.setCatdetTipoFuncNegocio(null);
+            }
+        }
+        if (vcatastro.getCatdetTipoFuncNegocio() != null) {
+            if (vcatastro.getCatdetTipoFuncNegocio().getCatdetCodigo() == null) {
+                vcatastro.setCatdetTipoFuncNegocio(null);
+            }
+        }
+
+        if (vcatastro.getCatdetAlicuotas() != null) {
+            if (vcatastro.getCatdetAlicuotas().getCatdetCodigo() == null) {
+                vcatastro.setCatdetAlicuotas(null);
+            }
+        }
+        if (vcatastro.getCatdetDimension() != null) {
+            if (vcatastro.getCatdetDimension().getCatdetCodigo() == null) {
+                vcatastro.setCatdetDimension(null);
+            }
+        }
+
+        if (vcatastro.getCatdetFuenteInformacion() != null) {
+            if (vcatastro.getCatdetFuenteInformacion().getCatdetCodigo() == null) {
+                vcatastro.setCatdetFuenteInformacion(null);
+            }
+        }
+        if (vcatastro.getCatdetDocRelevamiento() != null) {
+            if (vcatastro.getCatdetDocRelevamiento().getCatdetCodigo() == null) {
+                vcatastro.setCatdetDocRelevamiento(null);
+            }
+        }
+        if (vcatastro.getCatdetParroquia() != null) {
+            if (vcatastro.getCatdetParroquia().getCatdetCodigo() == null) {
+                vcatastro.setCatdetParroquia(null);
+            }
+        }
+        if (vcatastro.getCatdetSector() != null) {
+            if (vcatastro.getCatdetSector().getCatdetCodigo() == null) {
+                vcatastro.setCatdetSector(null);
+            }
+        }
     }
 
     public void editarCatastroPredial(CatastroPredial vcatastro) throws Exception {
         controlDetCatalogosNulos(vcatastro);
         catastroPredialDao.editar(vcatastro);
     }
-    
+
     //PROPIETARIOS:
-    public void cargarListaPropietariosPredio(CatastroPredial catPred) throws Exception{
-        if(catPred!=null){
-            if(catPred.getCatpreCodigo()!=null){
-                List<PropietarioPredio> lstPP=propietarioServicio.listarPropietariosPredio(catPred.getCatpreCodigo());
-                if(!lstPP.isEmpty()){
+    public void cargarListaPropietariosPredio(CatastroPredial catPred) throws Exception {
+        if (catPred != null) {
+            if (catPred.getCatpreCodigo() != null) {
+                List<PropietarioPredio> lstPP = propietarioServicio.listarPropietariosPredio(catPred.getCatpreCodigo());
+                if (!lstPP.isEmpty()) {
                     catPred.setListaPropietariosPredio(lstPP);
                 }
             }
         }
     }
-    public void guardarPropietarioPredio(PropietarioPredio vPP) throws Exception{
-         propietarioServicio.guardarPropietarioPredio(vPP);
-     }
-     public void eliminarPropietarioPredio(PropietarioPredio vPP) throws Exception{
-         propietarioServicio.eliminarPropietarioPredio(vPP);
-     }
-     public Propietario obtenerPropietarioPrincipalPredio(Integer idCatastroPre) throws Exception{
-         return propietarioServicio.obtenerPropietarioPrincipalPredio(idCatastroPre);
-     }
+
+    public void guardarPropietarioPredio(PropietarioPredio vPP) throws Exception {
+        propietarioServicio.guardarPropietarioPredio(vPP);
+    }
+
+    public void eliminarPropietarioPredio(PropietarioPredio vPP) throws Exception {
+        propietarioServicio.eliminarPropietarioPredio(vPP);
+    }
+
+    public Propietario obtenerPropietarioPrincipalPredio(Integer idCatastroPre) throws Exception {
+        return propietarioServicio.obtenerPropietarioPrincipalPredio(idCatastroPre);
+    }
 
     //INFRAESTRUCTURA
-    public void guardarItemsInfraestructura(CatastroPredial vcatastro, int vitem, List<CatastroPredialInfraestructura> lstItems) throws Exception {
-        if (!lstItems.isEmpty()) {
-            for (CatastroPredialInfraestructura inf : lstItems) {
+    /*public void guardarItemsInfraestructura(CatastroPredial vcatastro, int vitem, List<CatastroPredialInfraestructura> lstItems) throws Exception {
+     if (!lstItems.isEmpty()) {
+     for (CatastroPredialInfraestructura inf : lstItems) {
+     inf.setCatpreCodigo(vcatastro);
+     inf.setCatpreinfItem(vitem);
+     catastroPredialInfDao.crear(inf);
+     }
+     }
+     }*/
+    public void guardarItemsInfraestructura(CatastroPredial vcatastro, int vitem, List<CatalogoDetalle> lstDets) throws Exception {
+        if (!lstDets.isEmpty()) {
+            if (catastroPredialInfDao.existePor2Campos("CatastroPredialInfraestructura", "catpreCodigo", vcatastro, "catpreinfItem", vitem)) {
+                catastroPredialInfDao.eliminarPor2Campos("CatastroPredialInfraestructura", "catpreCodigo", vcatastro, "catpreinfItem", vitem);
+            }
+            for (CatalogoDetalle det : lstDets) {
+                CatastroPredialInfraestructura inf = new CatastroPredialInfraestructura();
                 inf.setCatpreCodigo(vcatastro);
                 inf.setCatpreinfItem(vitem);
+                inf.setCatdetCodigo(det);
                 catastroPredialInfDao.crear(inf);
             }
         }
     }
 
-    public List<CatastroPredialInfraestructura> listarInfraestructuraPorCatastroItemSeleccionados(CatastroPredial vcatastro, int vitem) throws Exception {
-        return catastroPredialInfDao.listarPor2CamposOrdenada("CatastroPredialInfraestructura", "catpreCodigo", vcatastro, "catpreinfItem", vitem, "catdetCodigo.catdetOrden", "asc");
-    }
+    public List<CatalogoDetalle> listarInfraestructuraPorCatastroItemSeleccionados(CatastroPredial vcatastro, int vitem) throws Exception {
 
-    public List<CatastroPredialInfraestructura> listarInfraestructuraPorCatastroItemIniciales(String vnemonicoCatDetalle, int item) throws Exception {
-        List<CatalogoDetalle> lstDets = new ArrayList<CatalogoDetalle>();
-        lstDets = catalogoDetalleServicio.listarPorNemonicoCatalogo(vnemonicoCatDetalle);
+        List<CatalogoDetalle> lstCat = new ArrayList<CatalogoDetalle>();
         List<CatastroPredialInfraestructura> lstInf = new ArrayList<CatastroPredialInfraestructura>();
-        for (CatalogoDetalle det : lstDets) {
-            CatastroPredialInfraestructura inf = new CatastroPredialInfraestructura();
-            inf.setCatpreinfItem(item);
-            inf.setCatdetCodigo(det);
-            lstInf.add(inf);
-        }
-        return lstInf;
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfServicios() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_SERVICIOS", 1);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfAlcantarillado1() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_ALCANTARILLADO1", 3);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfUso() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_USO", 11);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfMaterial() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_MATERIAL", 12);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfSentido() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_SENTIDO", 14);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfEnergiaElect() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_ENERGIA_ELEC", 20);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfAbasAgua() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_ABAS_AGUA", 30);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfAlcantarillado2() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_ALCANTARILLADO2", 40);
-    }
-
-    public List<CatastroPredialInfraestructura> listarInfOtrosServicios() throws Exception {
-        return listarInfraestructuraPorCatastroItemIniciales("INF_OTROS_SERV", 50);
-    }
-
-    public void editarItemsInfraestructura(List<CatastroPredialInfraestructura> lstItems) throws Exception {
-        if (!lstItems.isEmpty()) {
-            for (CatastroPredialInfraestructura inf : lstItems) {
-                catastroPredialInfDao.editar(inf);
+        lstInf = catastroPredialInfDao.listarPor2CamposOrdenada("CatastroPredialInfraestructura", "catpreCodigo", vcatastro, "catpreinfItem", vitem, "catdetCodigo.catdetOrden", "asc");
+        if (!lstInf.isEmpty()) {
+            for (CatastroPredialInfraestructura inf : lstInf) {
+                lstCat.add(inf.getCatdetCodigo());
             }
         }
+        return lstCat;
+    }
+
+    public List<CatalogoDetalle> listarInfServicios() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_SERVICIOS");
+    }
+
+    public List<CatalogoDetalle> listarInfAlcantarillado1() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_ALCANTARILLADO1");
+    }
+
+    public List<CatalogoDetalle> listarInfUso() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_USO");
+    }
+
+    public List<CatalogoDetalle> listarInfMaterial() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_MATERIAL");
+    }
+
+    public List<CatalogoDetalle> listarInfSentido() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_SENTIDO");
+    }
+
+    public List<CatalogoDetalle> listarInfEnergiaElect() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_ENERGIA_ELEC");
+    }
+
+    public List<CatalogoDetalle> listarInfAbasAgua() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_ABAS_AGUA");
+    }
+
+    public List<CatalogoDetalle> listarInfAlcantarillado2() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_ALCANTARILLADO2");
+    }
+
+    public List<CatalogoDetalle> listarInfOtrosServicios() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("INF_OTROS_SERV");
     }
 
     //USO DE SUELO
@@ -232,9 +306,16 @@ public class CatastroPredialServicio {
     public List<CatastroPredialUsosuelo> listarRegistrosUsuSueloPorCatastro(CatastroPredial vcatastro) throws Exception {
         return catastroPredialUsoSueloDao.listarPorCampoOrdenada("CatastroPredialUsosuelo", "catpreCodigo", vcatastro, "catpreusuItem", "asc");
     }
+    public List<CatastroPredialUsosuelo> listarRegistrosUsuSueloPorCatastroySubgrupo(CatastroPredial vcatastro, String vsubgrupo) throws Exception {
+        return catastroPredialUsoSueloDao.listarPor1Campo1IniciaOrdenada("CatastroPredialUsosuelo", "catpreCodigo", vcatastro, "catdetCodigo.catdetCod",vsubgrupo,"catpreusuItem", "asc");
+    }
 
-    public void editarRegistroUsuSuelo(CatastroPredialUsosuelo vusosuelo) throws Exception {
-        catastroPredialUsoSueloDao.editar(vusosuelo);
+    public void editarRegistroUsuSuelo(List<CatastroPredialUsosuelo> lstUsosuelo) throws Exception {
+        for (CatastroPredialUsosuelo vusosuelo : lstUsosuelo) {
+            if (vusosuelo.getCatpreusuAplica()) {
+                catastroPredialUsoSueloDao.editar(vusosuelo);
+            }
+        }
     }
 
     // Add business logic below. (Right-click in editor and choose
@@ -258,8 +339,12 @@ public class CatastroPredialServicio {
     }
 
     //EDIFICACIONES
-    public void crearRegistrosEdificacionesPorNumBloquesYPisos(CatastroPredial vcatastro, int numBloques, int numPisos) throws Exception {
+    public void crearRegistrosEdificacionesPorNumBloquesYPisos(CatastroPredial vcatastro) throws Exception {
+
+        int numBloques = vcatastro.getCatpreNumBloques();
+        int numPisos = vcatastro.getCatpreNumPisos();
         // 1 (4 items)
+
         for (int i = 1; i <= 4; i++) {
             for (int b = 1; b <= numBloques; b++) {
                 for (int p = 1; p <= numPisos; p++) {
@@ -327,66 +412,76 @@ public class CatastroPredialServicio {
         }
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_1(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "1", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_1(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "1", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_2(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "2", "catpreediSubgrupo", "1", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_2(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "2", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_3(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "3", "catpreediSubgrupo", "1", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_3(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "3", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_4(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediSubgrupo", "1", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_4(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "4", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo234(CatastroPredial vcatastro) throws Exception {
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo234(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
         List<CatastroPredialEdificacion> lst = new ArrayList<CatastroPredialEdificacion>();
-        lst.addAll(catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "2", "catpreediCodigo", "asc"));
-        lst.addAll(catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "3", "catpreediCodigo", "asc"));
-        lst.addAll(catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor4CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "2", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor4CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "3", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor4CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
 
         return lst;
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5(CatastroPredial vcatastro) throws Exception {
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
         List<CatastroPredialEdificacion> lst = new ArrayList<CatastroPredialEdificacion>();
-        lst.addAll(catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "1", "catpreediCodigo", "asc"));
-        lst.addAll(catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "2", "catpreediCodigo", "asc"));
-        lst.addAll(catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "3", "catpreediCodigo", "asc"));
-        lst.addAll(catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "4", "catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "1", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "2", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "3", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
+        lst.addAll(catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "4", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc"));
 
         return lst;
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_5(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "5", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_5(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "5", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_6(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "6", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_6(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "6", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_7(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "7", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_7(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "7", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_8(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "8", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_8(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "8", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_9(CatastroPredial vcatastro) throws Exception {
-        return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "9", "catpreediCodigo", "asc");
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo5_9(CatastroPredial vcatastro, String bloque, String piso) throws Exception {
+        return catastroPredialEdificacionDao.listarPor5CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "5", "catpreediSubgrupo", "9", "catpreediBloque",bloque,"catpreediPiso",piso,"catpreediCodigo", "asc");
     }
 
-    public void editarCatastroPredEdificacion(CatastroPredialEdificacion vedif) throws Exception {
-        catastroPredialEdificacionDao.editar(vedif);
+    public void editarCatastroPredEdificacion(List<CatastroPredialEdificacion> lstEdif) throws Exception {
+        for (CatastroPredialEdificacion edif : lstEdif) {
+            catastroPredialEdificacionDao.editar(edif);
+        }
     }
 
     //EXTRACCION DE CATALOGOS
+    public List<CatalogoDetalle> listaCatParroquias() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("PARROQUIAS");
+    }
+
+    public List<CatalogoDetalle> listaCatSectores() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("SECTORES");
+    }
+
     public List<CatalogoDetalle> listaCatTipoVia() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_VIA");
     }
@@ -466,40 +561,43 @@ public class CatastroPredialServicio {
     public List<CatalogoDetalle> listaTipoDocRelevamiento() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_DOCREL");
     }
+
     public List<CatalogoDetalle> listaOpcionesEdificacion(String vnum) throws Exception {
-        return catalogoDetalleServicio.listarPorNemonicoCatalogo("EDIF_"+vnum);
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("EDIF_" + vnum);
+    }
+
+    public List<CatalogoDetalle> listaOpcionesEdificacionConLista(String vnum, String lista) throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoyItemsIn("EDIF_" + vnum, lista);
     }
 
     public List<CatastroPredial> listarCatastroXCodigo(Integer codigo) throws Exception {
         return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catpreCodigo", codigo, "catpreCodigo", "asc");
     }
-    
+
     public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_SubGrupo2(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "2", "catpreediCodigo", "asc");
     }
-    
+
     public List<CatastroPredialEdificacion> listarEdificacionesGrupo1_SubGrupo3(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor3CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "1", "catpreediSubgrupo", "3", "catpreediCodigo", "asc");
     }
-    
-     public List<CatastroPredialEdificacion> listarEdificacionesGrupo2(CatastroPredial vcatastro) throws Exception {
+
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo2(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "2", "catpreediCodigo", "asc");
     }
- 
-      public List<CatastroPredialEdificacion> listarEdificacionesGrupo3(CatastroPredial vcatastro) throws Exception {
+
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo3(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor2CamposOrdenada("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "3", "catpreediCodigo", "asc");
     }
-     
-        public List<CatastroPredialEdificacion> listarEdificacionesGrupo4(CatastroPredial vcatastro) throws Exception {
+
+    public List<CatastroPredialEdificacion> listarEdificacionesGrupo4(CatastroPredial vcatastro) throws Exception {
         return catastroPredialEdificacionDao.listarPor2CamposOrdenadaMenosSanitaria("CatastroPredialEdificacion", "catpreCodigo", vcatastro, "catpreediGrupo", "4", "catpreediCodigo", "asc");
     }
         
     public List<CatalogoDetalle> listarTipoDeTarifa() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("TIPO_TARIF");
-    }    
-    
-     public CatalogoDetalle cargarObjetoCatalogoDetalle(int codCatDet) throws Exception {
+    }
+    public CatalogoDetalle cargarObjetoCatalogoDetalle(int codCatDet) throws Exception {
         return catalogoDetalleServicio.buscarPorCodigoCatDet(codCatDet);
     }
-    
 }

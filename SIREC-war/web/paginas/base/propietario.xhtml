@@ -15,12 +15,22 @@
                         <h:panelGrid id="pnlProp" columns="6">
                             <h:outputLabel value="Cédula/RUC:" for="proCi" />
                             <p:inputText id="proCi" value="#{propietarioControlador.propietarioActual.proCi}" 
-                                         maxlength="13" title="ProCi" required="true" requiredMessage="The ProCi field is required."/>
+                                         maxlength="13" title="ProCi" required="true" requiredMessage="Identificacion requerida.">
+                                <p:ajax event="blur" async="true" global="false"
+                                        listener="#{propietarioControlador.validarCedulaRuc}"
+                                        process="@this"
+                                        update="@this,:frmPropietario:msgs"/>
+                            </p:inputText>
                             <p:message for="proCi"/>
                             <h:outputLabel value="Tipo:" for="proTipoPersona" />
                             <p:selectOneMenu id="proTipoPersona" value="#{propietarioControlador.propietarioActual.proTipoPersona}">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
                                 <f:selectItem itemLabel="Natural" itemValue="N"/>
                                 <f:selectItem itemLabel="Juridica" itemValue="J"/>
+                                <p:ajax event="change"  async="true"
+                                        global="false"
+                                        process="@this"
+                                        update="proRazonSocial,proDiscapacidad,proApellidos,proNombres,proFechaNacimiento"/>
                             </p:selectOneMenu>
                             <p:message for="proTipoPersona"/>
                             <h:outputLabel value="Apellidos:" for="proApellidos" />
@@ -28,34 +38,38 @@
                                          value="#{propietarioControlador.propietarioActual.proApellidos}" 
                                          title="ProApellidos" required="true" 
                                          size="50"
-                                         maxlength="200" requiredMessage="The ProApellidos field is required."/>
+                                         disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='J'}"
+                                         maxlength="200" requiredMessage="Apellidos son requeridos"/>
                             <p:message for="proApellidos"/>
                             <h:outputLabel value="Nombres:" for="proNombres" />
                             <p:inputText id="proNombres" 
                                          value="#{propietarioControlador.propietarioActual.proNombres}" 
                                          maxlength="200" 
                                          size="50"
-                                         title="ProNombres" required="true" requiredMessage="The ProNombres field is required."/>
+                                         disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='J'}"
+                                         title="ProNombres" required="true" requiredMessage="Nombres son requeridos"/>
                             <p:message for="proNombres"/>
                             <h:outputLabel value="Fecha de Nacimiento:" for="proFechaNacimiento" />
                             <p:calendar id="proFechaNacimiento" 
                                         value="#{propietarioControlador.propietarioActual.proFechaNacimiento}" 
                                         title="ProFechaNacimiento" 
                                         required="true" 
-                                        requiredMessage="The ProFechaNacimiento field is required."
-                                        pattern="yyyy-MM-dd">
+                                        disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='J'}"
+                                        requiredMessage="Fecha de Nacimiento es requerida"
+                                        pattern="dd-MM-yyyy">
                             </p:calendar>
                             <p:message for="proFechaNacimiento"/>
                             <h:outputLabel value="Razon Social:" for="proRazonSocial" />
                             <p:inputText id="proRazonSocial" 
                                          size="50"
-                                         value="#{propietarioControlador.propietarioActual.proRazonSocial}" title="ProRazonSocial" required="true" requiredMessage="The ProRazonSocial field is required."/>
+                                         disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='N'}"
+                                         value="#{propietarioControlador.propietarioActual.proRazonSocial}" title="ProRazonSocial" />
                             <p:message for="proRazonSocial"/>
                             <h:outputLabel value="Direccion:" for="proDireccion" />
                             <p:inputTextarea id="proDireccion" 
-                                         value="#{propietarioControlador.propietarioActual.proDireccion}" 
-                                         title="ProDireccion"
-                                         cols="50" rows="2"/>
+                                             value="#{propietarioControlador.propietarioActual.proDireccion}" 
+                                             title="ProDireccion"
+                                             cols="50" rows="2"/>
                             <p:message for="proDireccion"/>
                             <h:outputLabel value="Telefono:" for="proTelefono" />
                             <p:inputText id="proTelefono" 
@@ -69,22 +83,25 @@
                                          title="ProCorreo" />
                             <p:message for="proCorreo"/>
                             <h:outputLabel value="Tiene Discapacidad:" for="proDiscapacidad" />
-                            <p:selectBooleanCheckbox id="proDiscapacidad" value="#{propietarioControlador.propietarioActual.proDiscapacidad}"/>
+                            <p:selectBooleanCheckbox id="proDiscapacidad" 
+                                                     disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='J'}"
+                                                     value="#{propietarioControlador.propietarioActual.proDiscapacidad}"/>
                             <p:message for="proDiscapacidad"/>
-                            <h:outputLabel value="ProObservaciones:" for="proObservaciones" />
+                            <h:outputLabel value="Observaciones:" for="proObservaciones" />
                             <p:inputText id="proObservaciones" value="#{propietarioControlador.propietarioActual.proObservaciones}" title="ProObservaciones" />
                             <p:message for="proObservaciones"/>
-                            <h:outputLabel value="CatdetCiudad:" for="catdetCiudad" />
-                            <h:selectOneMenu id="catdetCiudad" 
-                                             value="#{propietarioControlador.propietarioActual.catdetCiudad.catdetCodigo}" 
-                                             title="CatdetCiudad" required="true" 
-                                             requiredMessage="The CatdetCiudad field is required.">
+                            <h:outputLabel value="Ciudad" for="catdetCiudad" />
+                            <p:autoComplete id="catdetCiudad" value="#{propietarioControlador.propietarioActual.catdetCiudad}" 
+                                            completeMethod="#{propietarioControlador.listarCatDetalles}" 
+                                            onkeyup="value = value.toUpperCase();" 
+                                            converter="#{catalogoDetalleConverter}"
+                                            var="ciu" itemLabel="#{ciu.catdetTexto}" itemValue="#{ciu}"  forceSelection="true"
+                                            >
+                                <p:column>
+                                    <h:outputText value="#{ciu.catdetTexto}" />
+                                </p:column>
+                            </p:autoComplete>
 
-                                <f:selectItems value="#{propietarioControlador.listaCatCiudades}" 
-                                               var="ciudad"
-                                               itemLabel="#{ciudad.catdetTexto}"
-                                               itemValue="#{ciudad.catdetCodigo}"/>
-                            </h:selectOneMenu>
                             <p:message for="catdetCiudad"/>
                         </h:panelGrid>
                         <h:panelGrid columns="2">
@@ -104,22 +121,29 @@
 
                     <p:panel>
                         <h:panelGrid>
-                            <p:dataTable value="#{propietarioControlador.listaPropietarios}" var="item">
-                                <p:column headerText="Cédula/RUC">
+                            <p:dataTable value="#{propietarioControlador.listaPropietarios}" var="item"
+                                         rows="10" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15">
+                                <p:column headerText="Cédula/RUC" filterBy="#{item.proCi}" filterMatchMode="contains">
                                     <h:outputText value="#{item.proCi}"/>
                                 </p:column>
                                 <p:column headerText="Tipo">
-                                    <h:outputText value="#{item.proTipoPersona}"/>
+                                    <h:outputText value="Natural" rendered="#{item.proTipoPersona=='N'}"/>
+                                    <h:outputText value="Juridica" rendered="#{item.proTipoPersona=='J'}"/>
                                 </p:column>
-                                <p:column headerText="Apellidos y Nombres">
-                                    <h:outputText value="#{item.proApellidos} #{item.proNombres}"/>
+                                <p:column headerText="Apellidos" filterBy="#{item.proApellidos}" filterMatchMode="contains">
+                                    <h:outputText value="#{item.proApellidos}"/>
+                                </p:column>
+                                <p:column headerText="Nombres" filterBy="#{item.proNombres}" filterMatchMode="contains">
+                                    <h:outputText value="#{item.proNombres}"/>
                                 </p:column>
                                 <p:column headerText="Fecha Nac">
                                     <h:outputText value="#{item.proFechaNacimiento}">
                                         <f:convertDateTime pattern="MM/dd/yyyy" />
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Razon Social">
+                                <p:column headerText="Razon Social" sortBy="#{item.proRazonSocial}">
                                     <h:outputText value="#{item.proRazonSocial}"/>
                                 </p:column>
                                 <p:column headerText="Ciudad">
@@ -148,7 +172,7 @@
                                                      global="false"
                                                      icon="ui-icon-pencil"
                                                      update="@form"/>
-                                    
+
                                 </p:column>
                             </p:dataTable>
                         </h:panelGrid>

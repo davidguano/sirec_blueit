@@ -45,6 +45,20 @@ public class CatastroPredialValoracion implements Serializable {
     private BigDecimal catprevalAvaluoTerr;
     @Column(name = "catpreval_avaluo_tot")
     private BigDecimal catprevalAvaluoTot;
+    @Column(name = "catpreval_valor_propiedad")
+    private BigDecimal catprevalValorPropieda;
+    @Column(name = "catpreval_base_imponible")
+    private BigDecimal catprevalBaseImponible;
+    @Column(name = "catpreval_impuesto")
+    private BigDecimal catprevalImpuesto;
+    @Column(name = "catpreval_bomberos")
+    private BigDecimal catprevalBomberos;
+    @Column(name = "catpreval_solar_noedificado")
+    private BigDecimal catprevalSolarNoedificado;
+    @Column(name = "catpreval_tasa_adm")
+    private BigDecimal catprevalTasaAdm;
+    @Column(name = "catpreval_anio")
+    private Integer catprevalAnio;
     @JoinColumn(name = "catpre_codigo", referencedColumnName = "catpre_codigo")
     @ManyToOne(optional = false)
     private CatastroPredial catpreCodigo;
@@ -125,6 +139,64 @@ public class CatastroPredialValoracion implements Serializable {
     public void setCoactivaList(List<Coactiva> coactivaList) {
         this.coactivaList = coactivaList;
     }
+
+    public BigDecimal getCatprevalValorPropieda() {
+        return catprevalValorPropieda;
+    }
+
+    public void setCatprevalValorPropieda(BigDecimal catprevalValorPropieda) {
+        this.catprevalValorPropieda = catprevalValorPropieda;
+    }
+
+    public BigDecimal getCatprevalBaseImponible() {
+        return catprevalBaseImponible;
+    }
+
+    public void setCatprevalBaseImponible(BigDecimal catprevalBaseImponible) {
+        this.catprevalBaseImponible = catprevalBaseImponible;
+    }
+
+    public BigDecimal getCatprevalImpuesto() {
+        return catprevalImpuesto;
+    }
+
+    public void setCatprevalImpuesto(BigDecimal catprevalImpuesto) {
+        this.catprevalImpuesto = catprevalImpuesto;
+    }
+
+    public BigDecimal getCatprevalBomberos() {
+        return catprevalBomberos;
+    }
+
+    public void setCatprevalBomberos(BigDecimal catprevalBomberos) {
+        this.catprevalBomberos = catprevalBomberos;
+    }
+
+    public BigDecimal getCatprevalSolarNoedificado() {
+        return catprevalSolarNoedificado;
+    }
+
+    public void setCatprevalSolarNoedificado(BigDecimal catprevalSolarNoedificado) {
+        this.catprevalSolarNoedificado = catprevalSolarNoedificado;
+    }
+
+    public BigDecimal getCatprevalTasaAdm() {
+        return catprevalTasaAdm;
+    }
+
+    public void setCatprevalTasaAdm(BigDecimal catprevalTasaAdm) {
+        this.catprevalTasaAdm = catprevalTasaAdm;
+    }
+
+    public Integer getCatprevalAnio() {
+        return catprevalAnio;
+    }
+
+    public void setCatprevalAnio(Integer catprevalAnio) {
+        this.catprevalAnio = catprevalAnio;
+    }
+    
+    
 
     @Override
     public int hashCode() {

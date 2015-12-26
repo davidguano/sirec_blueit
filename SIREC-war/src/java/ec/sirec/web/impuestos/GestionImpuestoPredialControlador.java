@@ -273,7 +273,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
           catastroPredialActual = catastroPredialServicio.cargarObjetoCatastro(catastroPredialActual.getCatpreCodigo());   
              
           listaCatastroPredialEdificacion1_1 = new ArrayList<CatastroPredialEdificacion>();                      
-          listaCatastroPredialEdificacion1_1 = catastroPredialServicio.listarEdificacionesGrupo1_1(catastroPredialActual);
+          listaCatastroPredialEdificacion1_1 = catastroPredialServicio.listarEdificacionesGrupo1_1(catastroPredialActual,"1","1");
            
           List <Integer>  vidaUtil = new ArrayList<Integer>();
           

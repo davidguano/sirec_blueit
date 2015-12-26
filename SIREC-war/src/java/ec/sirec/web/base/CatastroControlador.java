@@ -11,18 +11,29 @@ import ec.sirec.ejb.entidades.CatastroPredialAreas;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
+import ec.sirec.ejb.entidades.CatastroPredialValoracion;
+import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
+import ec.sirec.ejb.servicios.PredioArchivoServicio;
+import ec.sirec.web.util.OpcionesUsoSuelo;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 
 /**
@@ -36,36 +47,45 @@ public class CatastroControlador extends BaseControlador {
     private static final Logger LOGGER = Logger.getLogger(CatastroControlador.class.getName());
     @EJB
     private CatastroPredialServicio catastroServicio;
+    @EJB
+    private PredioArchivoServicio predioArchivoServicio;
 
     private CatastroPredial catastroPredialActual;
+    private String cedulaPropietarioBusqueda;
+    private List<CatastroPredial> listaCatastrosDePropietario;
     private Propietario propietarioActual;
+    private CatastroPredialValoracion valoracionActual;
     private CatastroPredialAreas catastroPredialAreaBloqueActual;
     private List<CatastroPredialAreas> listaCatastroPredialAreasBloque;
 
-    private List<CatastroPredialInfraestructura> listaInfServicios;
-    private List<CatastroPredialInfraestructura> listaInfAlcantarillado1;
-    private List<CatastroPredialInfraestructura> listaInfUso;
-    private List<CatastroPredialInfraestructura> listaInfMaterial;
-    private List<CatastroPredialInfraestructura> listaInfSentido;
-    private List<CatastroPredialInfraestructura> listaInfEnergiaElec;
-    private List<CatastroPredialInfraestructura> listaInfAbasAgua;
-    private List<CatastroPredialInfraestructura> listaInfAlcantarillado2;
-    private List<CatastroPredialInfraestructura> listaInfOtrosServicios;
+    private List<CatalogoDetalle> listaInfServicios;
+    private List<CatalogoDetalle> listaInfAlcantarillado1;
+    private List<CatalogoDetalle> listaInfUso;
+    private List<CatalogoDetalle> listaInfMaterial;
+    private List<CatalogoDetalle> listaInfSentido;
+    private List<CatalogoDetalle> listaInfEnergiaElec;
+    private List<CatalogoDetalle> listaInfAbasAgua;
+    private List<CatalogoDetalle> listaInfAlcantarillado2;
+    private List<CatalogoDetalle> listaInfOtrosServicios;
 
-    private List<CatastroPredialInfraestructura> listaInfServiciosSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfAlcantarillado1Seleccionado;
-    private List<CatastroPredialInfraestructura> listaInfUsoSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfMaterialSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfSentidoSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfEnergiaElecSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfAbasAguaSeleccionado;
-    private List<CatastroPredialInfraestructura> listaInfAlcantarillado2Seleccionado;
-    private List<CatastroPredialInfraestructura> listaInfOtrosServiciosSeleccionado;
+    private List<CatalogoDetalle> listaInfServiciosSeleccionado;
+    private List<CatalogoDetalle> listaInfAlcantarillado1Seleccionado;
+    private List<CatalogoDetalle> listaInfUsoSeleccionado;
+    private List<CatalogoDetalle> listaInfMaterialSeleccionado;
+    private List<CatalogoDetalle> listaInfSentidoSeleccionado;
+    private List<CatalogoDetalle> listaInfEnergiaElecSeleccionado;
+    private List<CatalogoDetalle> listaInfAbasAguaSeleccionado;
+    private List<CatalogoDetalle> listaInfAlcantarillado2Seleccionado;
+    private List<CatalogoDetalle> listaInfOtrosServiciosSeleccionado;
 
     private List<CatastroPredialUsosuelo> listaUsuSuelo;
-
-    private int numBloquesEdif;
-    private int numPisosEdif;
+    private String grupoUsoSuelo;
+    private String subgrupoUsoSuelo;
+    private List<SelectItem> listaGruposUsoSuelo;
+    private List<SelectItem> listaSubgruposUsoSuelo;
+    
+    private String edifBloque;
+    private String edifPiso;
     private List<CatastroPredialEdificacion> listaEdifGrupo1_1;
     private List<CatastroPredialEdificacion> listaEdifGrupo1_2;
     private List<CatastroPredialEdificacion> listaEdifGrupo1_3;
@@ -79,13 +99,34 @@ public class CatastroControlador extends BaseControlador {
     private List<CatastroPredialEdificacion> listaEdifGrupo5_9;
     private List<CatalogoDetalle> listaOpcEdifGrupo1_1;
     private List<CatalogoDetalle> listaOpcEdifGrupo1_3;
-    private List<CatalogoDetalle> listaOpcEdifGrupo234;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_1;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_2;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_3;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_4;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_5;
+    private List<CatalogoDetalle> listaOpcEdifGrupo2_6;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_1;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_2;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_3;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_4;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_5;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_6;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_7;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_8;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_9;
+    private List<CatalogoDetalle> listaOpcEdifGrupo3_10;
+    private List<CatalogoDetalle> listaOpcEdifGrupo4_1;
+    private List<CatalogoDetalle> listaOpcEdifGrupo4_2;
+    private List<CatalogoDetalle> listaOpcEdifGrupo4_3;
     private List<CatalogoDetalle> listaOpcEdifGrupo5_5;
+
     private List<CatalogoDetalle> listaOpcEdifGrupo5_6;
     private List<CatalogoDetalle> listaOpcEdifGrupo5_7;
     private List<CatalogoDetalle> listaOpcEdifGrupo5_8;
     private List<CatalogoDetalle> listaOpcEdifGrupo5_9;
 
+    private List<CatalogoDetalle> listaParroquias;
+    private List<CatalogoDetalle> listaSectores;
     private List<CatalogoDetalle> listaTipoVia;
     private List<CatalogoDetalle> listaTipoUbicacion;
     private List<CatalogoDetalle> listaTipoProp1;
@@ -107,6 +148,10 @@ public class CatastroControlador extends BaseControlador {
     private List<CatalogoDetalle> listaOtraInfoFuenteInfo;
     private List<CatalogoDetalle> listaTipoDocRelevamiento;
 
+    //
+    private List<PredioArchivo> listaPredioArchivo;
+    private PredioArchivo predioArchivoActual;
+
     /**
      * Creates a new instance of CatastroControlador
      */
@@ -117,20 +162,53 @@ public class CatastroControlador extends BaseControlador {
     public void inicializar() {
         try {
             catastroPredialActual = new CatastroPredial();
-            propietarioActual=new Propietario();
+            propietarioActual = new Propietario();
+            listaCatastrosDePropietario = new ArrayList<CatastroPredial>();
+            valoracionActual = new CatastroPredialValoracion();
             catastroPredialAreaBloqueActual = new CatastroPredialAreas();
             listaCatastroPredialAreasBloque = new ArrayList<CatastroPredialAreas>();
+
+            listaGruposUsoSuelo = new ArrayList<SelectItem>();
+            OpcionesUsoSuelo ou = new OpcionesUsoSuelo();
+            listaGruposUsoSuelo = ou.getListaGrupos();
+            listaSubgruposUsoSuelo = new ArrayList<SelectItem>();
+            ou.cargarSubgruposPorgrupo("1");
+            listaSubgruposUsoSuelo = ou.getListaSubGrupos();
+
             listaUsuSuelo = new ArrayList<CatastroPredialUsosuelo>();
-            listaInfServiciosSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfAlcantarillado1Seleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfUsoSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfMaterialSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfSentidoSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfEnergiaElecSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfAbasAguaSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfAlcantarillado2Seleccionado = new ArrayList<CatastroPredialInfraestructura>();
-            listaInfOtrosServiciosSeleccionado = new ArrayList<CatastroPredialInfraestructura>();
+            listaEdifGrupo1_1 = new ArrayList<CatastroPredialEdificacion>();
+            listaInfServiciosSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfAlcantarillado1Seleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfUsoSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfMaterialSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfSentidoSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfEnergiaElecSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfAbasAguaSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfAlcantarillado2Seleccionado = new ArrayList<CatalogoDetalle>();
+            listaInfOtrosServiciosSeleccionado = new ArrayList<CatalogoDetalle>();
+            listaPredioArchivo = new ArrayList<PredioArchivo>();
             cargarCatalogos();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void listarCatastrosPorCedula() {
+        try {
+            if (cedulaPropietarioBusqueda.length() == 10 || cedulaPropietarioBusqueda.length() == 13) {
+                listaCatastrosDePropietario = catastroServicio.listarCatastroPorCedulaPropietario(cedulaPropietarioBusqueda);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void iraCatastroDesdeBusqueda(CatastroPredial vcatastro) {
+        try {
+            catastroPredialActual.setClaveCatastral(vcatastro.getCatpreCodNacional() + vcatastro.getCatpreCodLocal());
+            recuperarDatosDeCatastro();
+            listaCatastrosDePropietario = new ArrayList<CatastroPredial>();
+            cedulaPropietarioBusqueda = "";
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -142,6 +220,9 @@ public class CatastroControlador extends BaseControlador {
             catastroPredialActual.setUsuIdentificacion(obtenerUsuarioAutenticado());
             catastroPredialActual.setUltaccMarcatiempo(java.util.Calendar.getInstance().getTime());
             if (catastroPredialActual.getCatpreCodigo() == null) {
+                catastroPredialActual.setCatpreCodNacional(catastroPredialActual.getClaveCatastral().substring(0, 7));
+                catastroPredialActual.setCatpreCodLocal(catastroPredialActual.getClaveCatastral().substring(7, 19));
+
                 String codNac = catastroPredialActual.getCatpreCodNacional();
                 String codLoc = catastroPredialActual.getCatpreCodLocal();
                 boolean b = false;
@@ -151,7 +232,9 @@ public class CatastroControlador extends BaseControlador {
                 if (!b) {
                     catastroPredialActual.setUltaccDetalle("Se ha creado el registro");
                     catastroServicio.guardarCatastroPredial(catastroPredialActual);
+                    guardarPropietario();
                     crearRegistrosUsoSuelo();
+                    listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastro(catastroPredialActual);
                     addSuccessMessage("Correcto", "Ficha creada exitosamente");
                 } else {
                     addErrorMessage("Clave ya existe, presione Buscar.");
@@ -174,47 +257,57 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-
-    public void onRowEdit(RowEditEvent event) {
-        try {
-            editarRegistroUsoSuelo((CatastroPredialUsosuelo) event.getObject());
-            addSuccessMessage("Editado Correctamente");
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowCancel(RowEditEvent event) {
-
-    }
-
-    public void editarRegistroUsoSuelo(CatastroPredialUsosuelo vuso) {
-        try {
-            catastroServicio.editarRegistroUsuSuelo(vuso);
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
     
-    public void guardarPropietario(){
-        try{
-            if(catastroPredialActual.getCatpreCodigo()!=null && propietarioActual.getUsuIdentificacion()!=null){
-                PropietarioPredio pp=new PropietarioPredio();
+    public void listarSubgruposUsoSuelo() {
+        try {
+            OpcionesUsoSuelo ou=new OpcionesUsoSuelo();
+            ou.cargarSubgruposPorgrupo(grupoUsoSuelo);
+            listaSubgruposUsoSuelo=ou.getListaSubGrupos();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    public void listarRegistrosUsoSuelo() {
+        try {
+            if (catastroPredialActual.getCatpreCodigo() != null) {
+                listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastroySubgrupo(catastroPredialActual, subgrupoUsoSuelo);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void editarRegistrosUsoSuelo() {
+        try {
+            catastroServicio.editarRegistroUsuSuelo(listaUsuSuelo);
+            guardarRegistroPrincipal();
+            addSuccessMessage("Registros Editados Correctamente");
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void guardarPropietario() {
+        try {
+            if (catastroPredialActual.getCatpreCodigo() != null && propietarioActual.getUsuIdentificacion() != null) {
+                PropietarioPredio pp = new PropietarioPredio();
                 pp.setProCi(propietarioActual);
                 pp.setCatpreCodigo(catastroPredialActual);
                 catastroServicio.guardarPropietarioPredio(pp);
                 catastroServicio.cargarListaPropietariosPredio(catastroPredialActual);
-            }else{
-                
+                addSuccessMessage("Se ha guardado un propietario.");
+            } else {
+                addErrorMessage("No se pudo guardar propietario. Registrelo Nuevamente.");
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    public void eliminarPropietario(PropietarioPredio vpp){
-        try{
+
+    public void eliminarPropietario(PropietarioPredio vpp) {
+        try {
             catastroServicio.eliminarPropietarioPredio(vpp);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -233,6 +326,7 @@ public class CatastroControlador extends BaseControlador {
 
     public void guardarRegistrosInfraestructura() {
         try {
+            guardarRegistroPrincipal();
             catastroServicio.guardarItemsInfraestructura(catastroPredialActual, 1, listaInfServiciosSeleccionado);
             catastroServicio.guardarItemsInfraestructura(catastroPredialActual, 3, listaInfAlcantarillado1Seleccionado);
             catastroServicio.guardarItemsInfraestructura(catastroPredialActual, 11, listaInfUsoSeleccionado);
@@ -249,18 +343,33 @@ public class CatastroControlador extends BaseControlador {
 
     public void crearRegistrosEdificaciones() {
         try {
-            if (numBloquesEdif != 0 && numPisosEdif != 0) {
-                catastroServicio.crearRegistrosEdificacionesPorNumBloquesYPisos(catastroPredialActual, numBloquesEdif, numPisosEdif);
-                recuperarDatosdeEdificaciones();
+            if (catastroPredialActual.getCatpreNumBloques() != 0 && catastroPredialActual.getCatpreNumPisos() != 0) {
+                if (listaEdifGrupo1_1.isEmpty()) {
+                    catastroServicio.crearRegistrosEdificacionesPorNumBloquesYPisos(catastroPredialActual);
+                    recuperarDatosdeEdificaciones();
+                } else {
+                    addErrorMessage("Ya no puede volver a crear los registros.");
+                }
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void editarRegistroEdificacion(CatastroPredialEdificacion vedif) {
+    public void editarRegistrosEdificacion() {
         try {
-            catastroServicio.editarCatastroPredEdificacion(vedif);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo1_1);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo1_2);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo1_3);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo1_4);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo234);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_14);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_5);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_6);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_7);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_8);
+            catastroServicio.editarCatastroPredEdificacion(listaEdifGrupo5_9);
+            addSuccessMessage("Registros Editados Correctamente");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -268,16 +377,22 @@ public class CatastroControlador extends BaseControlador {
 
     public void recuperarDatosDeCatastro() {
         try {
+            catastroPredialActual.setCatpreCodNacional(catastroPredialActual.getClaveCatastral().substring(0, 7));
+            catastroPredialActual.setCatpreCodLocal(catastroPredialActual.getClaveCatastral().substring(7, 19));
             String codNac = catastroPredialActual.getCatpreCodNacional();
             String codLoc = catastroPredialActual.getCatpreCodLocal();
             if (codNac != null && codLoc != null) {
                 catastroPredialActual = catastroServicio.buscarCatastroPorCodigosClave(codNac, codLoc);
                 if (catastroPredialActual != null) {
                     catastroServicio.cargarListaPropietariosPredio(catastroPredialActual);
+                    if (!catastroPredialActual.getListaPropietariosPredio().isEmpty()) {
+                        propietarioActual = catastroPredialActual.getListaPropietariosPredio().get(0).getProCi();
+                    }
                     listaCatastroPredialAreasBloque = catastroServicio.listarAreasPorCatastro(catastroPredialActual.getCatpreCodigo());
                     recuperarDatosDeCatastroInfraestructura();
-                    listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastro(catastroPredialActual);
+                    listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastroySubgrupo(catastroPredialActual, "11");
                     recuperarDatosdeEdificaciones();
+                    valoracionActual = catastroServicio.obtenerValoracionPredio(catastroPredialActual);
                 } else {
                     inicializar();
                     addErrorMessage("Error", "No existe registro con esta clave");
@@ -295,8 +410,8 @@ public class CatastroControlador extends BaseControlador {
                 propietarioActual = catastroServicio.buscarPropietarioPorCi(ci);
                 if (propietarioActual != null) {
                     //
-                }else{
-                    propietarioActual=new Propietario();
+                } else {
+                    propietarioActual = new Propietario();
                 }
             }
         } catch (Exception ex) {
@@ -322,21 +437,39 @@ public class CatastroControlador extends BaseControlador {
 
     public void recuperarDatosdeEdificaciones() {
         try {
-            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual);
-            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual);
-            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual);
-            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual);
-            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual);
-            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual);
-            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual);
-            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual);
-            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual);
-            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual);
-            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual);
+            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual,"1","1");
+            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual,"1","1");
+            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual,"1","1");
+            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual,"1","1");
+            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual,"1","1");
+            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual,"0","0");
+            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual,"0","0");
+            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual,"0","0");
+            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual,"0","0");
+            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual,"0","0");
+            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual,"0","0");
 
             listaOpcEdifGrupo1_1 = catastroServicio.listaOpcionesEdificacion("1_1");
             listaOpcEdifGrupo1_3 = catastroServicio.listaOpcionesEdificacion("1_3");
-            listaOpcEdifGrupo234 = catastroServicio.listaOpcionesEdificacion("234");
+            listaOpcEdifGrupo2_1 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,3,4,6,7,8,9,12");
+            listaOpcEdifGrupo2_2 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,3,4,6,13");
+            listaOpcEdifGrupo2_3 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,6,8,10,26");
+            listaOpcEdifGrupo2_4 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,8,9,11,12,13,14,15,16");
+            listaOpcEdifGrupo2_5 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,3,6,7,8,9,10,11,12,13");
+            listaOpcEdifGrupo2_6 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,2,6,34,37,38,39,40");
+            listaOpcEdifGrupo3_1 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,12,13,19,20,21,22,23,24,26,27,28");
+            listaOpcEdifGrupo3_2 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,17,28,29,30,31");
+            listaOpcEdifGrupo3_3 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,17,28,29,30,31");
+            listaOpcEdifGrupo3_4 = catastroServicio.listaOpcionesEdificacionConLista("234", "1");
+            listaOpcEdifGrupo3_5 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,26,34,35,36");
+            listaOpcEdifGrupo3_6 = catastroServicio.listaOpcionesEdificacionConLista("234", "1");
+            listaOpcEdifGrupo3_7 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,8,10,28,66");
+            listaOpcEdifGrupo3_8 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,6,8,10,52,66");
+            listaOpcEdifGrupo3_9 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,6,8,52");
+            listaOpcEdifGrupo3_10 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,47");
+            listaOpcEdifGrupo4_1 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,48,49,50,51,52,99");
+            listaOpcEdifGrupo4_2 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,53,54,55,56,57,58,59");
+            listaOpcEdifGrupo4_3 = catastroServicio.listaOpcionesEdificacionConLista("234", "1,60,61,62,99");
             listaOpcEdifGrupo5_5 = catastroServicio.listaOpcionesEdificacion("5_5");
             listaOpcEdifGrupo5_6 = catastroServicio.listaOpcionesEdificacion("5_6");
             listaOpcEdifGrupo5_7 = catastroServicio.listaOpcionesEdificacion("5_7");
@@ -347,9 +480,29 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void listarInformacionEdificaciones(){
+        try{
+            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual,edifBloque,edifPiso);
+            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual,edifBloque,edifPiso);
+            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual,edifBloque,edifPiso);
+            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual,edifBloque,edifPiso);
+            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual,edifBloque,edifPiso);
+            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual,"0","0");
+            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual,"0","0");
+            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual,"0","0");
+            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual,"0","0");
+            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual,"0","0");
+            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual,"0","0");
+        }catch(Exception ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void cargarCatalogos() {
         try {
+            listaParroquias = catastroServicio.listaCatParroquias();
+            listaSectores = catastroServicio.listaCatSectores();
             listaTipoVia = catastroServicio.listaCatTipoVia();
             listaTipoUbicacion = catastroServicio.listaCatTipoUbicacion();
             listaTipoProp1 = catastroServicio.listaCatTipoProp1();
@@ -385,6 +538,85 @@ public class CatastroControlador extends BaseControlador {
         }
     }
 
+    //ARCHIVOS
+    public void listarArchivos() {
+        try {
+            if (catastroPredialActual != null) {
+                listaPredioArchivo = new ArrayList<PredioArchivo>();
+                // listaPredioArchivo = predioArchivoServicio.listarArchivos(usuarioActual);
+                listaPredioArchivo = predioArchivoServicio.listarArchivosXImpuesto(catastroPredialActual, "FC");
+            } else {
+                listaPredioArchivo = new ArrayList<PredioArchivo>();
+                addWarningMessage("Eliga la clave Catastral!");
+
+            }
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void eliminarArchivo(PredioArchivo archivo) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            predioArchivoServicio.eliminarPredioArchivo(archivo);
+            context.addMessage(null, new FacesMessage("Mensaje:", "Se Elimino el Archivo  " + archivo.getPrearcNombre()));
+            listarArchivos();
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void handleFileUpload(FileUploadEvent event) {
+
+        try {
+
+            if (catastroPredialActual.getCatpreCodigo() != null) {
+                predioArchivoActual = new PredioArchivo();
+                predioArchivoActual.setPrearcNombre(event.getFile().getFileName().replace(" ", "_"));
+                predioArchivoActual.setCatpreCodigo(catastroPredialActual);
+                predioArchivoActual.setPrearcData(event.getFile().getContents());
+                predioArchivoActual.setPrearcTipo("FC");
+                predioArchivoActual.setUsuIdentificacion(obtenerUsuarioAutenticado());
+                predioArchivoActual.setUltaccDetalle("");
+                predioArchivoActual.setUltaccMarcatiempo(new Date());
+
+                predioArchivoServicio.crearPredioArchivo(predioArchivoActual);
+
+                FacesMessage msg = new FacesMessage("El documento ", event.getFile().getFileName() + " ha sido cargado satisfactoriamente.");
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+
+                listarArchivos();
+            } else {
+                addErrorMessage("Seleccione Clave Catastral!!!");
+            }
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void startDownload(PredioArchivo archivo) {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
+                .getExternalContext().getResponse();
+        try {
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment;filename=" + archivo.getPrearcNombre());
+            response.getOutputStream().write(archivo.getPrearcData());
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (IOException ioex) {
+            LOGGER.log(Level.SEVERE, null, ioex);
+        }
+    }
+    
+    
+    public void generarReporteFichaCatastral(){
+        // metodo para generar reporte pdf
+    }
+
     //GETTER AND SETTERS
     public CatastroPredial getCatastroPredialActual() {
         return catastroPredialActual;
@@ -410,147 +642,147 @@ public class CatastroControlador extends BaseControlador {
         this.listaCatastroPredialAreasBloque = listaCatastroPredialAreasBloque;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfServicios() {
+    public List<CatalogoDetalle> getListaInfServicios() {
         return listaInfServicios;
     }
 
-    public void setListaInfServicios(List<CatastroPredialInfraestructura> listaInfServicios) {
+    public void setListaInfServicios(List<CatalogoDetalle> listaInfServicios) {
         this.listaInfServicios = listaInfServicios;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAlcantarillado1() {
+    public List<CatalogoDetalle> getListaInfAlcantarillado1() {
         return listaInfAlcantarillado1;
     }
 
-    public void setListaInfAlcantarillado1(List<CatastroPredialInfraestructura> listaInfAlcantarillado1) {
+    public void setListaInfAlcantarillado1(List<CatalogoDetalle> listaInfAlcantarillado1) {
         this.listaInfAlcantarillado1 = listaInfAlcantarillado1;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfUso() {
+    public List<CatalogoDetalle> getListaInfUso() {
         return listaInfUso;
     }
 
-    public void setListaInfUso(List<CatastroPredialInfraestructura> listaInfUso) {
+    public void setListaInfUso(List<CatalogoDetalle> listaInfUso) {
         this.listaInfUso = listaInfUso;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfMaterial() {
+    public List<CatalogoDetalle> getListaInfMaterial() {
         return listaInfMaterial;
     }
 
-    public void setListaInfMaterial(List<CatastroPredialInfraestructura> listaInfMaterial) {
+    public void setListaInfMaterial(List<CatalogoDetalle> listaInfMaterial) {
         this.listaInfMaterial = listaInfMaterial;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfSentido() {
+    public List<CatalogoDetalle> getListaInfSentido() {
         return listaInfSentido;
     }
 
-    public void setListaInfSentido(List<CatastroPredialInfraestructura> listaInfSentido) {
+    public void setListaInfSentido(List<CatalogoDetalle> listaInfSentido) {
         this.listaInfSentido = listaInfSentido;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfEnergiaElec() {
+    public List<CatalogoDetalle> getListaInfEnergiaElec() {
         return listaInfEnergiaElec;
     }
 
-    public void setListaInfEnergiaElec(List<CatastroPredialInfraestructura> listaInfEnergiaElec) {
+    public void setListaInfEnergiaElec(List<CatalogoDetalle> listaInfEnergiaElec) {
         this.listaInfEnergiaElec = listaInfEnergiaElec;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAbasAgua() {
+    public List<CatalogoDetalle> getListaInfAbasAgua() {
         return listaInfAbasAgua;
     }
 
-    public void setListaInfAbasAgua(List<CatastroPredialInfraestructura> listaInfAbasAgua) {
+    public void setListaInfAbasAgua(List<CatalogoDetalle> listaInfAbasAgua) {
         this.listaInfAbasAgua = listaInfAbasAgua;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAlcantarillado2() {
+    public List<CatalogoDetalle> getListaInfAlcantarillado2() {
         return listaInfAlcantarillado2;
     }
 
-    public void setListaInfAlcantarillado2(List<CatastroPredialInfraestructura> listaInfAlcantarillado2) {
+    public void setListaInfAlcantarillado2(List<CatalogoDetalle> listaInfAlcantarillado2) {
         this.listaInfAlcantarillado2 = listaInfAlcantarillado2;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfOtrosServicios() {
+    public List<CatalogoDetalle> getListaInfOtrosServicios() {
         return listaInfOtrosServicios;
     }
 
-    public void setListaInfOtrosServicios(List<CatastroPredialInfraestructura> listaInfOtrosServicios) {
+    public void setListaInfOtrosServicios(List<CatalogoDetalle> listaInfOtrosServicios) {
         this.listaInfOtrosServicios = listaInfOtrosServicios;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfServiciosSeleccionado() {
+    public List<CatalogoDetalle> getListaInfServiciosSeleccionado() {
         return listaInfServiciosSeleccionado;
     }
 
-    public void setListaInfServiciosSeleccionado(List<CatastroPredialInfraestructura> listaInfServiciosSeleccionado) {
+    public void setListaInfServiciosSeleccionado(List<CatalogoDetalle> listaInfServiciosSeleccionado) {
         this.listaInfServiciosSeleccionado = listaInfServiciosSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAlcantarillado1Seleccionado() {
+    public List<CatalogoDetalle> getListaInfAlcantarillado1Seleccionado() {
         return listaInfAlcantarillado1Seleccionado;
     }
 
-    public void setListaInfAlcantarillado1Seleccionado(List<CatastroPredialInfraestructura> listaInfAlcantarillado1Seleccionado) {
+    public void setListaInfAlcantarillado1Seleccionado(List<CatalogoDetalle> listaInfAlcantarillado1Seleccionado) {
         this.listaInfAlcantarillado1Seleccionado = listaInfAlcantarillado1Seleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfUsoSeleccionado() {
+    public List<CatalogoDetalle> getListaInfUsoSeleccionado() {
         return listaInfUsoSeleccionado;
     }
 
-    public void setListaInfUsoSeleccionado(List<CatastroPredialInfraestructura> listaInfUsoSeleccionado) {
+    public void setListaInfUsoSeleccionado(List<CatalogoDetalle> listaInfUsoSeleccionado) {
         this.listaInfUsoSeleccionado = listaInfUsoSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfMaterialSeleccionado() {
+    public List<CatalogoDetalle> getListaInfMaterialSeleccionado() {
         return listaInfMaterialSeleccionado;
     }
 
-    public void setListaInfMaterialSeleccionado(List<CatastroPredialInfraestructura> listaInfMaterialSeleccionado) {
+    public void setListaInfMaterialSeleccionado(List<CatalogoDetalle> listaInfMaterialSeleccionado) {
         this.listaInfMaterialSeleccionado = listaInfMaterialSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfSentidoSeleccionado() {
+    public List<CatalogoDetalle> getListaInfSentidoSeleccionado() {
         return listaInfSentidoSeleccionado;
     }
 
-    public void setListaInfSentidoSeleccionado(List<CatastroPredialInfraestructura> listaInfSentidoSeleccionado) {
+    public void setListaInfSentidoSeleccionado(List<CatalogoDetalle> listaInfSentidoSeleccionado) {
         this.listaInfSentidoSeleccionado = listaInfSentidoSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfEnergiaElecSeleccionado() {
+    public List<CatalogoDetalle> getListaInfEnergiaElecSeleccionado() {
         return listaInfEnergiaElecSeleccionado;
     }
 
-    public void setListaInfEnergiaElecSeleccionado(List<CatastroPredialInfraestructura> listaInfEnergiaElecSeleccionado) {
+    public void setListaInfEnergiaElecSeleccionado(List<CatalogoDetalle> listaInfEnergiaElecSeleccionado) {
         this.listaInfEnergiaElecSeleccionado = listaInfEnergiaElecSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAbasAguaSeleccionado() {
+    public List<CatalogoDetalle> getListaInfAbasAguaSeleccionado() {
         return listaInfAbasAguaSeleccionado;
     }
 
-    public void setListaInfAbasAguaSeleccionado(List<CatastroPredialInfraestructura> listaInfAbasAguaSeleccionado) {
+    public void setListaInfAbasAguaSeleccionado(List<CatalogoDetalle> listaInfAbasAguaSeleccionado) {
         this.listaInfAbasAguaSeleccionado = listaInfAbasAguaSeleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfAlcantarillado2Seleccionado() {
+    public List<CatalogoDetalle> getListaInfAlcantarillado2Seleccionado() {
         return listaInfAlcantarillado2Seleccionado;
     }
 
-    public void setListaInfAlcantarillado2Seleccionado(List<CatastroPredialInfraestructura> listaInfAlcantarillado2Seleccionado) {
+    public void setListaInfAlcantarillado2Seleccionado(List<CatalogoDetalle> listaInfAlcantarillado2Seleccionado) {
         this.listaInfAlcantarillado2Seleccionado = listaInfAlcantarillado2Seleccionado;
     }
 
-    public List<CatastroPredialInfraestructura> getListaInfOtrosServiciosSeleccionado() {
+    public List<CatalogoDetalle> getListaInfOtrosServiciosSeleccionado() {
         return listaInfOtrosServiciosSeleccionado;
     }
 
-    public void setListaInfOtrosServiciosSeleccionado(List<CatastroPredialInfraestructura> listaInfOtrosServiciosSeleccionado) {
+    public void setListaInfOtrosServiciosSeleccionado(List<CatalogoDetalle> listaInfOtrosServiciosSeleccionado) {
         this.listaInfOtrosServiciosSeleccionado = listaInfOtrosServiciosSeleccionado;
     }
 
@@ -560,22 +792,6 @@ public class CatastroControlador extends BaseControlador {
 
     public void setListaUsuSuelo(List<CatastroPredialUsosuelo> listaUsuSuelo) {
         this.listaUsuSuelo = listaUsuSuelo;
-    }
-
-    public int getNumBloquesEdif() {
-        return numBloquesEdif;
-    }
-
-    public void setNumBloquesEdif(int numBloquesEdif) {
-        this.numBloquesEdif = numBloquesEdif;
-    }
-
-    public int getNumPisosEdif() {
-        return numPisosEdif;
-    }
-
-    public void setNumPisosEdif(int numPisosEdif) {
-        this.numPisosEdif = numPisosEdif;
     }
 
     public List<CatastroPredialEdificacion> getListaEdifGrupo1_1() {
@@ -834,7 +1050,6 @@ public class CatastroControlador extends BaseControlador {
         this.listaOpcEdifGrupo1_1 = listaOpcEdifGrupo1_1;
     }
 
-
     public List<CatalogoDetalle> getListaOpcEdifGrupo1_3() {
         return listaOpcEdifGrupo1_3;
     }
@@ -842,16 +1057,6 @@ public class CatastroControlador extends BaseControlador {
     public void setListaOpcEdifGrupo1_3(List<CatalogoDetalle> listaOpcEdifGrupo1_3) {
         this.listaOpcEdifGrupo1_3 = listaOpcEdifGrupo1_3;
     }
-
-
-    public List<CatalogoDetalle> getListaOpcEdifGrupo234() {
-        return listaOpcEdifGrupo234;
-    }
-
-    public void setListaOpcEdifGrupo234(List<CatalogoDetalle> listaOpcEdifGrupo234) {
-        this.listaOpcEdifGrupo234 = listaOpcEdifGrupo234;
-    }
-
 
     public List<CatalogoDetalle> getListaOpcEdifGrupo5_5() {
         return listaOpcEdifGrupo5_5;
@@ -900,6 +1105,262 @@ public class CatastroControlador extends BaseControlador {
     public void setPropietarioActual(Propietario propietarioActual) {
         this.propietarioActual = propietarioActual;
     }
+
+    public List<PredioArchivo> getListaPredioArchivo() {
+        return listaPredioArchivo;
+    }
+
+    public void setListaPredioArchivo(List<PredioArchivo> listaPredioArchivo) {
+        this.listaPredioArchivo = listaPredioArchivo;
+    }
+
+    public PredioArchivo getPredioArchivoActual() {
+        return predioArchivoActual;
+    }
+
+    public void setPredioArchivoActual(PredioArchivo predioArchivoActual) {
+        this.predioArchivoActual = predioArchivoActual;
+    }
+
+    public List<CatalogoDetalle> getListaParroquias() {
+        return listaParroquias;
+    }
+
+    public void setListaParroquias(List<CatalogoDetalle> listaParroquias) {
+        this.listaParroquias = listaParroquias;
+    }
+
+    public List<CatalogoDetalle> getListaSectores() {
+        return listaSectores;
+    }
+
+    public void setListaSectores(List<CatalogoDetalle> listaSectores) {
+        this.listaSectores = listaSectores;
+    }
+
+    public CatastroPredialValoracion getValoracionActual() {
+        return valoracionActual;
+    }
+
+    public void setValoracionActual(CatastroPredialValoracion valoracionActual) {
+        this.valoracionActual = valoracionActual;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_1() {
+        return listaOpcEdifGrupo2_1;
+    }
+
+    public void setListaOpcEdifGrupo2_1(List<CatalogoDetalle> listaOpcEdifGrupo2_1) {
+        this.listaOpcEdifGrupo2_1 = listaOpcEdifGrupo2_1;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_2() {
+        return listaOpcEdifGrupo2_2;
+    }
+
+    public void setListaOpcEdifGrupo2_2(List<CatalogoDetalle> listaOpcEdifGrupo2_2) {
+        this.listaOpcEdifGrupo2_2 = listaOpcEdifGrupo2_2;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_3() {
+        return listaOpcEdifGrupo2_3;
+    }
+
+    public void setListaOpcEdifGrupo2_3(List<CatalogoDetalle> listaOpcEdifGrupo2_3) {
+        this.listaOpcEdifGrupo2_3 = listaOpcEdifGrupo2_3;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_4() {
+        return listaOpcEdifGrupo2_4;
+    }
+
+    public void setListaOpcEdifGrupo2_4(List<CatalogoDetalle> listaOpcEdifGrupo2_4) {
+        this.listaOpcEdifGrupo2_4 = listaOpcEdifGrupo2_4;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_5() {
+        return listaOpcEdifGrupo2_5;
+    }
+
+    public void setListaOpcEdifGrupo2_5(List<CatalogoDetalle> listaOpcEdifGrupo2_5) {
+        this.listaOpcEdifGrupo2_5 = listaOpcEdifGrupo2_5;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo2_6() {
+        return listaOpcEdifGrupo2_6;
+    }
+
+    public void setListaOpcEdifGrupo2_6(List<CatalogoDetalle> listaOpcEdifGrupo2_6) {
+        this.listaOpcEdifGrupo2_6 = listaOpcEdifGrupo2_6;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_1() {
+        return listaOpcEdifGrupo3_1;
+    }
+
+    public void setListaOpcEdifGrupo3_1(List<CatalogoDetalle> listaOpcEdifGrupo3_1) {
+        this.listaOpcEdifGrupo3_1 = listaOpcEdifGrupo3_1;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_2() {
+        return listaOpcEdifGrupo3_2;
+    }
+
+    public void setListaOpcEdifGrupo3_2(List<CatalogoDetalle> listaOpcEdifGrupo3_2) {
+        this.listaOpcEdifGrupo3_2 = listaOpcEdifGrupo3_2;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_3() {
+        return listaOpcEdifGrupo3_3;
+    }
+
+    public void setListaOpcEdifGrupo3_3(List<CatalogoDetalle> listaOpcEdifGrupo3_3) {
+        this.listaOpcEdifGrupo3_3 = listaOpcEdifGrupo3_3;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_4() {
+        return listaOpcEdifGrupo3_4;
+    }
+
+    public void setListaOpcEdifGrupo3_4(List<CatalogoDetalle> listaOpcEdifGrupo3_4) {
+        this.listaOpcEdifGrupo3_4 = listaOpcEdifGrupo3_4;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_5() {
+        return listaOpcEdifGrupo3_5;
+    }
+
+    public void setListaOpcEdifGrupo3_5(List<CatalogoDetalle> listaOpcEdifGrupo3_5) {
+        this.listaOpcEdifGrupo3_5 = listaOpcEdifGrupo3_5;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_6() {
+        return listaOpcEdifGrupo3_6;
+    }
+
+    public void setListaOpcEdifGrupo3_6(List<CatalogoDetalle> listaOpcEdifGrupo3_6) {
+        this.listaOpcEdifGrupo3_6 = listaOpcEdifGrupo3_6;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_7() {
+        return listaOpcEdifGrupo3_7;
+    }
+
+    public void setListaOpcEdifGrupo3_7(List<CatalogoDetalle> listaOpcEdifGrupo3_7) {
+        this.listaOpcEdifGrupo3_7 = listaOpcEdifGrupo3_7;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_8() {
+        return listaOpcEdifGrupo3_8;
+    }
+
+    public void setListaOpcEdifGrupo3_8(List<CatalogoDetalle> listaOpcEdifGrupo3_8) {
+        this.listaOpcEdifGrupo3_8 = listaOpcEdifGrupo3_8;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_9() {
+        return listaOpcEdifGrupo3_9;
+    }
+
+    public void setListaOpcEdifGrupo3_9(List<CatalogoDetalle> listaOpcEdifGrupo3_9) {
+        this.listaOpcEdifGrupo3_9 = listaOpcEdifGrupo3_9;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo3_10() {
+        return listaOpcEdifGrupo3_10;
+    }
+
+    public void setListaOpcEdifGrupo3_10(List<CatalogoDetalle> listaOpcEdifGrupo3_10) {
+        this.listaOpcEdifGrupo3_10 = listaOpcEdifGrupo3_10;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo4_1() {
+        return listaOpcEdifGrupo4_1;
+    }
+
+    public void setListaOpcEdifGrupo4_1(List<CatalogoDetalle> listaOpcEdifGrupo4_1) {
+        this.listaOpcEdifGrupo4_1 = listaOpcEdifGrupo4_1;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo4_2() {
+        return listaOpcEdifGrupo4_2;
+    }
+
+    public void setListaOpcEdifGrupo4_2(List<CatalogoDetalle> listaOpcEdifGrupo4_2) {
+        this.listaOpcEdifGrupo4_2 = listaOpcEdifGrupo4_2;
+    }
+
+    public List<CatalogoDetalle> getListaOpcEdifGrupo4_3() {
+        return listaOpcEdifGrupo4_3;
+    }
+
+    public void setListaOpcEdifGrupo4_3(List<CatalogoDetalle> listaOpcEdifGrupo4_3) {
+        this.listaOpcEdifGrupo4_3 = listaOpcEdifGrupo4_3;
+    }
+
+    public String getCedulaPropietarioBusqueda() {
+        return cedulaPropietarioBusqueda;
+    }
+
+    public void setCedulaPropietarioBusqueda(String cedulaPropietarioBusqueda) {
+        this.cedulaPropietarioBusqueda = cedulaPropietarioBusqueda;
+    }
+
+    public List<CatastroPredial> getListaCatastrosDePropietario() {
+        return listaCatastrosDePropietario;
+    }
+
+    public void setListaCatastrosDePropietario(List<CatastroPredial> listaCatastrosDePropietario) {
+        this.listaCatastrosDePropietario = listaCatastrosDePropietario;
+    }
+
+    public String getGrupoUsoSuelo() {
+        return grupoUsoSuelo;
+    }
+
+    public void setGrupoUsoSuelo(String grupoUsoSuelo) {
+        this.grupoUsoSuelo = grupoUsoSuelo;
+    }
+
+    public String getSubgrupoUsoSuelo() {
+        return subgrupoUsoSuelo;
+    }
+
+    public void setSubgrupoUsoSuelo(String subgrupoUsoSuelo) {
+        this.subgrupoUsoSuelo = subgrupoUsoSuelo;
+    }
+
+    public List<SelectItem> getListaGruposUsoSuelo() {
+        return listaGruposUsoSuelo;
+    }
+
+    public void setListaGruposUsoSuelo(List<SelectItem> listaGruposUsoSuelo) {
+        this.listaGruposUsoSuelo = listaGruposUsoSuelo;
+    }
+
+    public List<SelectItem> getListaSubgruposUsoSuelo() {
+        return listaSubgruposUsoSuelo;
+    }
+
+    public void setListaSubgruposUsoSuelo(List<SelectItem> listaSubgruposUsoSuelo) {
+        this.listaSubgruposUsoSuelo = listaSubgruposUsoSuelo;
+    }
+
+    public String getEdifBloque() {
+        return edifBloque;
+    }
+
+    public void setEdifBloque(String edifBloque) {
+        this.edifBloque = edifBloque;
+    }
+
+    public String getEdifPiso() {
+        return edifPiso;
+    }
+
+    public void setEdifPiso(String edifPiso) {
+        this.edifPiso = edifPiso;
+    }
     
-    
+
 }

@@ -61,9 +61,7 @@ public class Propietario implements Serializable {
     @Column(name = "pro_fecha_nacimiento")
     @Temporal(TemporalType.DATE)
     private Date proFechaNacimiento;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2147483647)
+    @Size(max = 2147483647)
     @Column(name = "pro_razon_social")
     private String proRazonSocial;
     @Size(max = 2147483647)

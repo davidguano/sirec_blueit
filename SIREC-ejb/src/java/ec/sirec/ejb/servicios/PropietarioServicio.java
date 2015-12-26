@@ -11,11 +11,14 @@ import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.facade.PropietarioFacade;
 import ec.sirec.ejb.facade.PropietarioPredioFacade;
+import ec.sirec.ejb.util.Utilitarios;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
 /**
  *
@@ -69,6 +72,10 @@ public class PropietarioServicio {
         return propietarioPredioDao.listarPorCampoOrdenada("PropietarioPredio", "proCi", prop, "propreCodigo", "asc");
     }
 
+    public List<PropietarioPredio> listarPropietariosPredioPorCedulaPropietario(String cedulaProp) throws Exception {
+        return propietarioPredioDao.listarPorCampoOrdenada("PropietarioPredio", "proCi.proCi", cedulaProp, "propreCodigo", "asc");
+    }
+
     public Propietario obtenerPropietarioPrincipalPredio(Integer idCatastroPre) throws Exception {
         Propietario p = new Propietario();
         List<PropietarioPredio> lstpp = new ArrayList<PropietarioPredio>();
@@ -85,5 +92,33 @@ public class PropietarioServicio {
 
     public void eliminarPropietarioPredio(PropietarioPredio vPP) throws Exception {
         propietarioPredioDao.eliminar(vPP);
+    }
+
+    public boolean esCedulaRucValida(String vcedula) throws Exception {
+        String c = "";
+        if (vcedula.length() == 13) {
+            c = vcedula.substring(0, 10);
+            if (!vcedula.substring(10, 13).equals("001")) {
+                return false;
+            }
+        } else {
+            c = vcedula;
+        }
+        return Utilitarios.validarCedula(c);
+    }
+
+    public List<CatalogoDetalle> listarCiudadesPorTexto(String texto) throws Exception {
+        return catalogoDetServicio.listarPorNemonicoyTextoContiene("CIUDADES", texto);
+    }
+
+    public boolean esFechaNacimientoValida(Date vfechaNac) throws Exception {
+        Calendar fn = java.util.Calendar.getInstance();
+        fn.setTime(vfechaNac);
+        Calendar fa = java.util.Calendar.getInstance();
+        if ((fa.getTimeInMillis()-fn.getTimeInMillis())>360000) {
+            return true;
+        } else {
+           return false;
+        }
     }
 }

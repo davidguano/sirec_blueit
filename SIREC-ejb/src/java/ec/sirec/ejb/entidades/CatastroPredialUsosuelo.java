@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -41,12 +42,20 @@ public class CatastroPredialUsosuelo implements Serializable {
     private int catpreusuItem;
     @Column(name = "catpreusu_valor")
     private Integer catpreusuValor;
+    @Column(name = "catpreusu_aplica")
+    private Boolean catpreusuAplica;
+  
     @JoinColumn(name = "catpre_codigo", referencedColumnName = "catpre_codigo")
     @ManyToOne(optional = false)
     private CatastroPredial catpreCodigo;
     @JoinColumn(name = "catdet_codigo", referencedColumnName = "catdet_codigo")
     @ManyToOne(optional = false)
     private CatalogoDetalle catdetCodigo;
+    @Transient
+    private String grupo;
+    @Transient
+    private String subgrupo;
+    
 
     public CatastroPredialUsosuelo() {
     }
@@ -99,6 +108,68 @@ public class CatastroPredialUsosuelo implements Serializable {
     public void setCatdetCodigo(CatalogoDetalle catdetCodigo) {
         this.catdetCodigo = catdetCodigo;
     }
+
+    public Boolean getCatpreusuAplica() {
+        return catpreusuAplica;
+    }
+
+    public void setCatpreusuAplica(Boolean catpreusuAplica) {
+        this.catpreusuAplica = catpreusuAplica;
+    }
+
+    public String getGrupo() {
+        if(catdetCodigo.getCatdetCod().substring(0, 1).equals("1")){
+            grupo="Produccion";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 1).equals("2")){
+            grupo="Consumo";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 1).equals("3")){
+            grupo="Intercambio";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 1).equals("4")){
+            grupo="Gestion";
+        }
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getSubgrupo() {
+        if(catdetCodigo.getCatdetCod().substring(0, 2).equals("11")){
+            subgrupo="Industrial";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("12")){
+            subgrupo="Artesanal";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("13")){
+            subgrupo="Agropecuario";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("21")){
+            subgrupo="Residencial";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("22")){
+            subgrupo="Alimentos y Bebidas";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("23")){
+            subgrupo="Recreacion";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("24")){
+            subgrupo="Educacion";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("25")){
+            subgrupo="Salud";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("31")){
+            subgrupo="Servicios Privados";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("32")){
+            subgrupo="Comercio";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("33")){
+            subgrupo="Comunicacion";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("41")){
+            subgrupo="Institucion publica";
+        }else if(catdetCodigo.getCatdetCod().substring(0, 2).equals("42")){
+            subgrupo="Institucion privada";
+        }
+        return subgrupo;
+    }
+
+    public void setSubgrupo(String subgrupo) {
+        this.subgrupo = subgrupo;
+    }
+    
+    
 
     @Override
     public int hashCode() {

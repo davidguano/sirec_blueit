@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ec.sirec.ejb.entidades;
 
 import java.io.Serializable;
@@ -38,6 +37,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "CatastroPredial.findAll", query = "SELECT c FROM CatastroPredial c")})
 public class CatastroPredial implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,7 +59,7 @@ public class CatastroPredial implements Serializable {
     private String catpreNumero;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2147483647)
+    @Size(max = 2147483647)
     @Column(name = "catpre_nombre_sector")
     private String catpreNombreSector;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -69,6 +69,8 @@ public class CatastroPredial implements Serializable {
     private Double catpreCoordLongitud;
     @Column(name = "catpre_longitud_frente_principal")
     private Double catpreLongitudFrentePrincipal;
+    @Column(name = "catpre_longitud_fondo")
+    private Double catpreLongitudFondo;
     @Column(name = "catpre_area_total")
     private Double catpreAreaTotal;
     @Column(name = "catpre_area_total_esc")
@@ -160,7 +162,21 @@ public class CatastroPredial implements Serializable {
     @Size(max = 200)
     @Column(name = "catpre_interseccion")
     private String catpreInterseccion;
-    
+    @Size(max = 10)
+    @Column(name = "catpre_num_lote")
+    private String catpreNumLote;
+    @Column(name = "catpre_num_bloques")
+    private Integer catpreNumBloques;
+    @Column(name = "catpre_num_pisos")
+    private Integer catpreNumPisos;
+    @Size(max = 200)
+    @Column(name = "catpre_otro_propietario")
+    private String catpreOtroPropietario;
+    @Size(max = 200)
+    @Column(name = "catpre_ident_predio")
+    private String catpreIdentPredio;
+    @Column(name = "catpre_num_fam_bloque")
+    private Integer catpreNumFamBloque;
     @JoinColumn(name = "usu_identificacion", referencedColumnName = "usu_identificacion")
     @ManyToOne(optional = false)
     private SegUsuario usuIdentificacion;
@@ -224,26 +240,37 @@ public class CatastroPredial implements Serializable {
     @JoinColumn(name = "catdet_caracteristicas_suelo", referencedColumnName = "catdet_codigo")
     @ManyToOne
     private CatalogoDetalle catdetCaracteristicasSuelo;
+    @JoinColumn(name = "catdet_parroquia", referencedColumnName = "catdet_codigo")
+    @ManyToOne
+    private CatalogoDetalle catdetParroquia;
+    @JoinColumn(name = "catdet_sector", referencedColumnName = "catdet_codigo")
+    @ManyToOne
+    private CatalogoDetalle catdetSector;
     @Transient
     private List<PropietarioPredio> listaPropietariosPredio;
-    
+    @Transient
+    private String claveCatastral;
+    @Transient
+    private Double porcentajeAreas;
 
     public CatastroPredial() {
-        listaPropietariosPredio=new ArrayList<PropietarioPredio>();
-        catdetTipoProp1=new CatalogoDetalle();
-        catdetTipoProp2=new CatalogoDetalle();
-        catdetTipoVia=new CatalogoDetalle();
-        catdetTipoUbicacion=new CatalogoDetalle();
-        catdetRefCartografica=new CatalogoDetalle();
-        catdetDominio=new CatalogoDetalle();
-        catdetTraslacionDominio=new CatalogoDetalle();
-        catdetOcupacion=new CatalogoDetalle();
-        catdetNoEdificado=new CatalogoDetalle();
-        catdetEnConstruccion=new CatalogoDetalle();
-        catdetCaracteristicasSuelo=new CatalogoDetalle();
-        catdetForma=new CatalogoDetalle();
-        catdetTopografia=new CatalogoDetalle();
-        catdetLocalizacion=new CatalogoDetalle();
+        listaPropietariosPredio = new ArrayList<PropietarioPredio>();
+        catdetTipoProp1 = new CatalogoDetalle();
+        catdetTipoProp2 = new CatalogoDetalle();
+        catdetTipoVia = new CatalogoDetalle();
+        catdetTipoUbicacion = new CatalogoDetalle();
+        catdetRefCartografica = new CatalogoDetalle();
+        catdetDominio = new CatalogoDetalle();
+        catdetTraslacionDominio = new CatalogoDetalle();
+        catdetOcupacion = new CatalogoDetalle();
+        catdetNoEdificado = new CatalogoDetalle();
+        catdetEnConstruccion = new CatalogoDetalle();
+        catdetCaracteristicasSuelo = new CatalogoDetalle();
+        catdetForma = new CatalogoDetalle();
+        catdetTopografia = new CatalogoDetalle();
+        catdetLocalizacion = new CatalogoDetalle();
+        catdetSector = new CatalogoDetalle();
+        catdetParroquia = new CatalogoDetalle();
     }
 
     public CatastroPredial(Integer catpreCodigo) {
@@ -609,8 +636,6 @@ public class CatastroPredial implements Serializable {
         this.catpreInterseccion = catpreInterseccion;
     }
 
-   
-
     public SegUsuario getUsuIdentificacion() {
         return usuIdentificacion;
     }
@@ -619,10 +644,9 @@ public class CatastroPredial implements Serializable {
         this.usuIdentificacion = usuIdentificacion;
     }
 
-
     public CatalogoDetalle getCatdetFuenteInformacion() {
-        if(catdetFuenteInformacion==null){
-            catdetFuenteInformacion=new CatalogoDetalle();
+        if (catdetFuenteInformacion == null) {
+            catdetFuenteInformacion = new CatalogoDetalle();
         }
         return catdetFuenteInformacion;
     }
@@ -632,8 +656,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetAlicuotas() {
-        if(catdetAlicuotas==null){
-            catdetAlicuotas=new CatalogoDetalle();
+        if (catdetAlicuotas == null) {
+            catdetAlicuotas = new CatalogoDetalle();
         }
         return catdetAlicuotas;
     }
@@ -641,9 +665,10 @@ public class CatastroPredial implements Serializable {
     public void setCatdetAlicuotas(CatalogoDetalle catdetAlicuotas) {
         this.catdetAlicuotas = catdetAlicuotas;
     }
+
     public CatalogoDetalle getCatdetDimension() {
-        if(catdetDimension==null){
-            catdetDimension=new CatalogoDetalle();
+        if (catdetDimension == null) {
+            catdetDimension = new CatalogoDetalle();
         }
         return catdetDimension;
     }
@@ -653,8 +678,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoFuncNegocio() {
-        if(catdetTipoFuncNegocio==null){
-            catdetTipoFuncNegocio=new CatalogoDetalle();
+        if (catdetTipoFuncNegocio == null) {
+            catdetTipoFuncNegocio = new CatalogoDetalle();
         }
         return catdetTipoFuncNegocio;
     }
@@ -664,8 +689,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoNegocio() {
-        if(catdetTipoNegocio==null){
-            catdetTipoNegocio=new CatalogoDetalle();
+        if (catdetTipoNegocio == null) {
+            catdetTipoNegocio = new CatalogoDetalle();
         }
         return catdetTipoNegocio;
     }
@@ -675,8 +700,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetLocalizacion() {
-        if(catdetLocalizacion==null){
-            catdetLocalizacion=new CatalogoDetalle();
+        if (catdetLocalizacion == null) {
+            catdetLocalizacion = new CatalogoDetalle();
         }
         return catdetLocalizacion;
     }
@@ -686,8 +711,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTopografia() {
-        if(catdetTopografia==null){
-            catdetTopografia=new CatalogoDetalle();
+        if (catdetTopografia == null) {
+            catdetTopografia = new CatalogoDetalle();
         }
         return catdetTopografia;
     }
@@ -697,8 +722,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetForma() {
-        if(catdetForma==null){
-            catdetForma=new CatalogoDetalle();
+        if (catdetForma == null) {
+            catdetForma = new CatalogoDetalle();
         }
         return catdetForma;
     }
@@ -708,8 +733,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetDocRelevamiento() {
-        if(catdetDocRelevamiento==null){
-            catdetDocRelevamiento=new CatalogoDetalle();
+        if (catdetDocRelevamiento == null) {
+            catdetDocRelevamiento = new CatalogoDetalle();
         }
         return catdetDocRelevamiento;
     }
@@ -719,8 +744,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoVia() {
-        if(catdetTipoVia==null){
-            catdetTipoVia=new CatalogoDetalle();
+        if (catdetTipoVia == null) {
+            catdetTipoVia = new CatalogoDetalle();
         }
         return catdetTipoVia;
     }
@@ -730,8 +755,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoUbicacion() {
-        if(catdetTipoUbicacion==null){
-            catdetTipoUbicacion=new CatalogoDetalle();
+        if (catdetTipoUbicacion == null) {
+            catdetTipoUbicacion = new CatalogoDetalle();
         }
         return catdetTipoUbicacion;
     }
@@ -741,8 +766,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoProp1() {
-        if(catdetTipoProp1==null){
-            catdetTipoProp1=new CatalogoDetalle();
+        if (catdetTipoProp1 == null) {
+            catdetTipoProp1 = new CatalogoDetalle();
         }
         return catdetTipoProp1;
     }
@@ -752,8 +777,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTipoProp2() {
-        if(catdetTipoProp2==null){
-            catdetTipoProp2=new CatalogoDetalle();
+        if (catdetTipoProp2 == null) {
+            catdetTipoProp2 = new CatalogoDetalle();
         }
         return catdetTipoProp2;
     }
@@ -763,8 +788,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetRefCartografica() {
-        if(catdetRefCartografica==null){
-            catdetRefCartografica=new CatalogoDetalle();
+        if (catdetRefCartografica == null) {
+            catdetRefCartografica = new CatalogoDetalle();
         }
         return catdetRefCartografica;
     }
@@ -774,8 +799,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetDominio() {
-        if(catdetDominio==null){
-            catdetDominio=new CatalogoDetalle();
+        if (catdetDominio == null) {
+            catdetDominio = new CatalogoDetalle();
         }
         return catdetDominio;
     }
@@ -785,8 +810,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetTraslacionDominio() {
-        if(catdetTraslacionDominio==null){
-            catdetTraslacionDominio=new CatalogoDetalle();
+        if (catdetTraslacionDominio == null) {
+            catdetTraslacionDominio = new CatalogoDetalle();
         }
         return catdetTraslacionDominio;
     }
@@ -796,8 +821,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetOcupacion() {
-        if(catdetOcupacion==null){
-            catdetOcupacion=new CatalogoDetalle();
+        if (catdetOcupacion == null) {
+            catdetOcupacion = new CatalogoDetalle();
         }
         return catdetOcupacion;
     }
@@ -807,8 +832,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetNoEdificado() {
-        if(catdetNoEdificado==null){
-            catdetNoEdificado=new CatalogoDetalle();
+        if (catdetNoEdificado == null) {
+            catdetNoEdificado = new CatalogoDetalle();
         }
         return catdetNoEdificado;
     }
@@ -818,8 +843,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetEnConstruccion() {
-        if(catdetEnConstruccion==null){
-            catdetEnConstruccion=new CatalogoDetalle();
+        if (catdetEnConstruccion == null) {
+            catdetEnConstruccion = new CatalogoDetalle();
         }
         return catdetEnConstruccion;
     }
@@ -829,8 +854,8 @@ public class CatastroPredial implements Serializable {
     }
 
     public CatalogoDetalle getCatdetCaracteristicasSuelo() {
-        if(catdetCaracteristicasSuelo==null){
-            catdetCaracteristicasSuelo=new CatalogoDetalle();
+        if (catdetCaracteristicasSuelo == null) {
+            catdetCaracteristicasSuelo = new CatalogoDetalle();
         }
         return catdetCaracteristicasSuelo;
     }
@@ -847,9 +872,108 @@ public class CatastroPredial implements Serializable {
         this.listaPropietariosPredio = listaPropietariosPredio;
     }
 
+    public String getCatpreNumLote() {
+        return catpreNumLote;
+    }
+
+    public void setCatpreNumLote(String catpreNumLote) {
+        this.catpreNumLote = catpreNumLote;
+    }
+
+    public Integer getCatpreNumBloques() {
+        return catpreNumBloques;
+    }
+
+    public void setCatpreNumBloques(Integer catpreNumBloques) {
+        this.catpreNumBloques = catpreNumBloques;
+    }
+
+    public Integer getCatpreNumPisos() {
+        return catpreNumPisos;
+    }
+
+    public void setCatpreNumPisos(Integer catpreNumPisos) {
+        this.catpreNumPisos = catpreNumPisos;
+    }
+
+    public CatalogoDetalle getCatdetParroquia() {
+        if (catdetParroquia == null) {
+            catdetParroquia = new CatalogoDetalle();
+        }
+        return catdetParroquia;
+    }
+
+    public void setCatdetParroquia(CatalogoDetalle catdetParroquia) {
+        this.catdetParroquia = catdetParroquia;
+    }
+
+    public CatalogoDetalle getCatdetSector() {
+        if (catdetSector == null) {
+            catdetSector = new CatalogoDetalle();
+        }
+        return catdetSector;
+    }
+
+    public void setCatdetSector(CatalogoDetalle catdetSector) {
+        this.catdetSector = catdetSector;
+    }
+
+    public String getClaveCatastral() {
+        if (catpreCodNacional != null && catpreCodLocal != null) {
+            claveCatastral = catpreCodNacional + catpreCodLocal;
+        }
+        return claveCatastral;
+    }
+
+    public void setClaveCatastral(String claveCatastral) {
+        this.claveCatastral = claveCatastral;
+    }
+
+    public Double getPorcentajeAreas() {
+        if(catpreAreaTotal!=null && catpreAreaTotalEsc!=null){
+            porcentajeAreas=((catpreAreaTotalEsc-catpreAreaTotal)/catpreAreaTotalEsc)*100;
+        }
+        return porcentajeAreas;
+    }
+
+    public void setPorcentajeAreas(Double porcentajeAreas) {
+        this.porcentajeAreas = porcentajeAreas;
+    }
+
+    public String getCatpreOtroPropietario() {
+        return catpreOtroPropietario;
+    }
+
+    public void setCatpreOtroPropietario(String catpreOtroPropietario) {
+        this.catpreOtroPropietario = catpreOtroPropietario;
+    }
+
+    public String getCatpreIdentPredio() {
+        return catpreIdentPredio;
+    }
+
+    public void setCatpreIdentPredio(String catpreIdentPredio) {
+        this.catpreIdentPredio = catpreIdentPredio;
+    }
+
+    public Double getCatpreLongitudFondo() {
+        return catpreLongitudFondo;
+    }
+
+    public void setCatpreLongitudFondo(Double catpreLongitudFondo) {
+        this.catpreLongitudFondo = catpreLongitudFondo;
+    }
+
+    public Integer getCatpreNumFamBloque() {
+        return catpreNumFamBloque;
+    }
+
+    public void setCatpreNumFamBloque(Integer catpreNumFamBloque) {
+        this.catpreNumFamBloque = catpreNumFamBloque;
+    }
     
     
-   
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -874,5 +998,5 @@ public class CatastroPredial implements Serializable {
     public String toString() {
         return "ec.sirec.ejb.entidades.CatastroPredial[ catpreCodigo=" + catpreCodigo + " ]";
     }
-    
+
 }
