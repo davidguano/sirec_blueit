@@ -445,7 +445,7 @@ public void calularRebajaDesvalorizacionBaseImpImpuesto() {
             catastroPredialPlusvaliaValoracion.setCatprepluvalBaseimp(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalValorRebaja()));                                                 
            // catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo());            
            // System.out.println("nM: "+catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor());            
-            catastroPredialPlusvaliaValoracion.setCatprepluvalImpuesto(new BigDecimal(catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()));             
+            catastroPredialPlusvaliaValoracion.setCatprepluvalImpuesto(new BigDecimal(catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValorDecimal()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()));             
             catastroPredialPlusvaliaValoracion.setCatprepluvalTasaproc(new BigDecimal(2)); 
             
         } catch (Exception ex) {
