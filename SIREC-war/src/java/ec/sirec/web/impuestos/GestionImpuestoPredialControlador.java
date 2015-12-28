@@ -11,6 +11,7 @@ import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.CpValoracionExtras;
+import ec.sirec.ejb.entidades.DatoGlobal;
 import ec.sirec.ejb.entidades.FittoCorvini;
 import ec.sirec.ejb.entidades.PredioArchivo;
 import ec.sirec.ejb.entidades.RecaudacionCab;
@@ -20,6 +21,7 @@ import ec.sirec.ejb.servicios.AdicionalesDeductivosServicio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
+import ec.sirec.ejb.servicios.DatoGlobalServicio;
 import ec.sirec.ejb.servicios.FittoCorviniServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.ejb.servicios.RecaudacionCabServicio;
@@ -27,7 +29,6 @@ import ec.sirec.ejb.servicios.RecaudacionDetServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,6 +96,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private FittoCorvini fittoCorvini;
     private RecaudacionCab recaudacioCab;
     private RecaudacionDet recaudacionDet;
+    private DatoGlobal datoGlobal;
 
     // SERVICIOS
     @EJB
@@ -113,6 +115,8 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private RecaudacionCabServicio recaudacionCabServicio;
     @EJB
     private RecaudacionDetServicio recaudacionDetServicio;
+    @EJB
+    private DatoGlobalServicio datoGlobalServicio;
 
     @PostConstruct
     public void inicializar() {
@@ -124,6 +128,7 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             listarTodasComboClaves();
             listarCatastroPredialERD();
             criterio = "";
+            datoGlobal = new DatoGlobal();
 
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -444,6 +449,13 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
           catastroPredialValoracionActual.setCatprevalAvaluoEdif(valorAvaluoConstruccion); 
           catastroPredialValoracionActual.setCatprevalAvaluoTerr(valorAvaluoTerrero); 
           catastroPredialValoracionActual.setCatprevalAvaluoTot(valorAvaluoConstruccion.add(valorAvaluoTerrero)); 
+          catastroPredialValoracionActual.setCatprevalValorPropieda(valorAvaluoConstruccion.add(valorAvaluoTerrero));           
+          catastroPredialValoracionActual.setCatprevalBaseImponible(valorAvaluoConstruccion.add(valorAvaluoTerrero));                     
+//          int d;
+//             d = (int) datoGlobalServicio.obtenerDatoGlobal("Banda_Impositiva").getDatgloValor();         
+          catastroPredialValoracionActual.setCatprevalImpuesto(valorAvaluoConstruccion.add(valorAvaluoTerrero).multiply(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Banda_Impositiva").getDatgloValor()).divide(new BigDecimal(100))));  
+          
+          
           
           catastroPredialValoracionServicio.crearAplicacion(catastroPredialValoracionActual);                    
           System.out.println("valorConstruccionT: "+ valorAvaluoConstruccion);
