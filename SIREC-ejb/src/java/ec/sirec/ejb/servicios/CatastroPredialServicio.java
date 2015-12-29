@@ -539,7 +539,9 @@ public class CatastroPredialServicio {
     public List<CatalogoDetalle> listaCatParroquias() throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoCatalogo("PARROQUIAS");
     }
-
+    public List<CatalogoDetalle> listaCatSectores() throws Exception {
+        return catalogoDetalleServicio.listarPorNemonicoCatalogo("SECTORES");
+    }
     public List<CatalogoDetalle> listaCatSectores(String vcodNacional) throws Exception {
         return catalogoDetalleServicio.listarPorNemonicoyCodigoCatalogo("SECTORES", vcodNacional);
     }
