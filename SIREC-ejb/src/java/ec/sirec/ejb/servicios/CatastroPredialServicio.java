@@ -600,4 +600,12 @@ public class CatastroPredialServicio {
     public CatalogoDetalle cargarObjetoCatalogoDetalle(int codCatDet) throws Exception {
         return catalogoDetalleServicio.buscarPorCodigoCatDet(codCatDet);
     }
+    
+    public List<CatastroPredial> listarCatastroXParroquia(CatalogoDetalle codParroquia) throws Exception {
+        return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catdetParroquia", codParroquia, "catpreCodigo", "asc");
+    }
+    
+     public List<CatastroPredial> listarCatastroXSector(CatalogoDetalle codSector) throws Exception {
+        return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catdetSector", codSector, "catpreCodigo", "asc");
+    }
 }
