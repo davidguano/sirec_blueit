@@ -48,7 +48,7 @@
     <!-- Servlet que permite mostrar un archivo en pdf-->
     <servlet>
         <servlet-name>ReporteServlet</servlet-name>
-        <servlet-class>ec.sirec.web.util.servlet.ReporteServlet</servlet-class>
+        <servlet-class>ec.sirec.web.util.ReporteServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ReporteServlet</servlet-name>
@@ -94,4 +94,8 @@
         <extension>woff2</extension> 
         <mime-type>application/x-font-woff2</mime-type> 
     </mime-mapping>
+    <context-param>  
+        <param-name>primefaces.THEME</param-name>  
+        <param-value>bootstrap</param-value>  
+    </context-param>
 </web-app>

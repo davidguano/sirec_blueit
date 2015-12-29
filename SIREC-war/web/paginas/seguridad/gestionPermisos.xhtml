@@ -38,14 +38,18 @@
                                              maxlength="50" size="40"/>
                                 <p:message for="perNomNem"/>
                                 <p:outputLabel value="#{txt.text_tip_per}"/>
-                                <p:inputText  id="perTipPer"  value="#{gestionPermisosControlador.permisoActual.perTipoPermiso}" 
-                                              maxlength="50" size="10"/>
+                                <p:selectOneMenu  id="perTipPer"  value="#{gestionPermisosControlador.permisoActual.perTipoPermiso}" 
+                                             >
+                                    <f:selectItem itemLabel="Acceso" itemValue="A"/>
+                                    <f:selectItem itemLabel="Creacion" itemValue="C"/>
+                                    <f:selectItem itemLabel="Modificacion" itemValue="M"/>
+                                    <f:selectItem itemLabel="Eliminacion" itemValue="E"/>
+                                </p:selectOneMenu>
                                 <p:message for="perTipPer"/>
                                 <p:outputLabel value="#{txt.text_url_pag_per}"/>
                                 <p:inputTextarea    id="urlPagPer" style="width: 250px" value="#{gestionPermisosControlador.permisoActual.perUrlPagina}" 
                                                     maxlength="500"  />
-                                <p:message for="urlPagPer"/>i
-                                <h:column></h:column>
+                                <p:message for="urlPagPer"/>
                                 <!-- <p:outputLabel value="{txt.text_per_cod_padre}"/>
                                  <p:inputText   id="perCodPad"  value="{gestionPermisosControlador.permisoActual.perPadreCodigo}" 
                                                 maxlength="50" size="10"/>
@@ -102,11 +106,7 @@
                                 </p:column>
                                 <p:column headerText="#{txt.lbl_nom_nem}" width="200" style="font-size:12px;">
                                     <h:outputText value="#{perColumna.perNemonico}" style="font-size:12px;" />
-                                </p:column>  
-                                <p:column headerText="#{txt.lbl_estado}" width="150" style="font-size:12px;">
-                                    <p:selectBooleanCheckbox disabled="true"  value="#{perColumna.perEstado}" >
-                                    </p:selectBooleanCheckbox>
-                                </p:column>
+                                </p:column> 
                                 <p:column headerText="#{txt.lbl_tipo_permiso}" width="50" style="font-size:12px;">
                                     <h:outputText value="#{perColumna.perTipoPermiso}" style="font-size:12px;" />
                                 </p:column>

@@ -19,16 +19,16 @@
                                     <div style="text-align: center !important;">
 
                                         <p:panel style="background: #CCCCFF;" header="Clave Catastral">
-                                            <h:panelGrid id="pnlClave"
+                                            <h:panelGrid id="pnlBusqueda"
                                                          columns="5" style="text-align: center !important;" >
                                                 <p:outputLabel value="Clave Catastral" for="codN"/>
                                                 <f:verbatim/>
                                                 <p:outputLabel value="Cedula/RUC" for="cedRuc"/>
                                                 <f:verbatim/>
                                                 <f:verbatim/>
-                                                <p:inputText id="codN" value="#{catastroControlador.catastroPredialActual.claveCatastral}"
+                                                <p:inputText id="codN" value="#{catastroControlador.claveCatastralBusqueda}"
                                                              required="true" requiredMessage="Valor requerido" maxlength="19" size="17"
-                                                             style="color:red;font-weight: bold;"
+                                                             style="color:white;font-weight: bold;background: black;"
                                                              onkeypress="return isNumberKey(event);"/>
                                                 <p:commandButton id="btnBuscarPorClave"
                                                                  value="Buscar" async="true" global="false"
@@ -39,7 +39,7 @@
                                                                  icon="fa fa-search"/>
                                                 <p:inputText id="cedRuc" value="#{catastroControlador.cedulaPropietarioBusqueda}"
                                                              maxlength="13" size="10"
-                                                             style="color:red;font-weight: bold;"
+                                                             style="color:white;font-weight: bold;background: black;"
                                                              onkeypress="return isNumberKey(event);"/>
                                                 <p:commandButton id="btnBuscarPorCedula"
                                                                  value="Buscar" async="true" global="false"
@@ -48,7 +48,9 @@
                                                                  update="lstBusqueda"
                                                                  onstart="PF('dlgValidando').show();" onsuccess="PF('dlgValidando').hide();"
                                                                  icon="fa fa-search"/>
-                                                <f:verbatim/>
+                                                <p:commandButton id="btnNuevo" value="Nuevo" action="#{catastroControlador.inicializar}"
+                                                                 async="true" global="false" process="@this"
+                                                                 update="@form"/>
                                                 <p:outputLabel value="Precio Base" for="precBase"/>
                                                 <p:inputText id="precBase" value="#{catastroControlador.valoracionActual.catprevalAvaluoTot}"
                                                              disabled="true" size="10"/>
@@ -66,7 +68,22 @@
                                                 </p:dataTable>
                                                 <p:commandButton id="btnReporteFicha" value="Imprimir"
                                                                  action="#{catastroControlador.generarReporteFichaCatastral()}"
-                                                                 ajax="false"/>
+                                                                 oncomplete="javascript:window.open('#{facesContext.externalContext.requestContextPath}/ReporteServlet','ReporteServlet')"
+                                                                 async="true"
+                                                                 global="false"
+                                                                 process="@this" 
+                                                                 />
+                                            </h:panelGrid>
+                                            <h:panelGrid id="pnlClave" columns="2">
+                                                <p:outputLabel value="Clave Catastral:"/>
+                                                <p:inputText id="claveCatastral" value="#{catastroControlador.catastroPredialActual.claveCatastral}"
+                                                             required="true" requiredMessage="Valor requerido" maxlength="19" size="17"
+                                                             disabled="#{!catastroControlador.flagNuevo}"
+                                                             onkeypress="return isNumberKey(event);">
+                                                    <p:ajax event="blur" listener="#{catastroControlador.validarNuevaClave}"
+                                                            process="@this" async="true" global="false"
+                                                            update="sector,:frmFicha:msgs"/>
+                                                </p:inputText>
                                             </h:panelGrid>
                                         </p:panel>
                                         <p:panel style="background: #CCFFFF;" header="Ubicación">
@@ -148,13 +165,13 @@
 
                                                 <p:outputLabel value="Tipo Persona:"/>
                                                 <p:outputLabel value="Natural" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"/>
-                                                <p:outputLabel value="Juridica" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='J'}"/>
+                                                <p:outputLabel value="Juridica (#{catastroControlador.propietarioActual.catdetTipoperjur.catdetTexto})" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='J'}"/>
                                                 <f:verbatim rendered="#{catastroControlador.propietarioActual.proTipoPersona==null}"/>
                                                 <f:verbatim/>
 
                                                 <p:outputLabel value="Apellidos y Nombres:" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"/>
                                                 <p:outputLabel rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"
-                                                    value="#{catastroControlador.propietarioActual.proApellidos} #{catastroControlador.propietarioActual.proNombres}"/>
+                                                               value="#{catastroControlador.propietarioActual.proApellidos} #{catastroControlador.propietarioActual.proNombres}"/>
                                                 <f:verbatim rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"/>
 
                                                 <p:outputLabel value="Fecha de Nacimiento:" rendered="#{catastroControlador.propietarioActual.proTipoPersona=='N'}"/>
@@ -218,13 +235,6 @@
                                                              size="50"/>
                                                 <p:message for="tipNumProp"/>
                                                 <f:verbatim/>
-                                                <p:commandButton id="btnGuarProp" 
-                                                                 action="#{catastroControlador.guardarPropietario}"
-                                                                 async="true"
-                                                                 global="false"
-                                                                 process="@this"
-                                                                 update="pnlListaProp"
-                                                                 icon="fa fa-save"/>
 
                                             </h:panelGrid>
                                             <h:panelGrid id="pnlListaProp">
@@ -234,12 +244,6 @@
                                                     <p:column>#{prop.proCi.proCi}</p:column>
                                                 </p:dataTable>
 
-                                            </h:panelGrid>
-                                        </p:panel>
-                                        <p:panel style="background: #FFFF33;" header="Información Anterior">
-                                            <h:panelGrid id="pnlInfAnterior">
-                                                <p:outputLabel value="Codigos Anteriores:"/>
-                                                <p:outputLabel value="Propietarios Anteriores:"/>
                                             </h:panelGrid>
                                         </p:panel>
                                         <p:panel style="background: #FFFFCC;" >
@@ -278,77 +282,150 @@
                                                              onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
                                                              icon="fa fa-save"/>
                                         </p:panel>
-                                        <p:panel style="background: #6699FF;" header="Superficies del predio">
-                                            <h:panelGrid id="pnlSuperf" columns="6">
-                                                <p:outputLabel value="Area total del terreno (m2):" for="atotal"/>
-                                                <p:inputText id="atotal" value="#{catastroControlador.catastroPredialActual.catpreAreaTotal}" 
-                                                             maxlength="10"
-                                                             size="10"
-                                                             />
-                                                <p:message for="atotal"/>
-                                                <p:outputLabel value="Area terreno segun escrituras (m2):" for="atotalesc"/>
-                                                <h:panelGrid columns="2">
-                                                    <p:inputText id="atotalesc" value="#{catastroControlador.catastroPredialActual.catpreAreaTotalEsc}" 
-                                                                 maxlength="10"
-                                                                 size="10"
-                                                                 >
-                                                        <p:ajax event="blur"  async="true"
-                                                                global="false"
-                                                                process="@this,atotal"
-                                                                update="porcAreas"/>
-                                                    </p:inputText>
-                                                    <p:outputLabel id="porcAreas" value="#{catastroControlador.catastroPredialActual.porcentajeAreas}%"
-                                                                   style="font-size: 14px;color:red;"/>
+
+                                        <p:panel style="background: #FFFF33;" header="Información Anterior">
+                                            <h:panelGrid id="pnlInfAnterior" columns="1">
+                                                <h:panelGrid columns="4">
+                                                    <p:outputLabel value="Tipo:"/>
+                                                    <p:selectOneMenu id="tipoInfAnt"
+                                                                     value="#{catastroControlador.tipoInfAnt}">
+                                                        <f:selectItem itemLabel="Codigo Anterior" itemValue="C"/>
+                                                        <f:selectItem itemLabel="Propietario Anterior" itemValue="P"/>
+                                                        <f:selectItem itemLabel="Tipo Propietario Anterior" itemValue="T"/>
+                                                    </p:selectOneMenu>
+                                                    <p:inputText id="valInfAnt" value="#{catastroControlador.valorInfAnt}"
+                                                                 size="100"/>
+                                                    <p:commandButton id="btnGuardarInfAnt"
+                                                                     icon="fa fa-save"
+                                                                     action="#{catastroControlador.guardarInformacionAnterior}"
+                                                                     process="@this,tipoInfAnt,valInfAnt"
+                                                                     update="lstInfAnt,valInfAnt,:frmFicha:msgs"
+                                                                     async="true" global="false"/>
+                                                    <f:verbatim/>
                                                 </h:panelGrid>
-                                                <p:message for="atotalesc"/>
-
-                                                <p:outputLabel value="Frente principal (m):" for="longFrente"/>
-                                                <p:inputText id="longFrente" value="#{catastroControlador.catastroPredialActual.catpreLongitudFrentePrincipal}" 
-                                                             maxlength="10"
-                                                             size="10"
-                                                             />
-                                                <p:message for="longFrente"/>
-
-                                                <p:outputLabel value="Area total de construccion (m2):" for="atotalcons"/>
-                                                <p:inputText id="atotalcons" value="#{catastroControlador.catastroPredialActual.catpreAreaTotalCons}" 
-                                                             maxlength="10"
-                                                             size="10"
-                                                             />
-                                                <p:message for="atotalcons"/>
-                                                
-                                                <p:outputLabel value="Fondo (m):" for="longFondo"/>
-                                                <p:inputText id="longFondo" value="#{catastroControlador.catastroPredialActual.catpreLongitudFondo}" 
-                                                             maxlength="10"
-                                                             size="10"
-                                                             />
-                                                <p:message for="longFondo"/>
-                                                <f:verbatim/>
-                                                <f:verbatim/>
-                                                <f:verbatim/>
-
-                                                <p:outputLabel value="Area de construccion (m2):"/>
-                                                <h:panelGrid id="pnlABloque" columns="2">
-                                                    <p:inputText id="aBloque" value="#{catastroControlador.catastroPredialAreaBloqueActual.catpreareBloque}" 
-                                                                 maxlength="2"
-                                                                 size="2"
-                                                                 onkeypress="return isNumberKey(event);"/>
-                                                    <p:inputText id="aBloqueValor" value="#{catastroControlador.catastroPredialAreaBloqueActual.catpreareArea}" 
+                                                <h:panelGrid>
+                                                    <p:dataTable id="lstInfAnt"
+                                                                 value="#{catastroControlador.listaInformacionAnterior}"
+                                                                 var="inf">
+                                                        <p:column>
+                                                            <h:outputText value="Codigo"
+                                                                          rendered="#{inf.catpreinfaTipo=='C'}"/>
+                                                            <h:outputText value="Propietario"
+                                                                          rendered="#{inf.catpreinfaTipo=='P'}"/>
+                                                            <h:outputText value="Tipo Prop."
+                                                                          rendered="#{inf.catpreinfaTipo=='T'}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{inf.catpreinfaValor}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:commandButton icon="ui-icon-trash"
+                                                                             action="#{catastroControlador.eliminarInformacionAnterior(inf)}"
+                                                                             process="@this"
+                                                                             async="true" global="false"
+                                                                             update="lstInfAnt"/>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </h:panelGrid>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                        <p:panel style="background: #6699FF;" header="Superficies del predio">
+                                            <h:panelGrid columns="2">
+                                                <h:panelGrid id="pnlSuperf" columns="6">
+                                                    <p:outputLabel value="Area total del terreno (m2):" for="atotal"/>
+                                                    <p:inputText id="atotal" value="#{catastroControlador.catastroPredialActual.catpreAreaTotal}" 
                                                                  maxlength="10"
                                                                  size="10"
                                                                  />
+                                                    <p:message for="atotal"/>
+                                                    <p:outputLabel value="Area terreno segun escrituras (m2):" for="atotalesc"/>
+                                                    <h:panelGrid columns="2">
+                                                        <p:inputText id="atotalesc" value="#{catastroControlador.catastroPredialActual.catpreAreaTotalEsc}" 
+                                                                     maxlength="10"
+                                                                     size="10"
+                                                                     >
+                                                            <p:ajax event="blur"  async="true"
+                                                                    global="false"
+                                                                    process="@this,atotal"
+                                                                    update="porcAreas"/>
+                                                        </p:inputText>
+                                                        <p:outputLabel id="porcAreas" value="#{catastroControlador.catastroPredialActual.porcentajeAreas}%"
+                                                                       style="font-size: 14px;color:red;"/>
+                                                    </h:panelGrid>
+                                                    <p:message for="atotalesc"/>
+
+                                                    <p:outputLabel value="Frente principal (m):" for="longFrente"/>
+                                                    <p:inputText id="longFrente" value="#{catastroControlador.catastroPredialActual.catpreLongitudFrentePrincipal}" 
+                                                                 maxlength="10"
+                                                                 size="10"
+                                                                 />
+                                                    <p:message for="longFrente"/>
+                                                    <p:outputLabel value="Fondo (m):" for="longFondo"/>
+                                                    <p:inputText id="longFondo" value="#{catastroControlador.catastroPredialActual.catpreLongitudFondo}" 
+                                                                 maxlength="10"
+                                                                 size="10"
+                                                                 />
+                                                    <p:message for="longFondo"/>
+
+
                                                 </h:panelGrid>
-                                                <f:verbatim/>
-                                                <p:commandButton id="btnGuardarArea" action="#{catastroControlador.guardarRegistrodeArea()}"
-                                                                 async="true" global="false"
-                                                                 process="@this,aBloque,aBloqueValor"
-                                                                 update="lstAreasBloque"
-                                                                 icon="fa fa-save"
-                                                                 onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"/>
-                                                <p:dataTable id="lstAreasBloque" value="#{catastroControlador.listaCatastroPredialAreasBloque}"
-                                                             var="area" style="width: 150px;" emptyMessage="No se ha registrado areas.">
-                                                    <p:column headerText="Bloque" width="10"><h:outputText value="#{area.catpreareBloque}"/></p:column>
-                                                    <p:column headerText="Area" width="20"><h:outputText value="#{area.catpreareArea}"/></p:column>
-                                                </p:dataTable>
+                                                <h:panelGrid>
+                                                    <h:panelGrid id="pnlAreas" columns="3">
+                                                        <p:outputLabel value="No Bloques:"/>
+                                                        <p:outputLabel value="Pisos:"/>
+                                                        <f:verbatim/>
+                                                        <p:spinner id="numBloques" value="#{catastroControlador.catastroPredialActual.catpreNumBloques}" 
+                                                                   required="true" requiredMessage="Valor requerido" size="2" maxlength="1"
+                                                                   onkeypress="return isNumberKey(event);"
+                                                                   min="1" max="6"/>
+                                                        <p:spinner id="numPisos" value="#{catastroControlador.catastroPredialActual.catpreNumPisos}" 
+                                                                   required="true" requiredMessage="Valor requerido" size="2" maxlength="1"
+                                                                   onkeypress="return isNumberKey(event);"
+                                                                   min="1" max="4"/>
+                                                        <p:commandButton id="btnCrearAreas" value="Crear Areas"
+                                                                         action="#{catastroControlador.guardarRegistrosdeArea}"
+                                                                         rendered="#{catastroControlador.listaCatastroPredialAreasBloque.size()==0}"
+                                                                         process="@this,numBloques,numPisos"
+                                                                         icon="fa fa-save"
+                                                                         onstart="PF('dlgRegistrando').show();" 
+                                                                         onsuccess="PF('dlgRegistrando').hide();"
+                                                                         async="true" global="false" update="pnlAreas,lstAreasBloque,:frmFicha:msgs"/>
+                                                        <p:commandButton style="font-size:12px;" icon="ui-icon-trash"  
+                                                                         rendered="#{catastroControlador.listaCatastroPredialAreasBloque.size()>0}"
+                                                                         actionListener="#{catastroControlador.eliminarAreasyEdificacion}" 
+                                                                         process="@this" async="true" global="false" update="pnlAreas,lstAreasBloque,atotalcons,:frmFicha:msgs"  >
+                                                            <p:confirm header="Confirmación" message="¿Está seguro de eliminar las areas? (Tambien se eliminaran los registros de edificacion.)" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="drop">
+                                                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button"  styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog>
+                                                    </h:panelGrid>
+                                                    <h:panelGrid>
+                                                        <p:dataTable id="lstAreasBloque" value="#{catastroControlador.listaCatastroPredialAreasBloque}"
+                                                                     var="area" style="width: 150px;" emptyMessage="No se ha registrado areas.">
+                                                            <p:column headerText="Bloque" width="10"><h:outputText value="#{area.catpreareBloque}"/></p:column>
+                                                            <p:column headerText="Piso" width="10"><h:outputText value="#{area.catprearePiso}"/></p:column>
+                                                            <p:column headerText="Area" width="20"><h:inputText value="#{area.catpreareArea}" size="5"/></p:column>
+                                                        </p:dataTable>
+                                                        <p:commandButton id="btnCalcAreas"
+                                                                         value="Guardar Areas"
+                                                                         action="#{catastroControlador.editarRegistrosdeArea}"
+                                                                         process="@this,lstAreasBloque"
+                                                                         update="atotalcons,:frmFicha:msgs"
+                                                                         async="true" global="false"/>
+                                                    </h:panelGrid>
+                                                    <h:panelGrid columns="3">
+                                                        <p:outputLabel value="Area total de construccion (m2):" for="atotalcons"/>
+                                                        <p:inputText id="atotalcons" value="#{catastroControlador.catastroPredialActual.catpreAreaTotalCons}" 
+                                                                     maxlength="10"
+                                                                     readonly="true"
+                                                                     size="10"
+                                                                     />
+                                                        <p:message for="atotalcons"/>
+                                                    </h:panelGrid>
+
+                                                </h:panelGrid>
                                             </h:panelGrid>
                                         </p:panel>
                                         <p:panel style="background: #CCCCCC;" header="Colindantes">
@@ -374,7 +451,7 @@
                                                              value="Guardar"
                                                              action="#{catastroControlador.guardarRegistroPrincipal}"
                                                              async="true" global="false"
-                                                             process="@this,pnlClave,pnlUbicacion,pnlPropietario,pnlRefCart,pnlColindantes"
+                                                             process="@this,pnlClave,pnlUbicacion,pnlPropietario,pnlRefCart,pnlColindantes,pnlSuperf"
                                                              update="@form"
                                                              onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
                                                              icon="fa fa-save"/>
@@ -468,20 +545,26 @@
                                         </p:selectOneMenu>
                                         <p:message for="trasDominio"/>
                                         <p:outputLabel value="Existen escrituras?:"/>
-                                        <p:selectBooleanCheckbox id="tieneEsc" value="#{catastroControlador.catastroPredialActual.catpreExisteEscrituras}"/>
+                                        <p:selectBooleanCheckbox id="tieneEsc" value="#{catastroControlador.catastroPredialActual.catpreExisteEscrituras}">
+                                            <p:ajax process="@this" async="true" global="false"
+                                                    update="notariaEsc,lugarEsc,fechaEsc"/>
+                                        </p:selectBooleanCheckbox>
                                         <p:message for="tieneEsc"/>
                                         <p:outputLabel value="Notaria:"/>
                                         <p:inputText id="notariaEsc" value="#{catastroControlador.catastroPredialActual.catpreNumNotaria}"
                                                      maxlength="10" size="10"
+                                                     disabled="#{!catastroControlador.catastroPredialActual.catpreExisteEscrituras}"
                                                      onkeypress="return isNumberKey(event);"/>
                                         <p:message for="notariaEsc"/>
                                         <p:outputLabel value="Lugar:"/>
                                         <p:inputText id="lugarEsc" value="#{catastroControlador.catastroPredialActual.catpreLugarEscritura}"
-                                                     maxlength="100" size="80"/>
+                                                     maxlength="100" size="80"
+                                                     disabled="#{!catastroControlador.catastroPredialActual.catpreExisteEscrituras}"/>
                                         <p:message for="lugarEsc"/>
                                         <p:outputLabel value="Fecha Reg. Propiedad:"/>
                                         <p:calendar id="fechaEsc" value="#{catastroControlador.catastroPredialActual.catpreFechaRegPropiedad}"
-                                                    pattern="dd-MM-yyyy"/>
+                                                    pattern="dd-MM-yyyy"
+                                                    disabled="#{!catastroControlador.catastroPredialActual.catpreExisteEscrituras}"/>
                                         <p:message for="fechaEsc"/>
                                     </h:panelGrid>
                                     <p:commandButton id="btnEditarTenencia"
@@ -496,259 +579,259 @@
                             </p:tab>
                             <p:tab title="Descripción del Terreno">
                                 <p:panel rendered="#{catastroControlador.catastroPredialActual.catpreCodigo!=null}">
-                                <h:panelGrid id="pnlOcupacion" columns="3">
-                                    <p:outputLabel value="Ocupación:"/>
-                                    <p:selectOneMenu id="ocupacion" value="#{catastroControlador.catastroPredialActual.catdetOcupacion.catdetCodigo}"
-                                                     required="true" requiredMessage="Valor requerido">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoOcupacion}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="ocupacion"/>
+                                    <h:panelGrid id="pnlOcupacion" columns="3">
+                                        <p:outputLabel value="Ocupación:"/>
+                                        <p:selectOneMenu id="ocupacion" value="#{catastroControlador.catastroPredialActual.catdetOcupacion.catdetCodigo}"
+                                                         required="true" requiredMessage="Valor requerido">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoOcupacion}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="ocupacion"/>
 
-                                    <p:outputLabel value="No Edificado:"/>
-                                    <p:selectOneMenu id="noedif" value="#{catastroControlador.catastroPredialActual.catdetNoEdificado.catdetCodigo}">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoNoEdificado}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="noedif"/>
+                                        <p:outputLabel value="No Edificado:"/>
+                                        <p:selectOneMenu id="noedif" value="#{catastroControlador.catastroPredialActual.catdetNoEdificado.catdetCodigo}">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoNoEdificado}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="noedif"/>
 
-                                    <p:outputLabel value="En construccion:"/>
-                                    <p:selectOneMenu id="encons" value="#{catastroControlador.catastroPredialActual.catdetEnConstruccion.catdetCodigo}">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoConstruccion}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="encons"/>
+                                        <p:outputLabel value="En construccion:"/>
+                                        <p:selectOneMenu id="encons" value="#{catastroControlador.catastroPredialActual.catdetEnConstruccion.catdetCodigo}">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoConstruccion}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="encons"/>
 
-                                    <p:outputLabel value="Construccion Legalizada?:"/>
-                                    <p:selectBooleanCheckbox id="legal" value="#{catastroControlador.catastroPredialActual.catpreTieneLegalizacion}"
-                                                             />
-                                    <p:message for="legal"/>
+                                        <p:outputLabel value="Construccion Legalizada?:"/>
+                                        <p:selectBooleanCheckbox id="legal" value="#{catastroControlador.catastroPredialActual.catpreTieneLegalizacion}"
+                                                                 />
+                                        <p:message for="legal"/>
 
-                                    <p:outputLabel value="Caracteristicas del suelo:"/>
-                                    <p:selectOneMenu id="carsue" value="#{catastroControlador.catastroPredialActual.catdetCaracteristicasSuelo.catdetCodigo}"
-                                                     required="true" requiredMessage="Valor requerido">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoCaracteristicasSuelo}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="carsue"/>
+                                        <p:outputLabel value="Caracteristicas del suelo:"/>
+                                        <p:selectOneMenu id="carsue" value="#{catastroControlador.catastroPredialActual.catdetCaracteristicasSuelo.catdetCodigo}"
+                                                         required="true" requiredMessage="Valor requerido">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoCaracteristicasSuelo}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="carsue"/>
 
-                                    <p:outputLabel value="Forma:"/>
-                                    <p:selectOneMenu id="forma" value="#{catastroControlador.catastroPredialActual.catdetForma.catdetCodigo}"
-                                                     required="true" requiredMessage="Valor requerido">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoForma}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="forma"/>
+                                        <p:outputLabel value="Forma:"/>
+                                        <p:selectOneMenu id="forma" value="#{catastroControlador.catastroPredialActual.catdetForma.catdetCodigo}"
+                                                         required="true" requiredMessage="Valor requerido">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoForma}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="forma"/>
 
-                                    <p:outputLabel value="Topografia:"/>
-                                    <p:selectOneMenu id="topo" value="#{catastroControlador.catastroPredialActual.catdetTopografia.catdetCodigo}"
-                                                     required="true" requiredMessage="Valor requerido">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoTopografia}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="topo"/>
+                                        <p:outputLabel value="Topografia:"/>
+                                        <p:selectOneMenu id="topo" value="#{catastroControlador.catastroPredialActual.catdetTopografia.catdetCodigo}"
+                                                         required="true" requiredMessage="Valor requerido">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoTopografia}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="topo"/>
 
-                                    <p:outputLabel value="Localizacion:"/>
-                                    <p:selectOneMenu id="local" value="#{catastroControlador.catastroPredialActual.catdetLocalizacion.catdetCodigo}"
-                                                     required="true" requiredMessage="Valor requerido">
-                                        <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                        <f:selectItems value="#{catastroControlador.listaTerrenoLocalizacion}" 
-                                                       var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="local"/>
-                                </h:panelGrid>
-                                <p:commandButton id="btnEditarOcup"
-                                                 value="Guardar"
-                                                 action="#{catastroControlador.guardarRegistroPrincipal}"
-                                                 async="true" global="false"
-                                                 process="@this,pnlOcupacion"
-                                                 update=":frmFicha:msgs,pnlOcupacion"
-                                                 onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
-                                                 icon="fa fa-save"/>
+                                        <p:outputLabel value="Localizacion:"/>
+                                        <p:selectOneMenu id="local" value="#{catastroControlador.catastroPredialActual.catdetLocalizacion.catdetCodigo}"
+                                                         required="true" requiredMessage="Valor requerido">
+                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                            <f:selectItems value="#{catastroControlador.listaTerrenoLocalizacion}" 
+                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                        </p:selectOneMenu>
+                                        <p:message for="local"/>
+                                    </h:panelGrid>
+                                    <p:commandButton id="btnEditarOcup"
+                                                     value="Guardar"
+                                                     action="#{catastroControlador.guardarRegistroPrincipal}"
+                                                     async="true" global="false"
+                                                     process="@this,pnlOcupacion"
+                                                     update=":frmFicha:msgs,pnlOcupacion"
+                                                     onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
+                                                     icon="fa fa-save"/>
                                 </p:panel>
                             </p:tab>
                             <p:tab title="Infraestructura y Servicios">
                                 <p:panel rendered="#{catastroControlador.catastroPredialActual.catpreCodigo!=null}">
-                                <h:panelGrid id="pnlInfra">
-                                    <p:panel header="Del Predio">
-                                        <h:panelGrid columns="3">
-                                            <p:outputLabel value="Servicios del Predio"/>
-                                            <p:selectManyMenu id="lstServ" value="#{catastroControlador.listaInfServiciosSeleccionado}" filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfServicios}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstServ"/>
-                                            <p:outputLabel value="No Medidores Luz:"/>
-                                            <p:inputText id="numMedLuz" value="#{catastroControlador.catastroPredialActual.catpreNumMedidoresLuz}" size="4"
-                                                         maxlength="3"/>
-                                            <p:message for="numMedLuz"/>
-                                            <p:outputLabel value="No Medidores Agua:"/>
-                                            <p:inputText id="numMedAgua" value="#{catastroControlador.catastroPredialActual.catpreNumMedidoresAgua}" size="4"
-                                                         maxlength="3"
-                                                         onkeypress="return isNumberKey(event);"/>
-                                            <p:message for="numMedAgua"/>
-                                            <p:outputLabel value="Alcantarillado:"/>
-                                            <p:selectManyMenu id="lstAlcant" value="#{catastroControlador.listaInfAlcantarillado1Seleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfAlcantarillado1}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstAlcant"/>
-                                        </h:panelGrid>
-                                    </p:panel>
-                                    <p:panel header="Del Sector">
-                                        <h:panelGrid columns="3">
-                                            <p:outputLabel value="Acceso al predio-Vias:"/>
-                                            <f:verbatim/>
-                                            <f:verbatim/>
-                                            <p:outputLabel value="Uso:"/>
-                                            <p:selectManyMenu id="lstUsoVias" value="#{catastroControlador.listaInfUsoSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfUso}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstUsoVias"/>
+                                    <h:panelGrid id="pnlInfra">
+                                        <p:panel header="Del Predio">
+                                            <h:panelGrid columns="3">
+                                                <p:outputLabel value="Servicios del Predio"/>
+                                                <p:selectManyMenu id="lstServ" value="#{catastroControlador.listaInfServiciosSeleccionado}" filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfServicios}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstServ"/>
+                                                <p:outputLabel value="No Medidores Luz:"/>
+                                                <p:inputText id="numMedLuz" value="#{catastroControlador.catastroPredialActual.catpreNumMedidoresLuz}" size="4"
+                                                             maxlength="3"/>
+                                                <p:message for="numMedLuz"/>
+                                                <p:outputLabel value="No Medidores Agua:"/>
+                                                <p:inputText id="numMedAgua" value="#{catastroControlador.catastroPredialActual.catpreNumMedidoresAgua}" size="4"
+                                                             maxlength="3"
+                                                             onkeypress="return isNumberKey(event);"/>
+                                                <p:message for="numMedAgua"/>
+                                                <p:outputLabel value="Alcantarillado:"/>
+                                                <p:selectManyMenu id="lstAlcant" value="#{catastroControlador.listaInfAlcantarillado1Seleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfAlcantarillado1}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstAlcant"/>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                        <p:panel header="Del Sector">
+                                            <h:panelGrid columns="3">
+                                                <p:outputLabel value="Acceso al predio-Vias:"/>
+                                                <f:verbatim/>
+                                                <f:verbatim/>
+                                                <p:outputLabel value="Uso:"/>
+                                                <p:selectManyMenu id="lstUsoVias" value="#{catastroControlador.listaInfUsoSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfUso}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstUsoVias"/>
 
-                                            <p:outputLabel value="Material:"/>
-                                            <p:selectManyMenu id="lstMatVias" value="#{catastroControlador.listaInfMaterialSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfMaterial}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstMatVias"/>
+                                                <p:outputLabel value="Material:"/>
+                                                <p:selectManyMenu id="lstMatVias" value="#{catastroControlador.listaInfMaterialSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfMaterial}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstMatVias"/>
 
-                                            <p:outputLabel value="No Carriles:"/>
-                                            <p:inputText id="numCarr" value="#{catastroControlador.catastroPredialActual.catpreNumCarrilesAcceso}" size="4"
-                                                         maxlength="3"
-                                                         onkeypress="return isNumberKey(event);"/>
-                                            <p:message for="numCarr"/>
+                                                <p:outputLabel value="No Carriles:"/>
+                                                <p:inputText id="numCarr" value="#{catastroControlador.catastroPredialActual.catpreNumCarrilesAcceso}" size="4"
+                                                             maxlength="3"
+                                                             onkeypress="return isNumberKey(event);"/>
+                                                <p:message for="numCarr"/>
 
-                                            <p:outputLabel value="Sentido:"/>
-                                            <p:selectManyMenu id="lstSentido" value="#{catastroControlador.listaInfSentidoSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfSentido}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstSentido"/>
+                                                <p:outputLabel value="Sentido:"/>
+                                                <p:selectManyMenu id="lstSentido" value="#{catastroControlador.listaInfSentidoSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfSentido}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstSentido"/>
 
-                                            <p:outputLabel value="Energia Electrica:"/>
-                                            <p:selectManyMenu id="lstEneEl" value="#{catastroControlador.listaInfEnergiaElecSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfEnergiaElec}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstEneEl"/>
+                                                <p:outputLabel value="Energia Electrica:"/>
+                                                <p:selectManyMenu id="lstEneEl" value="#{catastroControlador.listaInfEnergiaElecSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfEnergiaElec}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstEneEl"/>
 
-                                            <p:outputLabel value="Abastecimiento Agua:"/>
-                                            <p:selectManyMenu id="lstAbasAgua" value="#{catastroControlador.listaInfAbasAguaSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfAbasAgua}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstAbasAgua"/>
+                                                <p:outputLabel value="Abastecimiento Agua:"/>
+                                                <p:selectManyMenu id="lstAbasAgua" value="#{catastroControlador.listaInfAbasAguaSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfAbasAgua}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstAbasAgua"/>
 
-                                            <p:outputLabel value="Alcantarillado:"/>
-                                            <p:selectManyMenu id="lstAlcant2" value="#{catastroControlador.listaInfAlcantarillado2Seleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfAlcantarillado2}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstAlcant2"/>
+                                                <p:outputLabel value="Alcantarillado:"/>
+                                                <p:selectManyMenu id="lstAlcant2" value="#{catastroControlador.listaInfAlcantarillado2Seleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfAlcantarillado2}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstAlcant2"/>
 
-                                            <p:outputLabel value="Otros Servicios:"/>
-                                            <p:selectManyMenu id="lstOtrosServicios" value="#{catastroControlador.listaInfOtrosServiciosSeleccionado}"  filter="false" showCheckbox="true"
-                                                              converter="#{catalogoDetalleConverter}">
-                                                <f:selectItems value="#{catastroControlador.listaInfOtrosServicios}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
-                                            </p:selectManyMenu>
-                                            <p:message for="lstOtrosServicios"/>
+                                                <p:outputLabel value="Otros Servicios:"/>
+                                                <p:selectManyMenu id="lstOtrosServicios" value="#{catastroControlador.listaInfOtrosServiciosSeleccionado}"  filter="false" showCheckbox="true"
+                                                                  converter="#{catalogoDetalleConverter}">
+                                                    <f:selectItems value="#{catastroControlador.listaInfOtrosServicios}" var="item" itemLabel="#{item.catdetTexto}" itemValue="#{item}" />
+                                                </p:selectManyMenu>
+                                                <p:message for="lstOtrosServicios"/>
 
-                                        </h:panelGrid>
-                                    </p:panel>
-                                </h:panelGrid>
-                                <p:commandButton id="btnEditarInf"
-                                                 value="Guardar"
-                                                 action="#{catastroControlador.guardarRegistrosInfraestructura}"
-                                                 async="true" global="false"
-                                                 process="@this,pnlInfra"
-                                                 update=":frmFicha:msgs,pnlInfra"
-                                                 onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
-                                                 icon="fa fa-save"/>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                    </h:panelGrid>
+                                    <p:commandButton id="btnEditarInf"
+                                                     value="Guardar"
+                                                     action="#{catastroControlador.guardarRegistrosInfraestructura}"
+                                                     async="true" global="false"
+                                                     process="@this,pnlInfra"
+                                                     update=":frmFicha:msgs,pnlInfra"
+                                                     onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
+                                                     icon="fa fa-save"/>
                                 </p:panel>
                             </p:tab>
                             <p:tab title="Uso del Suelo">
                                 <p:panel rendered="#{catastroControlador.catastroPredialActual.catpreCodigo!=null}">
-                                <h:panelGrid columns="2" styleClass="hpanelGrid_vert_align">
-                                    <h:panelGrid columns="2">
-                                        <p:outputLabel value="Grupo:"/>
-                                        <p:selectOneMenu id="gruUsu" value="#{catastroControlador.grupoUsoSuelo}"
-                                                         >
-                                            <f:selectItems value="#{catastroControlador.listaGruposUsoSuelo}"/>
-                                            <p:ajax event="change" async="true" global="false"
-                                                    listener="#{catastroControlador.listarSubgruposUsoSuelo}"
-                                                    process="@this" update="subgruUsu"
-                                                    onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"/>
-                                        </p:selectOneMenu>
-                                        <p:outputLabel value="Sub Grupo:"/>
-                                        <p:selectOneMenu id="subgruUsu" value="#{catastroControlador.subgrupoUsoSuelo}"
-                                                         >
-                                            <f:selectItems value="#{catastroControlador.listaSubgruposUsoSuelo}"/>
-                                        </p:selectOneMenu>
+                                    <h:panelGrid columns="2" styleClass="hpanelGrid_vert_align">
+                                        <h:panelGrid columns="2">
+                                            <p:outputLabel value="Grupo:"/>
+                                            <p:selectOneMenu id="gruUsu" value="#{catastroControlador.grupoUsoSuelo}"
+                                                             >
+                                                <f:selectItems value="#{catastroControlador.listaGruposUsoSuelo}"/>
+                                                <p:ajax event="change" async="true" global="false"
+                                                        listener="#{catastroControlador.listarSubgruposUsoSuelo}"
+                                                        process="@this" update="subgruUsu"
+                                                        onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Sub Grupo:"/>
+                                            <p:selectOneMenu id="subgruUsu" value="#{catastroControlador.subgrupoUsoSuelo}"
+                                                             >
+                                                <f:selectItems value="#{catastroControlador.listaSubgruposUsoSuelo}"/>
+                                            </p:selectOneMenu>
+                                            <f:verbatim/>
+                                            <p:commandButton id="btnUsuSuelo" async="true" global="false" value="Consultar"
+                                                             action="#{catastroControlador.listarRegistrosUsoSuelo}"
+                                                             process="@this,subgruUsu" update="lstUsoSuelo"
+                                                             onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"/>
+                                        </h:panelGrid>
                                         <f:verbatim/>
-                                        <p:commandButton id="btnUsuSuelo" async="true" global="false" value="Consultar"
-                                                    action="#{catastroControlador.listarRegistrosUsoSuelo}"
-                                                    process="@this,subgruUsu" update="lstUsoSuelo"
-                                                    onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"/>
+
+                                        <p:dataTable id="lstUsoSuelo" value="#{catastroControlador.listaUsuSuelo}"
+                                                     var="uso" style="width:400px;">
+                                            <p:column filterBy="#{uso.catdetCodigo.catdetCod}" headerText="Cod" filterMatchMode="contains"
+                                                      width="55"
+                                                      filterStyle="width:50px;">
+                                                <h:outputText value="#{uso.catdetCodigo.catdetCod}"/>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{uso.catdetCodigo.catdetTexto}"/></p:column>
+                                            <p:column width="20"><p:selectBooleanCheckbox value="#{uso.catpreusuAplica}"/></p:column>
+                                            <p:column width="70"><h:inputText value="#{uso.catpreusuValor}" size="5"/></p:column>
+
+                                        </p:dataTable>
+                                        <h:panelGrid id="pnlUso" columns="3">
+                                            <p:outputLabel value="Numero de Familias por Bloque:"/>
+                                            <p:inputText id="numFamBlo" value="#{catastroControlador.catastroPredialActual.catpreNumFamBloque}"
+                                                         size="2" maxlength="3"/>
+                                            <p:message for="numFamBlo"/>
+                                            <p:outputLabel value="Tiene negocio la vivienda?:"/>
+                                            <p:selectBooleanCheckbox id="tieneNeg" value="#{catastroControlador.catastroPredialActual.catpreNegocioVivienda}"
+                                                                     />
+                                            <p:message for="tieneNeg"/>
+
+                                            <p:outputLabel value="El negocio es:"/>
+                                            <p:selectOneMenu id="tipoNegocio" value="#{catastroControlador.catastroPredialActual.catdetTipoNegocio.catdetCodigo}"
+                                                             >
+                                                <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                                <f:selectItems value="#{catastroControlador.listaUsoSueloTipoNegocio}" 
+                                                               var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                            </p:selectOneMenu>
+                                            <p:message for="tipoNegocio"/>
+
+                                            <p:outputLabel value="Tiempo de funcionamiento de negocio:"/>
+                                            <p:selectOneMenu id="tiempNegocio" value="#{catastroControlador.catastroPredialActual.catdetTipoFuncNegocio.catdetCodigo}">
+                                                <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                                                <f:selectItems value="#{catastroControlador.listaUsoSueloTiempoFuncionamiento}" 
+                                                               var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
+                                            </p:selectOneMenu>
+                                            <p:message for="tiempNegocio"/>
+                                            <f:verbatim/>
+                                            <p:commandButton id="btnEditarUso"
+                                                             value="Guardar"
+                                                             action="#{catastroControlador.editarRegistrosUsoSuelo}"
+                                                             async="true" global="false"
+                                                             process="@this,pnlUso,lstUsoSuelo"
+                                                             update=":frmFicha:msgs,pnlUso"
+                                                             onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
+                                                             icon="fa fa-save"/>
+                                        </h:panelGrid>
                                     </h:panelGrid>
-                                    <f:verbatim/>
-                                    
-                                    <p:dataTable id="lstUsoSuelo" value="#{catastroControlador.listaUsuSuelo}"
-                                                 var="uso" style="width:400px;">
-                                        <p:column filterBy="#{uso.catdetCodigo.catdetCod}" headerText="Cod" filterMatchMode="contains"
-                                                  width="55"
-                                                  filterStyle="width:50px;">
-                                            <h:outputText value="#{uso.catdetCodigo.catdetCod}"/>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{uso.catdetCodigo.catdetTexto}"/></p:column>
-                                        <p:column width="20"><p:selectBooleanCheckbox value="#{uso.catpreusuAplica}"/></p:column>
-                                        <p:column width="70"><h:inputText value="#{uso.catpreusuValor}" size="5"/></p:column>
-
-                                    </p:dataTable>
-                                    <h:panelGrid id="pnlUso" columns="3">
-                                        <p:outputLabel value="Numero de Familias por Bloque:"/>
-                                        <p:inputText id="numFamBlo" value="#{catastroControlador.catastroPredialActual.catpreNumFamBloque}"
-                                                     size="2" maxlength="3"/>
-                                        <p:message for="numFamBlo"/>
-                                        <p:outputLabel value="Tiene negocio la vivienda?:"/>
-                                        <p:selectBooleanCheckbox id="tieneNeg" value="#{catastroControlador.catastroPredialActual.catpreNegocioVivienda}"
-                                                                 />
-                                        <p:message for="tieneNeg"/>
-
-                                        <p:outputLabel value="El negocio es:"/>
-                                        <p:selectOneMenu id="tipoNegocio" value="#{catastroControlador.catastroPredialActual.catdetTipoNegocio.catdetCodigo}"
-                                                         required="true" requiredMessage="Valor requerido">
-                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                            <f:selectItems value="#{catastroControlador.listaUsoSueloTipoNegocio}" 
-                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                        </p:selectOneMenu>
-                                        <p:message for="tipoNegocio"/>
-
-                                        <p:outputLabel value="Tiempo de funcionamiento de negocio:"/>
-                                        <p:selectOneMenu id="tiempNegocio" value="#{catastroControlador.catastroPredialActual.catdetTipoFuncNegocio.catdetCodigo}">
-                                            <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
-                                            <f:selectItems value="#{catastroControlador.listaUsoSueloTiempoFuncionamiento}" 
-                                                           var ="det" itemValue="#{det.catdetCodigo}" itemLabel="#{det.catdetTexto}" />
-                                        </p:selectOneMenu>
-                                        <p:message for="tiempNegocio"/>
-                                        <f:verbatim/>
-                                        <p:commandButton id="btnEditarUso"
-                                                         value="Guardar"
-                                                         action="#{catastroControlador.editarRegistrosUsoSuelo}"
-                                                         async="true" global="false"
-                                                         process="@this,pnlUso,lstUsoSuelo"
-                                                         update=":frmFicha:msgs,pnlUso"
-                                                         onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
-                                                         icon="fa fa-save"/>
-                                    </h:panelGrid>
-                                </h:panelGrid>
                                 </p:panel>
                             </p:tab>
                             <p:tab title="Características de la edificación">
@@ -757,42 +840,46 @@
                                         <p:outputLabel value="No Bloques:"/>
                                         <p:outputLabel value="Pisos:"/>
                                         <f:verbatim/>
-                                        <p:inputText id="numBloques" value="#{catastroControlador.catastroPredialActual.catpreNumBloques}" 
+                                        <p:inputText value="#{catastroControlador.catastroPredialActual.catpreNumBloques}" 
                                                      required="true" requiredMessage="Valor requerido" size="2" maxlength="1"
+                                                     disabled="true"
                                                      onkeypress="return isNumberKey(event);"/>
-                                        <p:inputText id="numPisos" value="#{catastroControlador.catastroPredialActual.catpreNumPisos}" 
+                                        <p:inputText value="#{catastroControlador.catastroPredialActual.catpreNumPisos}" 
                                                      required="true" requiredMessage="Valor requerido" size="2" maxlength="1"
+                                                     disabled="true"
                                                      onkeypress="return isNumberKey(event);"/>
                                         <p:commandButton id="btnCrearEdif" value="Crear Registros"
                                                          action="#{catastroControlador.crearRegistrosEdificaciones()}"
-                                                         process="@this,numBloques,numPisos"
+                                                         process="@this"
                                                          icon="fa fa-save"
                                                          onstart="PF('dlgRegistrando').show();" 
                                                          onsuccess="PF('dlgRegistrando').hide();"
                                                          async="true" global="false" update="pnlListaEdif,:frmFicha:msgs"/>
                                     </h:panelGrid>
                                     <h:panelGrid columns="2">
-                                            <p:selectOneMenu id="edifBloque" value="#{catastroControlador.edifBloque}">
-                                                <f:selectItem itemLabel="Bloque 1" itemValue="1"/>
-                                                <f:selectItem itemLabel="Bloque 2" itemValue="2"/>
-                                                <f:selectItem itemLabel="Bloque 3" itemValue="3"/>
-                                                <f:selectItem itemLabel="Bloque 4" itemValue="4"/>
-                                                <f:selectItem itemLabel="Bloque 5" itemValue="5"/>
-                                                <f:selectItem itemLabel="Bloque 6" itemValue="6"/>
-                                                <p:ajax event="change" listener="#{catastroControlador.listarInformacionEdificaciones}"
-                                                        async="true" global="false" process="@this,edifPiso"
-                                                        update="pnlListaEdif"/>
-                                            </p:selectOneMenu>
-                                            <p:selectOneMenu id="edifPiso" value="#{catastroControlador.edifPiso}">
-                                                <f:selectItem itemLabel="Piso 1" itemValue="1"/>
-                                                <f:selectItem itemLabel="Piso 2" itemValue="2"/>
-                                                <f:selectItem itemLabel="Piso 3" itemValue="3"/>
-                                                <f:selectItem itemLabel="Piso 4" itemValue="4"/>
-                                                <p:ajax event="change" listener="#{catastroControlador.listarInformacionEdificaciones}"
-                                                        async="true" global="false" process="@this,edifBloque"
-                                                        update="pnlListaEdif"/>
-                                            </p:selectOneMenu>
-                                        </h:panelGrid>
+                                        <p:selectOneMenu id="edifBloque" value="#{catastroControlador.edifBloque}">
+                                            <f:selectItem itemLabel="Bloque 1" itemValue="1"/>
+                                            <f:selectItem itemLabel="Bloque 2" itemValue="2"/>
+                                            <f:selectItem itemLabel="Bloque 3" itemValue="3"/>
+                                            <f:selectItem itemLabel="Bloque 4" itemValue="4"/>
+                                            <f:selectItem itemLabel="Bloque 5" itemValue="5"/>
+                                            <f:selectItem itemLabel="Bloque 6" itemValue="6"/>
+                                            <p:ajax event="change" listener="#{catastroControlador.listarInformacionEdificaciones}"
+                                                    async="true" global="false" process="@this,edifPiso"
+                                                    update="pnlListaEdif"
+                                                    onstart="PF('dlgValidando').show();" onsuccess="PF('dlgValidando').hide();"/>
+                                        </p:selectOneMenu>
+                                        <p:selectOneMenu id="edifPiso" value="#{catastroControlador.edifPiso}">
+                                            <f:selectItem itemLabel="Piso 1" itemValue="1"/>
+                                            <f:selectItem itemLabel="Piso 2" itemValue="2"/>
+                                            <f:selectItem itemLabel="Piso 3" itemValue="3"/>
+                                            <f:selectItem itemLabel="Piso 4" itemValue="4"/>
+                                            <p:ajax event="change" listener="#{catastroControlador.listarInformacionEdificaciones}"
+                                                    async="true" global="false" process="@this,edifBloque"
+                                                    update="pnlListaEdif"
+                                                    onstart="PF('dlgValidando').show();" onsuccess="PF('dlgValidando').hide();"/>
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
                                     <h:panelGrid id="pnlListaEdif" width="50%">
                                         <p:dataTable id="lstEdif1_1" value="#{catastroControlador.listaEdifGrupo1_1}" var="item">
                                             <p:column headerText="Grupo">
@@ -1039,48 +1126,52 @@
                             </p:tab>
                             <p:tab title="Datos Discapacidad">
                                 <p:panel rendered="#{catastroControlador.catastroPredialActual.catpreCodigo!=null}">
-                                <h:panelGrid id="pnlDatDisc" columns="2">
-                                    <h:panelGrid>
-                                        <p:outputLabel value="Personas con discapacidad en el predio:"/>
-                                        <p:selectBooleanCheckbox id="perDisc" value="#{catastroControlador.catastroPredialActual.catprePerDiscapacidad}"/>
+                                    <h:panelGrid id="pnlDatDisc" columns="2">
+                                        <h:panelGrid>
+                                            <p:outputLabel value="Personas con discapacidad en el predio:"/>
+                                            <p:selectBooleanCheckbox id="perDisc" value="#{catastroControlador.catastroPredialActual.catprePerDiscapacidad}"/>
 
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="3">
+                                            <p:outputLabel value="No Cedula / Carnet:"/>
+                                            <p:inputText id="discCi" value="#{catastroControlador.catastroPredialActual.catpreDiscCicarnet}"
+                                                         size="15" maxlength="10"
+                                                         onkeypress="return isNumberKey(event);"/>
+                                            <p:message for="discCi"/>
+                                            <p:outputLabel value="Nombres y Apellidos:"/>
+                                            <p:inputText id="discNom" value="#{catastroControlador.catastroPredialActual.catpreDiscNombre}"
+                                                         size="80" maxlength="200"/>
+                                            <p:message for="discNom"/>
+                                            <p:outputLabel value="% Discapacidad:"/>
+                                            <p:inputText id="discPorc" value="#{catastroControlador.catastroPredialActual.catpreDiscPorc}"
+                                                         size="3" maxlength="2"
+                                                         onkeypress="return isNumberKey(event);"/>
+                                            <p:message for="discPorc"/>
+                                        </h:panelGrid>
                                     </h:panelGrid>
-                                    <h:panelGrid columns="3">
-                                        <p:outputLabel value="No Cedula / Carnet:"/>
-                                        <p:inputText id="discCi" value="#{catastroControlador.catastroPredialActual.catpreDiscCicarnet}"
-                                                     size="15" maxlength="10"
-                                                     onkeypress="return isNumberKey(event);"/>
-                                        <p:message for="discCi"/>
-                                        <p:outputLabel value="Nombres y Apellidos:"/>
-                                        <p:inputText id="discNom" value="#{catastroControlador.catastroPredialActual.catpreDiscNombre}"
-                                                     size="80" maxlength="200"/>
-                                        <p:message for="discNom"/>
-                                        <p:outputLabel value="% Discapacidad:"/>
-                                        <p:inputText id="discPorc" value="#{catastroControlador.catastroPredialActual.catpreDiscPorc}"
-                                                     size="3" maxlength="2"
-                                                     onkeypress="return isNumberKey(event);"/>
-                                        <p:message for="discPorc"/>
-                                    </h:panelGrid>
-                                </h:panelGrid>
-                                <p:commandButton id="btnEditarDatDisc"
-                                                 value="Guardar"
-                                                 action="#{catastroControlador.guardarRegistroPrincipal}"
-                                                 async="true" global="false"
-                                                 process="@this,pnlDatDisc"
-                                                 update=":frmFicha:msgs,pnlDatDisc"
-                                                 onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
-                                                 icon="fa fa-save"/>
+                                    <p:commandButton id="btnEditarDatDisc"
+                                                     value="Guardar"
+                                                     action="#{catastroControlador.guardarRegistroPrincipal}"
+                                                     async="true" global="false"
+                                                     process="@this,pnlDatDisc"
+                                                     update=":frmFicha:msgs,pnlDatDisc"
+                                                     onstart="PF('dlgGuardando').show();" onsuccess="PF('dlgGuardando').hide();"
+                                                     icon="fa fa-save"/>
                                 </p:panel>
                             </p:tab>
                             <p:tab title="Datos de relevamiento">
                                 <p:panel rendered="#{catastroControlador.catastroPredialActual.catpreCodigo!=null}">
                                     <h:panelGrid id="pnlRelev" columns="3">
                                         <p:outputLabel value="Tipo Documento Presentado:"/>
-                                        <p:selectOneRadio id="tipDocRel" value="#{catastroControlador.catastroPredialActual.catdetDocRelevamiento.catdetCodigo}">
-                                            <f:selectItems value="#{catastroControlador.listaTipoDocRelevamiento}" var="det"
-                                                           itemLabel="#{det.catdetTexto}" itemValue="#{det.catdetCodigo}"/>
-                                        </p:selectOneRadio>
-                                        <p:message for="tipDocRel"/>
+                                        <h:panelGrid columns="2">
+                                            <p:outputLabel value="Cedula:"/>
+                                            <p:selectBooleanCheckbox value="#{catastroControlador.catastroPredialActual.catpreDocrelCedula}"/>
+                                            <p:outputLabel value="Carne Conadis:"/>
+                                            <p:selectBooleanCheckbox value="#{catastroControlador.catastroPredialActual.catpreDocrelCarne}"/>
+                                            <p:outputLabel value="Escrituras:"/>
+                                            <p:selectBooleanCheckbox value="#{catastroControlador.catastroPredialActual.catpreDocrelEscrituras}"/>
+                                        </h:panelGrid>
+                                        <f:verbatim/>
 
                                         <p:outputLabel value="Empadronador:"/>
                                         <p:inputText id="empadr" value="#{catastroControlador.catastroPredialActual.catpreEmpadronador}"

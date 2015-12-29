@@ -23,8 +23,11 @@
                                                maxlength="20" size="40"/>
                                 <p:message for="aplNomNem"/>
                                 <p:outputLabel value="#{txt.text_tipo_logeo}"/>
-                                <p:inputText  id="aplTipLog"  value="#{gestionAplicacionControlador.aplicacionActual.apliTipoLogeo}" 
-                                              maxlength="1" size="10"/>
+                                <p:selectOneMenu  id="aplTipLog"  value="#{gestionAplicacionControlador.aplicacionActual.apliTipoLogeo}" 
+                                             >
+                                    <f:selectItem itemLabel="Normal" itemValue="N"/>
+                                    <f:selectItem itemLabel="Complejo" itemValue="C"/>
+                                </p:selectOneMenu>
                                 <p:message for="aplTipLog"/>
                                 <p:outputLabel value="#{txt.text_url_pag_per}"/>
                                 <p:inputText    id="urlPagIni"  value="#{gestionAplicacionControlador.aplicacionActual.apliUrlInicio}" 
@@ -40,14 +43,6 @@
                                 <p:inputText  id="aplIcon"  value="#{gestionAplicacionControlador.aplicacionActual.apliIcono}" 
                                               maxlength="20" size="40"/>
                                 <p:message for="aplIcon"/>
-                                <p:outputLabel value="#{txt.text_estade_decribe}"/>
-                                <p:inputText  id="aplCalif" onkeyup="value = value.toUpperCase()" value="#{gestionAplicacionControlador.aplicacionActual.apliEstadoActual}" 
-                                              maxlength="1" size="10"/>
-                                <p:message for="aplCalif"/>
-                                <p:outputLabel value="#{txt.text_porcentaje_estado}"/>
-                                <p:inputText  id="aplPor"  value="#{gestionAplicacionControlador.aplicacionActual.apliPorcentaje}" 
-                                              maxlength="3" size="10"/>
-                                <p:message for="aplPor"/>
                                 <center>
                                     <h:panelGrid columns="2">
                                         <p:commandButton value="#{txt.btn_guardar_global}" 
@@ -101,9 +96,6 @@
                                 </p:column>
                                 <p:column headerText="#{txt.lbl_url_pagina}" width="150" style="font-size:12px;">
                                     <h:outputText value="#{aplColumna.apliUrlInicio}" style="font-size:12px;" />
-                                </p:column>
-                                <p:column headerText="#{txt.lbl_estado_porcentaje}" width="150" style="font-size:12px;">
-                                    <h:outputText value="#{aplColumna.apliPorcentaje}%" style="font-size:12px;" />
                                 </p:column>
                                 <p:column headerText="#{txt.btn_editar_global}" style="width:50px;text-align: center;font-size:12px;" >
                                     <p:commandButton   style="font-size:12px;" icon="ui-icon-pencil"  action="#{gestionAplicacionControlador.recuperarAplicacionCampos(aplColumna)}" 

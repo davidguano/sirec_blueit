@@ -30,9 +30,17 @@
                                 <p:ajax event="change"  async="true"
                                         global="false"
                                         process="@this"
-                                        update="proRazonSocial,proDiscapacidad,proApellidos,proNombres,proFechaNacimiento"/>
+                                        update="proRazonSocial,proDiscapacidad,proApellidos,proNombres,proFechaNacimiento,proTipoPerJur"/>
                             </p:selectOneMenu>
                             <p:message for="proTipoPersona"/>
+                            <h:outputLabel value="Tipo Persona Juridica:" for="proTipoPerJur" />
+                            <p:selectOneMenu id="proTipoPerJur" value="#{propietarioControlador.propietarioActual.catdetTipoperjur.catdetCodigo}"
+                                             disabled="#{propietarioControlador.propietarioActual.proTipoPersona=='N'}">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{propietarioControlador.listaCatTipoPersonaJuridica}" var="tip"
+                                               itemLabel="#{tip.catdetTexto}" itemValue="#{tip.catdetCodigo}"/>
+                            </p:selectOneMenu>
+                            <p:message for="proTipoPerJur"/>
                             <h:outputLabel value="Apellidos:" for="proApellidos" />
                             <p:inputText id="proApellidos" 
                                          value="#{propietarioControlador.propietarioActual.proApellidos}" 

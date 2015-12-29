@@ -9,6 +9,7 @@ import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialAreas;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
+import ec.sirec.ejb.entidades.CatastroPredialInfAnt;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
@@ -18,10 +19,14 @@ import ec.sirec.ejb.entidades.PropietarioPredio;
 import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.web.util.OpcionesUsoSuelo;
+import ec.sirec.web.util.UtilitariosCod;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -31,7 +36,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -52,12 +63,16 @@ public class CatastroControlador extends BaseControlador {
 
     private CatastroPredial catastroPredialActual;
     private String cedulaPropietarioBusqueda;
+    private String claveCatastralBusqueda;
     private List<CatastroPredial> listaCatastrosDePropietario;
     private Propietario propietarioActual;
     private CatastroPredialValoracion valoracionActual;
-    private CatastroPredialAreas catastroPredialAreaBloqueActual;
     private List<CatastroPredialAreas> listaCatastroPredialAreasBloque;
-
+    
+    private String tipoInfAnt;
+    private String valorInfAnt;
+    private List<CatastroPredialInfAnt> listaInformacionAnterior;
+    
     private List<CatalogoDetalle> listaInfServicios;
     private List<CatalogoDetalle> listaInfAlcantarillado1;
     private List<CatalogoDetalle> listaInfUso;
@@ -83,7 +98,7 @@ public class CatastroControlador extends BaseControlador {
     private String subgrupoUsoSuelo;
     private List<SelectItem> listaGruposUsoSuelo;
     private List<SelectItem> listaSubgruposUsoSuelo;
-    
+
     private String edifBloque;
     private String edifPiso;
     private List<CatastroPredialEdificacion> listaEdifGrupo1_1;
@@ -152,6 +167,8 @@ public class CatastroControlador extends BaseControlador {
     private List<PredioArchivo> listaPredioArchivo;
     private PredioArchivo predioArchivoActual;
 
+    private boolean flagNuevo;
+
     /**
      * Creates a new instance of CatastroControlador
      */
@@ -161,11 +178,14 @@ public class CatastroControlador extends BaseControlador {
     @PostConstruct
     public void inicializar() {
         try {
+            flagNuevo = true;
             catastroPredialActual = new CatastroPredial();
+            claveCatastralBusqueda=null;
+            tipoInfAnt=null;
+            valorInfAnt=null;
             propietarioActual = new Propietario();
             listaCatastrosDePropietario = new ArrayList<CatastroPredial>();
             valoracionActual = new CatastroPredialValoracion();
-            catastroPredialAreaBloqueActual = new CatastroPredialAreas();
             listaCatastroPredialAreasBloque = new ArrayList<CatastroPredialAreas>();
 
             listaGruposUsoSuelo = new ArrayList<SelectItem>();
@@ -214,6 +234,34 @@ public class CatastroControlador extends BaseControlador {
         }
     }
 
+    public void validarNuevaClave() {
+        try {
+            if (catastroPredialActual.getClaveCatastral().length() == 19) {
+                catastroPredialActual.setCatpreCodNacional(catastroPredialActual.getClaveCatastral().substring(0, 7));
+                catastroPredialActual.setCatpreCodLocal(catastroPredialActual.getClaveCatastral().substring(7, 19));
+                String codNac = catastroPredialActual.getCatpreCodNacional();
+                String codLoc = catastroPredialActual.getCatpreCodLocal();
+                if (codNac != null && codLoc != null) {
+                    catastroPredialActual = catastroServicio.buscarCatastroPorCodigosClave(codNac, codLoc);
+                    if (catastroPredialActual == null) {
+                        addSuccessMessage("Clave Valida");
+                        catastroPredialActual = new CatastroPredial();
+                        catastroPredialActual.setCatpreCodNacional(codNac);
+                        catastroPredialActual.setCatpreCodLocal(codLoc);
+                        listaSectores = catastroServicio.listaCatSectores(codNac);
+                    } else {
+                        addErrorMessage("Clave ya existe");
+                        inicializar();
+                    }
+                }
+            } else {
+                addErrorMessage("Clave Incorrecta");
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void guardarRegistroPrincipal() {
         try {
 
@@ -236,6 +284,7 @@ public class CatastroControlador extends BaseControlador {
                     crearRegistrosUsoSuelo();
                     listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastro(catastroPredialActual);
                     addSuccessMessage("Correcto", "Ficha creada exitosamente");
+                    flagNuevo=false;
                 } else {
                     addErrorMessage("Clave ya existe, presione Buscar.");
                 }
@@ -249,6 +298,25 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+    public void guardarInformacionAnterior(){
+        try{
+            catastroServicio.guardarInformacionAnterior(catastroPredialActual,tipoInfAnt, valorInfAnt);
+            listaInformacionAnterior=catastroServicio.listarInformacionAnteriorCatastro(catastroPredialActual);
+            valorInfAnt=null;
+        }catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    public void eliminarInformacionAnterior(CatastroPredialInfAnt vinf){
+        try{
+            catastroServicio.eliminarInformacionAnterior(vinf);
+            listaInformacionAnterior=catastroServicio.listarInformacionAnteriorCatastro(catastroPredialActual);
+        }catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void crearRegistrosUsoSuelo() {
         try {
@@ -257,16 +325,17 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void listarSubgruposUsoSuelo() {
         try {
-            OpcionesUsoSuelo ou=new OpcionesUsoSuelo();
+            OpcionesUsoSuelo ou = new OpcionesUsoSuelo();
             ou.cargarSubgruposPorgrupo(grupoUsoSuelo);
-            listaSubgruposUsoSuelo=ou.getListaSubGrupos();
+            listaSubgruposUsoSuelo = ou.getListaSubGrupos();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+
     public void listarRegistrosUsoSuelo() {
         try {
             if (catastroPredialActual.getCatpreCodigo() != null) {
@@ -312,12 +381,42 @@ public class CatastroControlador extends BaseControlador {
         }
     }
 
-    public void guardarRegistrodeArea() {
+    public void guardarRegistrosdeArea() {
         try {
-            if (catastroPredialAreaBloqueActual.getCatpreareBloque() != 0 && catastroPredialActual.getCatpreCodigo() != null) {
-                catastroServicio.guardarAreaBloque(catastroPredialActual, catastroPredialAreaBloqueActual);
+            if (catastroPredialActual.getCatpreNumBloques() != null && 
+                    catastroPredialActual.getCatpreNumPisos()!= null && 
+                    catastroPredialActual.getCatpreCodigo() != null) {
+                catastroServicio.crearAreasDeCatastro(catastroPredialActual);
                 listaCatastroPredialAreasBloque = catastroServicio.listarAreasPorCatastro(catastroPredialActual.getCatpreCodigo());
-                catastroPredialAreaBloqueActual = new CatastroPredialAreas();
+                
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    public void editarRegistrosdeArea(){
+        try {
+            if(!listaCatastroPredialAreasBloque.isEmpty()){
+                catastroServicio.calcularyGuardarAreaTotalConstruccion(catastroPredialActual, listaCatastroPredialAreasBloque);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarAreasyEdificacion(){
+        try {
+            if(!listaCatastroPredialAreasBloque.isEmpty()){
+               catastroServicio.eliminarAreaBloquedeCatastro(catastroPredialActual);
+                addSuccessMessage("Areas eliminadas correctamente");
+                catastroPredialActual.setCatpreAreaTotalCons(Double.valueOf("0"));
+                catastroServicio.editarCatastroPredial(catastroPredialActual);
+                listaCatastroPredialAreasBloque=new ArrayList<CatastroPredialAreas>();
+            }
+            if(!listaEdifGrupo1_1.isEmpty()){
+               catastroServicio.eliminarCatastroPredEdificacionPorCatastro(catastroPredialActual);
+               addSuccessMessage("Registros de edificacion eliminados correctamente");
+               listarInformacionEdificaciones();
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -377,17 +476,19 @@ public class CatastroControlador extends BaseControlador {
 
     public void recuperarDatosDeCatastro() {
         try {
-            catastroPredialActual.setCatpreCodNacional(catastroPredialActual.getClaveCatastral().substring(0, 7));
-            catastroPredialActual.setCatpreCodLocal(catastroPredialActual.getClaveCatastral().substring(7, 19));
-            String codNac = catastroPredialActual.getCatpreCodNacional();
-            String codLoc = catastroPredialActual.getCatpreCodLocal();
+
+            String codNac = claveCatastralBusqueda.substring(0, 7);
+            String codLoc = claveCatastralBusqueda.substring(7, 19);
             if (codNac != null && codLoc != null) {
                 catastroPredialActual = catastroServicio.buscarCatastroPorCodigosClave(codNac, codLoc);
                 if (catastroPredialActual != null) {
+                    flagNuevo = false;
+                    listaSectores = catastroServicio.listaCatSectores(codNac);
                     catastroServicio.cargarListaPropietariosPredio(catastroPredialActual);
                     if (!catastroPredialActual.getListaPropietariosPredio().isEmpty()) {
                         propietarioActual = catastroPredialActual.getListaPropietariosPredio().get(0).getProCi();
                     }
+                    listaInformacionAnterior=catastroServicio.listarInformacionAnteriorCatastro(catastroPredialActual);
                     listaCatastroPredialAreasBloque = catastroServicio.listarAreasPorCatastro(catastroPredialActual.getCatpreCodigo());
                     recuperarDatosDeCatastroInfraestructura();
                     listaUsuSuelo = catastroServicio.listarRegistrosUsuSueloPorCatastroySubgrupo(catastroPredialActual, "11");
@@ -437,17 +538,17 @@ public class CatastroControlador extends BaseControlador {
 
     public void recuperarDatosdeEdificaciones() {
         try {
-            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual,"1","1");
-            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual,"1","1");
-            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual,"1","1");
-            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual,"1","1");
-            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual,"1","1");
-            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual,"0","0");
-            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual,"0","0");
-            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual,"0","0");
-            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual,"0","0");
-            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual,"0","0");
-            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual,"0","0");
+            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual, "1", "1");
+            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual, "1", "1");
+            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual, "1", "1");
+            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual, "1", "1");
+            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual, "1", "1");
+            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual, "0", "0");
 
             listaOpcEdifGrupo1_1 = catastroServicio.listaOpcionesEdificacion("1_1");
             listaOpcEdifGrupo1_3 = catastroServicio.listaOpcionesEdificacion("1_3");
@@ -480,21 +581,21 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void listarInformacionEdificaciones(){
-        try{
-            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual,edifBloque,edifPiso);
-            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual,edifBloque,edifPiso);
-            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual,edifBloque,edifPiso);
-            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual,edifBloque,edifPiso);
-            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual,edifBloque,edifPiso);
-            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual,"0","0");
-            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual,"0","0");
-            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual,"0","0");
-            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual,"0","0");
-            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual,"0","0");
-            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual,"0","0");
-        }catch(Exception ex){
+
+    public void listarInformacionEdificaciones() {
+        try {
+            listaEdifGrupo1_1 = catastroServicio.listarEdificacionesGrupo1_1(catastroPredialActual, edifBloque, edifPiso);
+            listaEdifGrupo1_2 = catastroServicio.listarEdificacionesGrupo1_2(catastroPredialActual, edifBloque, edifPiso);
+            listaEdifGrupo1_3 = catastroServicio.listarEdificacionesGrupo1_3(catastroPredialActual, edifBloque, edifPiso);
+            listaEdifGrupo1_4 = catastroServicio.listarEdificacionesGrupo1_4(catastroPredialActual, edifBloque, edifPiso);
+            listaEdifGrupo234 = catastroServicio.listarEdificacionesGrupo234(catastroPredialActual, edifBloque, edifPiso);
+            listaEdifGrupo5_14 = catastroServicio.listarEdificacionesGrupo5(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_5 = catastroServicio.listarEdificacionesGrupo5_5(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_6 = catastroServicio.listarEdificacionesGrupo5_6(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_7 = catastroServicio.listarEdificacionesGrupo5_7(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_8 = catastroServicio.listarEdificacionesGrupo5_8(catastroPredialActual, "0", "0");
+            listaEdifGrupo5_9 = catastroServicio.listarEdificacionesGrupo5_9(catastroPredialActual, "0", "0");
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -502,7 +603,6 @@ public class CatastroControlador extends BaseControlador {
     public void cargarCatalogos() {
         try {
             listaParroquias = catastroServicio.listaCatParroquias();
-            listaSectores = catastroServicio.listaCatSectores();
             listaTipoVia = catastroServicio.listaCatTipoVia();
             listaTipoUbicacion = catastroServicio.listaCatTipoUbicacion();
             listaTipoProp1 = catastroServicio.listaCatTipoProp1();
@@ -611,10 +711,39 @@ public class CatastroControlador extends BaseControlador {
             LOGGER.log(Level.SEVERE, null, ioex);
         }
     }
-    
-    
-    public void generarReporteFichaCatastral(){
-        // metodo para generar reporte pdf
+
+    public String generarReporteFichaCatastral() throws Exception {
+        //Conexion con local datasource
+        UtilitariosCod util = new UtilitariosCod();
+        Connection conexion = util.getConexion();
+        byte[] fichero = null;
+        JasperReport jasperReport = null;
+        Map parameters = new HashMap();
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+            ServletContext servletContext = (ServletContext) context.getExternalContext().getContext();
+            session.removeAttribute("reporteInforme");
+            parameters.put("catpre_codigo", catastroPredialActual.getCatpreCodigo());
+            parameters.put("logo_gad", servletContext.getRealPath("/imagenes/icons/gadPedroMoncayo.jpg"));
+            String real1 = servletContext.getRealPath("/reportes/fichaCatastral/fiCatSubRepPrt1_2_3.jasper");
+            parameters.put("SUBREPORT_DIR1", real1);
+            String real2 = servletContext.getRealPath("/reportes/fichaCatastral/fiCatSubRepPrtUsoSuelo.jasper");
+            parameters.put("SUBREPORT_DIR2", real2);
+            jasperReport = (JasperReport) JRLoader.loadObject(servletContext.getRealPath("/reportes/fichaCatastral/repFichaCatastral.jasper"));
+            fichero = JasperRunManager.runReportToPdf(jasperReport, parameters, conexion);
+            session.setAttribute("reporteInforme", fichero);
+
+        } catch (JRException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        } finally {
+            if (conexion != null) {
+                conexion.close();
+            }
+        }
+        return null;
     }
 
     //GETTER AND SETTERS
@@ -626,13 +755,7 @@ public class CatastroControlador extends BaseControlador {
         this.catastroPredialActual = catastroPredialActual;
     }
 
-    public CatastroPredialAreas getCatastroPredialAreaBloqueActual() {
-        return catastroPredialAreaBloqueActual;
-    }
-
-    public void setCatastroPredialAreaBloqueActual(CatastroPredialAreas catastroPredialAreaBloqueActual) {
-        this.catastroPredialAreaBloqueActual = catastroPredialAreaBloqueActual;
-    }
+    
 
     public List<CatastroPredialAreas> getListaCatastroPredialAreasBloque() {
         return listaCatastroPredialAreasBloque;
@@ -1361,6 +1484,47 @@ public class CatastroControlador extends BaseControlador {
     public void setEdifPiso(String edifPiso) {
         this.edifPiso = edifPiso;
     }
+
+    public boolean isFlagNuevo() {
+        return flagNuevo;
+    }
+
+    public void setFlagNuevo(boolean flagNuevo) {
+        this.flagNuevo = flagNuevo;
+    }
+
+    public String getClaveCatastralBusqueda() {
+        return claveCatastralBusqueda;
+    }
+
+    public void setClaveCatastralBusqueda(String claveCatastralBusqueda) {
+        this.claveCatastralBusqueda = claveCatastralBusqueda;
+    }
+
+    public String getTipoInfAnt() {
+        return tipoInfAnt;
+    }
+
+    public void setTipoInfAnt(String tipoInfAnt) {
+        this.tipoInfAnt = tipoInfAnt;
+    }
+
+    public String getValorInfAnt() {
+        return valorInfAnt;
+    }
+
+    public void setValorInfAnt(String valorInfAnt) {
+        this.valorInfAnt = valorInfAnt;
+    }
+
+    public List<CatastroPredialInfAnt> getListaInformacionAnterior() {
+        return listaInformacionAnterior;
+    }
+
+    public void setListaInformacionAnterior(List<CatastroPredialInfAnt> listaInformacionAnterior) {
+        this.listaInformacionAnterior = listaInformacionAnterior;
+    }
+    
     
 
 }

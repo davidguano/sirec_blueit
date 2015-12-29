@@ -40,8 +40,11 @@
                                 <p:message for="nomNemRol"/>
 
                                 <h:outputLabel for="rolTClave" value="#{txt.text_tipo_clave}"/>                                                            
-                                <p:inputText onkeyup="value = value.toUpperCase()" id="rolTClave"  value="#{gestionRolControlador.rolActual.rolTipoClave}"  
-                                             maxlength="50" size="20" required="true" />
+                                <p:selectOneMenu  id="rolTClave"  value="#{gestionRolControlador.rolActual.rolTipoClave}" 
+                                             >
+                                    <f:selectItem itemLabel="Normal" itemValue="N"/>
+                                    <f:selectItem itemLabel="Complejo" itemValue="C"/>
+                                </p:selectOneMenu>
                                 <p:message for="rolTClave"/>
 
                                 <h:outputLabel for="rolDias" value="#{txt.text_dias}"/>

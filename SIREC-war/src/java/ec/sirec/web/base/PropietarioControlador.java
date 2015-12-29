@@ -33,6 +33,7 @@ public class PropietarioControlador extends BaseControlador {
     private Propietario propietarioActual;
     private List<Propietario> listaPropietarios;
     private List<CatalogoDetalle> listaCatCiudades;
+    private List<CatalogoDetalle> listaCatTipoPersonaJuridica;
     private boolean flagEditar;
 
     /**
@@ -48,6 +49,7 @@ public class PropietarioControlador extends BaseControlador {
             propietarioActual = new Propietario();
             listaPropietarios = new ArrayList<Propietario>();
             listaCatCiudades = propietarioServicio.listarCiudades();
+            listaCatTipoPersonaJuridica=propietarioServicio.listarTiposPersonasJuridicas();
             listarPropietarios();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -77,7 +79,9 @@ public class PropietarioControlador extends BaseControlador {
     public void guardarPropietario() {
         try {
             if (propietarioServicio.esCedulaRucValida(propietarioActual.getProCi()) && propietarioServicio.esFechaNacimientoValida(propietarioActual.getProFechaNacimiento())) {
-                
+                if(propietarioActual.getProTipoPersona().equals("N")){
+                    propietarioActual.setCatdetTipoperjur(null);
+                }
                 if (!flagEditar) {
                     propietarioActual.setUsuIdentificacion(obtenerUsuarioAutenticado());
                     propietarioServicio.crearPropietario(propietarioActual);
@@ -138,5 +142,15 @@ public class PropietarioControlador extends BaseControlador {
     public void setListaCatCiudades(List<CatalogoDetalle> listaCatCiudades) {
         this.listaCatCiudades = listaCatCiudades;
     }
+
+    public List<CatalogoDetalle> getListaCatTipoPersonaJuridica() {
+        return listaCatTipoPersonaJuridica;
+    }
+
+    public void setListaCatTipoPersonaJuridica(List<CatalogoDetalle> listaCatTipoPersonaJuridica) {
+        this.listaCatTipoPersonaJuridica = listaCatTipoPersonaJuridica;
+    }
+    
+    
     
 }

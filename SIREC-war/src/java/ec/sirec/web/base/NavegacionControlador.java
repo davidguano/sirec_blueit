@@ -167,7 +167,10 @@ public class NavegacionControlador extends BaseControlador {
             fichaCatastral.setCommand("#{navegacionControlador.redireccionarAPagina('predio','ficha_catastral')}");
             subMenuPredios.addElement(fichaCatastral);
             
-            
+             DefaultMenuItem catalogoEdi = new DefaultMenuItem("Catalogo Materiales Edificacion");
+            catalogoEdi.setIcon("ui-icon-person");
+            catalogoEdi.setCommand("#{navegacionControlador.redireccionarAPagina('base','catalogo_edificaciones')}");
+            subMenuPredios.addElement(catalogoEdi);
             
             menu.addElement(subMenuPredios);
             
