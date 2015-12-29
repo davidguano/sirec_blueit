@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fiCatSubRepPrtUsoSuelo" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eb9e9d78-3242-4c4b-9187-b79e72c52609">
-	<property name="ireport.zoom" value="1.1269722013523664"/>
-	<property name="ireport.x" value="4"/>
-	<property name="ireport.y" value="178"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fiCatSubRepPrtUsoSueloOrden2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eb9e9d78-3242-4c4b-9187-b79e72c52609">
+	<property name="ireport.zoom" value="0.5266625086121597"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="codigoCatPredial" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR_ORDEN2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["F:\\ \\sirec_blueit\\SIREC-war\\web\\reportes\\fichaCatastral\\"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[---------Clave Catastral----------------
 select cp.catpre_cod_nacional as codNacional,cp.catdet_parroquia as parroquia,
 cp.catpre_cod_local as codLocal,
-----------Ubicación---------------------
-cp.catdet_tipo_via as tipoVia,catpre_via_principal as viaPrincipal,catpre_interseccion as interseccion,
-cp.catpre_numero as numero,cp.catpre_num_lote as numLote,catdet_tipo_ubicacion as tipoUbicacion,catpre_nombre_sector as nomSector,
 ---------Propietario--------------------
 p.pro_tipo_persona as tipoPersona,cp.catdet_tipo_prop1 as tipoPropietario,
 cp.catdet_tipo_prop2 as numPropietarios, catpre_per_discapacidad as perDiscapacidad,p.pro_apellidos as proApellidos,p.pro_nombres as proNombres,p.pro_fecha_nacimiento as fechaNacimiento,
@@ -41,13 +44,6 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 	<field name="codnacional" class="java.lang.String"/>
 	<field name="parroquia" class="java.lang.Integer"/>
 	<field name="codlocal" class="java.lang.String"/>
-	<field name="tipovia" class="java.lang.Integer"/>
-	<field name="viaprincipal" class="java.lang.String"/>
-	<field name="interseccion" class="java.lang.String"/>
-	<field name="numero" class="java.lang.String"/>
-	<field name="numlote" class="java.lang.String"/>
-	<field name="tipoubicacion" class="java.lang.Integer"/>
-	<field name="nomsector" class="java.lang.String"/>
 	<field name="tipopersona" class="java.lang.String"/>
 	<field name="tipopropietario" class="java.lang.Integer"/>
 	<field name="numpropietarios" class="java.lang.Integer"/>
@@ -160,7 +156,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="475" y="11" width="70" height="13" uuid="e5a5fc46-2241-4b35-868e-e6d70ad24ac6"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[8. LOCALIZACIÓN]]></text>
 			</staticText>
@@ -207,7 +203,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="129" y="11" width="95" height="13" uuid="5791afc1-708e-43b7-a6c0-f5b0b3a40f60"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[3. EN CONSTRUCCIÓN (4)]]></text>
 			</staticText>
@@ -228,7 +224,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="11" y="10" width="58" height="13" uuid="83e206cc-557d-44dc-85d0-50072c0e6ae3"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1. OCUPACIÓN]]></text>
 			</staticText>
@@ -311,7 +307,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="233" y="11" width="122" height="13" uuid="2e80374a-ffa0-41eb-b3c8-b69c4d4fb71c"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[5. CARACTERISTICAS DEL SUELO]]></text>
 			</staticText>
@@ -324,7 +320,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="10" y="70" width="70" height="13" uuid="717b326c-bc53-4716-be76-6c914448cc20"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[2.NO EDIFICADO (3)]]></text>
 			</staticText>
@@ -334,7 +330,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="364" y="11" width="58" height="13" uuid="790eccf0-d28c-411a-9c78-071ff1dc7c94"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[7. TOPOGRAFIA]]></text>
 			</staticText>
@@ -363,36 +359,36 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[4. TERRENO VALDIO]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="221" y="115" width="13" height="13" uuid="c4b3248f-34a8-4ef7-94ad-6d7c9be3e256"/>
+				<reportElement x="179" y="115" width="13" height="13" uuid="c4b3248f-34a8-4ef7-94ad-6d7c9be3e256"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="130" y="115" width="90" height="13" uuid="efae835f-6329-43a7-b32c-733ee2327984"/>
+				<reportElement x="145" y="115" width="31" height="13" uuid="efae835f-6329-43a7-b32c-733ee2327984"/>
 				<textElement>
 					<font size="7" isBold="false"/>
 				</textElement>
 				<text><![CDATA[2. NO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="130" y="101" width="85" height="13" uuid="4afc2aa3-5d5a-45dd-b99d-b845b4213a24"/>
+				<reportElement x="145" y="101" width="31" height="13" uuid="4afc2aa3-5d5a-45dd-b99d-b845b4213a24"/>
 				<textElement>
 					<font size="7" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1. SI]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="221" y="101" width="13" height="13" uuid="7a2694dd-5d93-4edf-abd0-7409d8a5f846"/>
+				<reportElement x="179" y="101" width="13" height="13" uuid="7a2694dd-5d93-4edf-abd0-7409d8a5f846"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="130" y="87" width="122" height="13" uuid="7369fb41-66ba-4774-9c44-34204e05d370"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[4. LEGALIZACIÓN CONSTRUCCIÓN]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="252" y="87" width="103" height="13" uuid="8435dddf-c346-4870-b7d9-8f36b130c8d2"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[6. FORMA]]></text>
 			</staticText>
@@ -508,7 +504,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="221" y="100" width="13" height="13" uuid="2e41fcef-7445-46cf-8d73-a3b813cc9a54">
+				<reportElement x="179" y="100" width="13" height="13" uuid="2e41fcef-7445-46cf-8d73-a3b813cc9a54">
 					<printWhenExpression><![CDATA[$F{legalconstruccion}==true]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top">
@@ -517,7 +513,7 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="222" y="114" width="13" height="13" uuid="ab63e9eb-8c4c-4857-80a6-f75a8db5d7eb">
+				<reportElement x="180" y="114" width="13" height="13" uuid="ab63e9eb-8c4c-4857-80a6-f75a8db5d7eb">
 					<printWhenExpression><![CDATA[$F{legalconstruccion}==false]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top">
@@ -716,68 +712,31 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				</textElement>
 				<text><![CDATA[x]]></text>
 			</staticText>
+			<line>
+				<reportElement x="585" y="8" width="1" height="135" uuid="ed896d80-e773-4613-a135-7139361d7320"/>
+			</line>
+			<line>
+				<reportElement x="5" y="7" width="1" height="135" uuid="b89a781e-8838-40b8-852e-24ad4edef7ac"/>
+			</line>
+			<line>
+				<reportElement x="5" y="8" width="580" height="1" uuid="be7e185b-2938-464b-962e-85fe82ada082"/>
+			</line>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="300">
+		<band height="231">
 			<rectangle>
-				<reportElement mode="Transparent" x="6" y="5" width="585" height="20" uuid="3bec2c5b-2177-47fe-aa8c-19f68dc90fdc"/>
+				<reportElement mode="Opaque" x="5" y="4" width="580" height="20" backcolor="#CCCCCC" uuid="3bec2c5b-2177-47fe-aa8c-19f68dc90fdc"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="65" y="6" width="374" height="18" uuid="8e7111fb-9529-4ea6-9b17-012a5d60f094"/>
+				<reportElement x="65" y="6" width="431" height="18" uuid="8e7111fb-9529-4ea6-9b17-012a5d60f094"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[04 INFRAESTRUCTURA Y SERVICIOS]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="475" y="46" width="70" height="13" uuid="ff5af0f7-0ec3-4fca-ae11-bd248c2c23c7"/>
-				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[5.OTROS SERVICIOS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="236" y="149" width="81" height="13" uuid="466381c7-aa56-4cf3-9400-93bf4e413926"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[3.ALUMBRADO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="236" y="122" width="76" height="13" uuid="f1d4f1be-f7f5-4627-bfe5-4c2909cff0fb"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1.NO TIENE]]></text>
-			</staticText>
 			<rectangle>
 				<reportElement x="109" y="74" width="13" height="13" uuid="527df38a-48e6-4b50-b606-4d75097f0f05"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="322" y="136" width="13" height="13" uuid="67ae8d0d-109b-4bba-9515-6fc349155e45"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="477" y="118" width="76" height="13" uuid="bc642ee7-43c5-4093-bc19-0f24ffb9d45c"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[5.RECOLEC.BASURA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="558" y="119" width="13" height="13" uuid="a539acd9-8c21-4b66-a84e-36c717606c7e"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="323" y="148" width="13" height="13" uuid="ed974b51-4246-4ad6-b86e-4c2eb6241dc5">
-					<printWhenExpression><![CDATA[$F{forma}==47]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="557" y="104" width="13" height="13" uuid="818e0149-2ff9-4740-8c0d-b2e6cccec788"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="95" y="196" width="13" height="13" uuid="ea0ddfb0-bd3f-4102-b952-09a155374a93">
@@ -789,77 +748,8 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="477" y="104" width="76" height="13" uuid="1ced2843-6854-4e77-a545-52cdfe4b139a"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.RED TELEFÓNICA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="236" y="136" width="81" height="13" uuid="e83c8cff-1efd-4133-8091-e3cbe7a5373e"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.RED PUBLICA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="323" y="135" width="13" height="13" uuid="8aa513a6-e9da-4055-8b1b-55e110211bd9">
-					<printWhenExpression><![CDATA[$F{forma}==46]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="454" y="104" width="13" height="13" uuid="6c1bce21-7a2a-49ad-acba-15b662432d43">
-					<printWhenExpression><![CDATA[$F{topografia}==51]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="454" y="90" width="13" height="13" uuid="a0ce6585-804b-4584-9caa-d48a174846a6"/>
-			</rectangle>
-			<staticText>
 				<reportElement x="109" y="87" width="13" height="13" uuid="9dd67267-1d8b-4c13-a93c-593642077e39">
 					<printWhenExpression><![CDATA[$F{ocupacion}==34]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="558" y="102" width="13" height="13" uuid="b0df0c72-23b4-4fff-b7cd-b8fe0ab8f8b4">
-					<printWhenExpression><![CDATA[$F{localizacion}==57]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="557" y="74" width="13" height="13" uuid="668cfb85-957c-4a50-a1c7-574a650af955"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="454" y="59" width="13" height="13" uuid="41982b7c-5059-4e62-8498-b10513a0c5d2"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="131" y="88" width="67" height="13" uuid="9beeb3ea-ddf4-4b57-96c7-610f5ab19d8b"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.VEHICULAR]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="557" y="89" width="13" height="13" uuid="fca0719f-0ba9-4152-a1ad-981eaf6a8f5e"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="557" y="72" width="13" height="13" uuid="1194f57f-82d7-4f89-af44-0c9328f94110">
-					<printWhenExpression><![CDATA[$F{localizacion}==55]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font isBold="true"/>
@@ -874,43 +764,6 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[2.LUZ(5)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="558" y="57" width="13" height="13" uuid="29a27ead-4ad6-4f6d-bee5-110c34e5e400">
-					<printWhenExpression><![CDATA[$F{localizacion}==54]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="234" y="107" width="103" height="13" uuid="0e1ff386-9f31-4337-bb18-908bb15694e3"/>
-				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[2. ENERGIA ELECTRICA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="454" y="89" width="13" height="13" uuid="a59daf9c-d9ea-43f9-be4c-9daf990b6174">
-					<printWhenExpression><![CDATA[$F{topografia}==50]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="331" y="89" width="13" height="13" uuid="b386a4a0-56ab-45b8-a17b-2e5b0a223b51">
-					<printWhenExpression><![CDATA[$F{caracsuelo}==43]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="331" y="90" width="13" height="13" uuid="569984af-f132-4657-85f8-897de9b8eec2"/>
-			</rectangle>
-			<staticText>
 				<reportElement x="26" y="213" width="47" height="13" uuid="6644b560-9047-4483-bf12-45abdd8e60ac"/>
 				<textElement>
 					<font size="7" isBold="false"/>
@@ -924,37 +777,6 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				</textElement>
 				<text><![CDATA[3.ALCANTARILLADO(6)]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="557" y="87" width="13" height="13" uuid="5b423f0b-0207-416c-aa5e-f7ee98d22b31">
-					<printWhenExpression><![CDATA[$F{localizacion}==56]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="454" y="74" width="13" height="13" uuid="9cd60f19-1fb0-43e3-a678-4bb4b2ad4e26"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="454" y="105" width="13" height="13" uuid="738c4da5-d545-4633-8c1e-9d52f876043b"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="366" y="89" width="82" height="13" uuid="b2929861-d28f-4942-91a2-fc33cd8435a3"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[3.OTROS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="331" y="72" width="13" height="13" uuid="541bf5eb-fd5f-4645-b4cd-77c96560b25c">
-					<printWhenExpression><![CDATA[$F{caracsuelo}==42]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
 			<rectangle>
 				<reportElement mode="Transparent" x="95" y="197" width="13" height="13" uuid="70db4598-98f5-4c5a-a2e1-276473e2eec8"/>
 			</rectangle>
@@ -966,29 +788,6 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[1.AGUA(5)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="477" y="75" width="76" height="13" uuid="0da39ad3-0aa7-4b7a-8169-1963bfc0ebf1"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.ACERAS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="366" y="104" width="82" height="13" uuid="015174af-6d8f-40ad-a8e5-940a4620cdfa"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.CONEX DOMICILIARIA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="558" y="132" width="13" height="13" uuid="8e798789-d2ff-49e1-ae8f-cb51521e7443">
-					<printWhenExpression><![CDATA[$F{localizacion}==59]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="109" y="57" width="13" height="13" uuid="cd70d243-e91a-4e2d-b74f-545dca25a471">
 					<printWhenExpression><![CDATA[$F{ocupacion}==32]]></printWhenExpression>
 				</reportElement>
@@ -998,16 +797,6 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[x]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="235" y="90" width="92" height="13" uuid="33e40667-4cd5-4997-8ff7-dad57359e1a2"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2. DOBLE VIA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="322" y="149" width="13" height="13" uuid="b87cf3bb-e314-4cf5-a41f-4030522233a9"/>
-			</rectangle>
-			<staticText>
 				<reportElement x="26" y="197" width="62" height="13" uuid="4762e4cb-a6a5-41c0-803a-ba949317b94e"/>
 				<textElement>
 					<font size="7" isBold="false"/>
@@ -1015,110 +804,21 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<text><![CDATA[1.POZO SEPTICO]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="558" y="134" width="13" height="13" uuid="90f1d467-8555-4db1-93a0-e451d5102f31"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="366" y="60" width="82" height="13" uuid="1df755fb-fba9-4469-aab6-172c1222f526"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1. NO TIENE]]></text>
-			</staticText>
-			<rectangle>
 				<reportElement x="95" y="213" width="13" height="13" uuid="6bbb100f-63e0-414d-b6d4-5511503ffb14"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="13" y="44" width="96" height="13" uuid="5d8c0c03-5c3d-4a3e-a551-6d232eb135fd"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1. SERVICIOS DL PREDIO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="204" y="71" width="13" height="13" uuid="c26541cc-fad4-468f-b8c5-61e3845c99c8">
-					<printWhenExpression><![CDATA[$F{enconstruccion}==39]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="205" y="88" width="13" height="13" uuid="df19109d-ad56-4835-95d5-7aa9759a1bf3"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="477" y="60" width="76" height="13" uuid="eb33cfb0-8f38-4f71-a529-847cbf5efb46"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1 NO TIENE]]></text>
 			</staticText>
 			<rectangle>
 				<reportElement x="109" y="89" width="13" height="13" uuid="6d747001-b206-4485-919f-95f1f745dfda"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="205" y="86" width="13" height="13" uuid="35659f8e-557e-4dd0-b9fb-f7f954d3a633">
-					<printWhenExpression><![CDATA[$F{enconstruccion}==40]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="322" y="122" width="13" height="13" uuid="de4f3b56-2952-4201-8968-2b860306d1e7"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="366" y="75" width="82" height="13" uuid="5ad5d6a2-9936-4e51-9c8b-9b8dbf0c6424"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.RED PUBLICA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="557" y="58" width="13" height="13" uuid="1f2efa59-8486-4155-ae67-e1987893e5a4"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="477" y="132" width="76" height="13" uuid="a649b297-e32f-42f6-b4c8-3476b3faf53f"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[6.ACEO CALLES]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="323" y="121" width="13" height="13" uuid="681e7569-c33a-4bfb-8650-894d71663440">
-					<printWhenExpression><![CDATA[$F{forma}==45]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="205" y="72" width="13" height="13" uuid="2d6b771c-57d5-4738-b50e-ac12984d7d33"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="131" y="72" width="68" height="13" uuid="9ba8b53a-d062-49a3-95ef-61f7f800cc8a"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1. PEATONAL]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="95" y="212" width="13" height="13" uuid="f70fcad4-14db-4f62-baf7-e7339b105810">
 					<printWhenExpression><![CDATA[$F{noedificado}==36]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="331" y="74" width="13" height="13" uuid="4071348f-f608-4024-aaa6-f8e18bb8911f"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="454" y="72" width="13" height="13" uuid="a957b2d4-16c4-4c8f-be79-1948ff729d61">
-					<printWhenExpression><![CDATA[$F{topografia}==49]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font isBold="true"/>
@@ -1138,57 +838,18 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 				<reportElement x="109" y="58" width="13" height="13" uuid="6b829f8e-49db-4e58-823a-75df7d3fdef5"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="557" y="117" width="13" height="13" uuid="5dfba559-96a1-4414-a001-7fcd3525a0c9">
-					<printWhenExpression><![CDATA[$F{localizacion}==58]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="364" y="46" width="103" height="13" uuid="e4c9e9b4-1014-4b40-a63d-9e24e9cd9fa0"/>
-				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[3. ABASTECIMIENTO  AGUA]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="130" y="46" width="95" height="13" uuid="93634694-5b5c-48bf-81e5-4b553395a023"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1.ACCESO AL PREDIO VIAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="236" y="75" width="95" height="13" uuid="25446d88-f8cf-498b-beee-bbc253de5d99"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1. UNA VIA]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="233" y="46" width="122" height="13" uuid="248a1a22-bdb2-4e29-aab5-41e98eb041bf"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1.3 Nº CARRILES]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="477" y="89" width="76" height="13" uuid="d7b51a7f-43c2-4689-af17-6c67941f0bbd"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[3.BORDILLOS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="454" y="57" width="13" height="13" uuid="b1420293-0f6d-4ba4-afe4-4d81e49e11c7">
-					<printWhenExpression><![CDATA[$F{topografia}==48]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
 			</staticText>
 			<rectangle>
 				<reportElement x="109" y="119" width="13" height="13" uuid="32487770-edda-429d-bf24-2c4710e12539"/>
@@ -1255,238 +916,57 @@ and cp.catpre_codigo=$P{codigoCatPredial}]]>
 			<staticText>
 				<reportElement x="21" y="183" width="88" height="13" uuid="c248b453-e700-4f3d-a4fd-de64fe6f2c74"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[3. ALCANTARILLADO (6)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="130" y="58" width="63" height="13" uuid="89fbf964-d1f9-40f3-bc40-f1d6a9d2c198"/>
-				<textElement>
-					<font size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[1.1 USO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="132" y="132" width="47" height="13" uuid="d1b8fd8f-bd0f-4623-8f50-b36f5a743f1c"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.LASTRE]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="186" y="117" width="13" height="13" uuid="bc816978-fbf6-471e-b3ec-a5abc13aa228"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="186" y="132" width="13" height="13" uuid="cbec54a0-f210-4b90-abd5-bb90347210b9"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="185" y="131" width="13" height="13" uuid="2f516190-f407-4efd-b962-12a93d47e9f5">
-					<printWhenExpression><![CDATA[$F{enconstruccion}==40]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="185" y="116" width="13" height="13" uuid="486c1d6f-91d0-4b27-bb89-94f7e5f75b01">
-					<printWhenExpression><![CDATA[$F{enconstruccion}==39]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="132" y="118" width="47" height="13" uuid="2d37ba3e-b9c2-4da3-8397-fa22b1b816d3"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1.TIERRA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="131" y="104" width="54" height="13" uuid="9aabc9a8-8e16-403b-8caf-ab3c9a70bf90"/>
-				<textElement>
-					<font size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[1.2 MATERIAL]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="186" y="147" width="13" height="13" uuid="6f013326-0700-42d0-b782-47d8c924b266"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="132" y="147" width="47" height="13" uuid="6254ee46-48c4-420a-b796-dbcde7bd63f4"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[3.PIEDRA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="186" y="162" width="13" height="13" uuid="c5a702c0-9e72-4277-b3e8-147f3cf80734"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="132" y="161" width="47" height="13" uuid="4a448746-2aac-4d98-aa14-680dfbc887ed"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.ADOQUIN]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="186" y="177" width="13" height="13" uuid="1df56108-ff8f-4121-9490-3cc32253a899"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="132" y="175" width="47" height="13" uuid="2ac675ec-ea7f-4da1-b4aa-07d97dfb89df"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[5.ASFALTO]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="186" y="193" width="13" height="13" uuid="db4c7a40-dfee-41a2-8be8-eb4a8d67a248"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="133" y="189" width="47" height="13" uuid="e597398a-0f19-4cdd-b8f4-096d5ac49b35"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[6.HORMIGON]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="235" y="60" width="63" height="13" uuid="7e19115d-2c7a-4878-a8de-9db7832ce9e5"/>
-				<textElement>
-					<font size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[1.4 SENTIDO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="236" y="164" width="81" height="13" uuid="e1455dc0-3718-4589-9675-ba6852f159c2"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.RED PROVISIONAL]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="322" y="164" width="13" height="13" uuid="1701272d-c65b-4164-9bc7-e0348849e789"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="236" y="178" width="81" height="13" uuid="f739214e-c424-4afc-aca7-733f76f43c6c"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[5.RED DEFINITIVA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="322" y="178" width="13" height="13" uuid="a62834bf-272b-4c95-86f0-4669059ec139"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="236" y="192" width="81" height="13" uuid="e04166a3-fa77-412b-a822-25614107ecfe"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[6.CONEX DOMICILIARIA]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="322" y="192" width="13" height="13" uuid="6c42fb27-9ecb-4fd5-8403-404695db129f"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="364" y="123" width="103" height="13" uuid="bf7b92ac-985e-4a8b-a99a-913f534586fd"/>
-				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[4. ALCANTARILLADO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="366" y="153" width="69" height="13" uuid="363f01a5-f3e7-4f96-869c-303515379aba"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[2.ALC COMBINADO]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement mode="Transparent" x="435" y="137" width="13" height="13" uuid="49740ac0-3fa4-48fb-b704-da744dfbe31f"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="366" y="139" width="62" height="13" uuid="f6660be2-0f8d-4693-9b63-dfd0423fee80"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[1.NO TIENE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="435" y="152" width="13" height="13" uuid="834c0811-9e3a-4529-ac78-6935f2e4ce3f">
-					<printWhenExpression><![CDATA[$F{noedificado}==36]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement x="435" y="153" width="13" height="13" uuid="9eefa023-5233-4733-969c-8070a408921d"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="435" y="184" width="13" height="13" uuid="e66e9a28-72c9-4749-b264-cc3bc55de4cf"/>
-			</rectangle>
-			<rectangle>
-				<reportElement mode="Transparent" x="435" y="168" width="13" height="13" uuid="1070ce0c-afaa-4f60-bbc1-636d2782fcdd"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="366" y="182" width="62" height="13" uuid="0d64f5e0-3391-4e8e-b80a-05c5c4bfbbf8"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.ALC PLUVIAL]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="366" y="167" width="62" height="13" uuid="b872351d-efca-496d-9595-b59195e986b0"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[3.ALC SANITARIO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="478" y="146" width="75" height="13" uuid="778516c8-ffcd-4534-8c99-e61cb1c103f3"/>
-				<textElement>
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[7.TRANSP. PUBLICO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="559" y="147" width="13" height="13" uuid="c75a6785-ecff-432e-a58b-8f10add67f79">
-					<printWhenExpression><![CDATA[$F{localizacion}==59]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[x]]></text>
-			</staticText>
-			<rectangle>
-				<reportElement mode="Transparent" x="558" y="149" width="13" height="13" uuid="f40260dc-f468-437c-b393-4637985f3c7d"/>
-			</rectangle>
-			<staticText>
 				<reportElement x="11" y="30" width="106" height="13" uuid="694c645d-4139-4240-ba2b-bf70d64afc13"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[DEL PREDIO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="131" y="31" width="447" height="13" uuid="fe585af3-50ef-443b-a4d5-89722a53bd57"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[DEL SECTOR]]></text>
 			</staticText>
-			<rectangle>
-				<reportElement mode="Transparent" x="8" y="232" width="585" height="20" uuid="341af138-49a6-4e71-b365-6d0218d2e755"/>
-			</rectangle>
-			<staticText>
-				<reportElement x="75" y="233" width="374" height="18" uuid="d1256e1d-c62f-42a0-861f-2b91c4a36a2b"/>
-				<textElement textAlignment="Center">
-					<font size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[05 USOS DEL SUELO]]></text>
-			</staticText>
+			<subreport>
+				<reportElement x="131" y="64" width="452" height="162" uuid="46175c51-335a-4ba0-8a69-8f940fdd2e9a"/>
+				<subreportParameter name="catpreCodigo">
+					<subreportParameterExpression><![CDATA[$P{codigoCatPredial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_ORDEN}]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="585" y="0" width="1" height="231" uuid="8b539caa-0306-4b35-87ae-dff22dfeb7f2"/>
+			</line>
+			<line>
+				<reportElement x="5" y="-1" width="1" height="232" uuid="6b09757a-1910-4391-bd21-375471639cd1"/>
+			</line>
+		</band>
+		<band height="249">
+			<subreport>
+				<reportElement x="13" y="5" width="570" height="50" uuid="c0009a89-247d-47f2-9c34-6af9467daebf"/>
+				<subreportParameter name="catpreCodigo">
+					<subreportParameterExpression><![CDATA[$P{codigoCatPredial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_ORDEN2}]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="585" y="0" width="1" height="66" uuid="fab99cb6-78b4-45f6-bc7c-07784241f08c"/>
+			</line>
+			<line>
+				<reportElement x="7" y="241" width="578" height="1" uuid="a87b8cf4-b76d-4e9e-b6cc-d0829126eb13"/>
+			</line>
+			<line>
+				<reportElement x="6" y="0" width="1" height="66" uuid="5bdce921-eca5-4a12-ae35-1c50721089a6"/>
+			</line>
 		</band>
 	</detail>
 </jasperReport>

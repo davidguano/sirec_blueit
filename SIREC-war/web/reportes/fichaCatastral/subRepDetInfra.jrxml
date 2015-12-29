@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRepDetInfra" language="groovy" pageWidth="455" pageHeight="600" columnWidth="455" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e8ad7ba4-0bd9-4033-90a2-76081fbae47b">
+	<property name="ireport.zoom" value="1.1289478601075547"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="catpreCodigo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select c.cat_codigo as codItem, cpi.catdet_codigo as codInfra,c.cat_texto as tipoServInff,cd.catdet_texto as nomServInv
+from sirec.catastro_predial_infraestructura  cpi,sirec.catalogo_detalle cd,sirec.catalogo c
+where cpi.catdet_codigo=cd.catdet_codigo
+and cd.cat_codigo=c.cat_codigo
+and catpre_codigo=$P{catpreCodigo}]]>
+	</queryString>
+	<field name="coditem" class="java.lang.Integer"/>
+	<field name="codinfra" class="java.lang.Integer"/>
+	<field name="tiposervinff" class="java.lang.String"/>
+	<field name="nomservinv" class="java.lang.String"/>
+	<detail>
+		<band height="23">
+			<textField>
+				<reportElement x="19" y="6" width="194" height="13" uuid="89a82a5e-f18d-4c80-a717-e4ca45f1d8cc"/>
+				<textFieldExpression><![CDATA[$F{tiposervinff}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="6" width="195" height="13" uuid="30b37d0b-a7b3-41f9-ad54-08e1cdb1477d"/>
+				<textFieldExpression><![CDATA[$F{nomservinv}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="16" y="3" width="204" height="20" uuid="57470a9c-d044-44f2-8c01-c112c7eb2ddf"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="220" y="3" width="210" height="20" uuid="b2bf5362-f3ff-4e9f-9c44-4966efbe5d4f"/>
+			</rectangle>
+		</band>
+	</detail>
+</jasperReport>

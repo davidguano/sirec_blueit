@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRepLstUsoSuelo" language="groovy" pageWidth="595" pageHeight="600" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e8ad7ba4-0bd9-4033-90a2-76081fbae47b">
+	<property name="ireport.zoom" value="1.366026910730141"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="catpreCodigo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select cd.catdet_texto as tipoUso,catpreusu_item as codigo,catpreusu_valor as valor from sirec.catastro_predial  cp,
+sirec.catastro_predial_usosuelo us,sirec.catalogo_detalle cd
+where cp.catpre_codigo=us.catpre_codigo
+and us.catdet_codigo=cd.catdet_codigo
+and cp.catpre_codigo=$P{catpreCodigo}
+and us.catpreusu_aplica=true
+order by 2]]>
+	</queryString>
+	<field name="tipouso" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.Integer"/>
+	<field name="valor" class="java.lang.Integer"/>
+	<columnHeader>
+		<band height="22">
+			<staticText>
+				<reportElement uuid="d1256e1d-c62f-42a0-861f-2b91c4a36a2b" x="71" y="3" width="374" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[05 USOS DEL SUELO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="341af138-49a6-4e71-b365-6d0218d2e755" mode="Transparent" x="4" y="2" width="585" height="20"/>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3173ec6a-fcf3-415d-9453-47bded993e2e" mode="Transparent" x="77" y="3" width="195" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{tipouso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6447bae7-9584-423d-a6f8-c34a509d66ed" x="285" y="3" width="79" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d807f87c-338d-4abb-a33a-9c9930a13680" x="388" y="3" width="75" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="2899667a-2d4e-48b4-baef-97199e1854c8" mode="Transparent" x="72" y="1" width="205" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="66fbde48-f154-49d7-aed8-b64ea5aa6270" mode="Transparent" x="277" y="1" width="100" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="da7dc7cc-ba2b-4b1f-b3c5-8c7764fa4d93" mode="Transparent" x="377" y="1" width="100" height="20"/>
+			</rectangle>
+		</band>
+	</detail>
+</jasperReport>

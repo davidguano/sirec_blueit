@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRepLstCarEdif" language="groovy" pageWidth="595" pageHeight="600" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e8ad7ba4-0bd9-4033-90a2-76081fbae47b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="catPreCodigo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select e.catpreedi_grupo as grupo,e.catpreedi_subgrupo as subGrupo, e.catpreedi_bloque as bloque,e.catpreedi_piso as piso,cd.catdet_cod as codCaracteristica,cd.catdet_texto as caracteristicas,e.catpreedi_valor as valor
+from sirec.catastro_predial_edificacion  e,sirec.catalogo_detalle as cd,sirec.catastro_predial as cp
+where e.catdet_codigo=cd.catdet_codigo
+and cp.catpre_codigo=e.catpre_codigo
+and cp.catpre_codigo=$P{catPreCodigo}
+and e.catpreedi_grupo='1'
+
+
+union
+select e.catpreedi_grupo as grupo,e.catpreedi_subgrupo as subGrupo, e.catpreedi_bloque as bloque,e.catpreedi_piso as piso,cd.catdet_cod as codCaracteristica,cd.catdet_texto as caracteristicas,e.catpreedi_valor as valor
+from sirec.catastro_predial_edificacion  e,sirec.catalogo_detalle as cd,sirec.catastro_predial as cp
+where e.catdet_codigo=cd.catdet_codigo
+and cp.catpre_codigo=e.catpre_codigo
+and cp.catpre_codigo=$P{catPreCodigo}
+and e.catpreedi_grupo='2'
+
+union
+select e.catpreedi_grupo as grupo,e.catpreedi_subgrupo as subGrupo, e.catpreedi_bloque as bloque,e.catpreedi_piso as piso,cd.catdet_cod as codCaracteristica,cd.catdet_texto as caracteristicas,e.catpreedi_valor as valor
+from sirec.catastro_predial_edificacion  e,sirec.catalogo_detalle as cd,sirec.catastro_predial as cp
+where e.catdet_codigo=cd.catdet_codigo
+and cp.catpre_codigo=e.catpre_codigo
+and cp.catpre_codigo=$P{catPreCodigo}
+and e.catpreedi_grupo='3'
+
+union
+select e.catpreedi_grupo as grupo,e.catpreedi_subgrupo as subGrupo, e.catpreedi_bloque as bloque,e.catpreedi_piso as piso,cd.catdet_cod as codCaracteristica,cd.catdet_texto as caracteristicas,e.catpreedi_valor as valor
+from sirec.catastro_predial_edificacion  e,sirec.catalogo_detalle as cd,sirec.catastro_predial as cp
+where e.catdet_codigo=cd.catdet_codigo
+and cp.catpre_codigo=e.catpre_codigo
+and cp.catpre_codigo=$P{catPreCodigo}
+and e.catpreedi_grupo='4'
+order by 1,2]]>
+	</queryString>
+	<field name="grupo" class="java.lang.String"/>
+	<field name="subgrupo" class="java.lang.String"/>
+	<field name="bloque" class="java.lang.String"/>
+	<field name="piso" class="java.lang.String"/>
+	<field name="codcaracteristica" class="java.lang.String"/>
+	<field name="caracteristicas" class="java.lang.String"/>
+	<field name="valor" class="java.lang.Integer"/>
+	<columnHeader>
+		<band height="22">
+			<staticText>
+				<reportElement x="96" y="4" width="40" height="15" uuid="61a439e0-be4e-4888-9226-10e14d2fdaed"/>
+				<text><![CDATA[GRUPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="136" y="4" width="62" height="15" uuid="7fd772b9-2bff-49d4-8cfa-eb3447dd84c8"/>
+				<text><![CDATA[SUB GRUPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="4" width="47" height="15" uuid="ed09a6a4-420c-4a09-96cd-862a8e52e15b"/>
+				<text><![CDATA[CD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="253" y="4" width="35" height="15" uuid="d588e7e9-2cc0-427f-8c32-33424b8b2f13"/>
+				<text><![CDATA[UNIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="4" width="53" height="15" uuid="b3b39a28-0077-4e35-9f1e-cf2bb2c6c249"/>
+				<text><![CDATA[COD/CAP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="4" width="81" height="15" uuid="26e0df47-225b-4e9e-91d1-bf5f31d14e87"/>
+				<text><![CDATA[TIPO EDIF.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="95" y="2" width="39" height="20" uuid="2c1e691d-0196-4b7d-b95a-393b23e098a5"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="134" y="2" width="64" height="20" uuid="c06d247b-67af-4cc7-82cd-902ffd862096"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="198" y="2" width="52" height="20" uuid="d10c57bd-3d18-4df8-87fd-7c90b6db082d"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="250" y="2" width="41" height="20" uuid="53058a0a-73bc-4b65-bae0-69b5c28df16a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="291" y="2" width="63" height="20" uuid="13a52910-b900-43b3-8312-1e0d68cc68fd"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="354" y="2" width="112" height="20" uuid="508685b2-d772-4360-95d1-49879df71eeb"/>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="97" y="5" width="35" height="15" uuid="78112763-828d-4f37-ae09-b7b96d933c8f"/>
+				<textFieldExpression><![CDATA[$F{grupo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="136" y="5" width="60" height="15" uuid="ca7ce2cb-f328-4f32-9e8c-6313b767ad5a"/>
+				<textFieldExpression><![CDATA[$F{subgrupo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="201" y="5" width="47" height="15" uuid="e9a92a7d-6625-49d0-a430-0d79ab3000c2"/>
+				<textFieldExpression><![CDATA[$F{bloque}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="5" width="38" height="15" uuid="6277905c-178d-4c50-833e-980c6e3408d4"/>
+				<textFieldExpression><![CDATA[$F{piso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="5" width="53" height="15" uuid="295e353b-30d6-40eb-b425-b933812542c8"/>
+				<textFieldExpression><![CDATA[$F{codcaracteristica}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="5" width="96" height="15" uuid="6e0d2575-bdc4-44bd-950b-763ab6e9a9eb"/>
+				<textFieldExpression><![CDATA[$F{caracteristicas}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="134" y="2" width="64" height="20" uuid="135d1549-d3f5-4714-9b35-e527ede59438"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="250" y="2" width="41" height="20" uuid="94c6435f-7485-4453-9b7b-306b41d6a03b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="198" y="2" width="52" height="20" uuid="0dea350d-ff4c-47f0-ae06-06d2cabeb394"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="354" y="2" width="112" height="20" uuid="4d6816af-cd31-495a-a661-ca7181e72c32"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="95" y="2" width="39" height="20" uuid="cb4616e6-b4c2-4d53-8709-e148bd702bab"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="291" y="2" width="63" height="20" uuid="5d3e1b99-5d71-4efc-840d-c0e08f26ce0f"/>
+			</rectangle>
+		</band>
+	</detail>
+</jasperReport>
