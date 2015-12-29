@@ -29,15 +29,16 @@
                                         </p:selectOneMenu>                                 
                             </h:panelGrid>
                                                                                          
-                            <h:panelGrid id="pnlAnio" columns="2">                                                       
+                            <h:panelGrid id="pnlAnio" columns="3">                                                       
                                 <p:outputLabel value="#{txt.anio}"/>
-                                <p:selectOneMenu id="catTip" style="width:152px">
+                                <p:selectOneMenu id="catTip" style="width:152px" value="#{gestionImpuestoPredialControlador.anio}"
+                                                 required="true"> 
                                             <f:selectItem itemLabel="Seleccione..." itemValue="" /> 
                                             <f:selectItem itemLabel="2015" itemValue="2015" />
                                             <f:selectItem itemLabel="2016" itemValue="2016" />          
                                             <f:selectItem itemLabel="2017" itemValue="2017" />          
                                         </p:selectOneMenu>
-                                                                                               
+                                                                          
                                 </h:panelGrid> 
                             <p:panel id="pnlRec" header="#{txt.RECARGOS}">
                                 <p:selectManyCheckbox id="cmbRec" value="#{gestionImpuestoPredialControlador.listaAdicionalesDeductivosRecargosSeleccion}"
@@ -153,7 +154,7 @@
                                                      id="btnGuardar" 
                                                      action="#{gestionImpuestoPredialControlador.guardarAdicionalesDeductivos()}" 
                                                      icon="ui-icon-disk"  
-                                                     process="@this, pnllstArch, pnlRec, pnlExo, pnlDec, pnlCC, alPred" 
+                                                     process="@this, pnllstArch, pnlRec, pnlExo, pnlDec, pnlCC, alPred, pnlAnio" 
                                                      update=":frmImpPredial:msgs"
                                                      async="true"
                                                      global="false"

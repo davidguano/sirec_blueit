@@ -33,7 +33,8 @@
                                      <p:inputText id="pPrecAct" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventa}"
                                                   disabled="true"/>
                                      <p:outputLabel value="PRECIO DE VENTA ANTERIOR"/>
-                                     <p:inputText  id="pPrecAnt" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventaAnt}">
+                                     <p:inputText  id="pPrecAnt" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalPrecioventaAnt}"
+                                                   onkeypress="return isDecimalKey(event)" >
                                                    <p:ajax event="blur" listener="#{gestionAlcabalasControlador.calularDiferenciaBruta}"  update=":frmAlcabalas:tabAlca:pDifBruta,pMej,pDifNeta"
                                          process="@this,pPrecAnt,pPrecAct" async="true" global="false"/>  
                                      </p:inputText>
@@ -52,7 +53,7 @@
                                         
                                         <p:outputLabel value="AÑOS TRANSCURRIDOS EN TRANSFERENCIA DE DOMINIO"/>
                                         <p:inputText id="pAnosTrans" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalAniosTransf}"
-                                                      >
+                                                      onkeypress="return isNumberKey(event)">
                                              <p:ajax event="blur" listener="#{gestionAlcabalasControlador.calularValorAniosTranDominio()}"  update=":frmAlcabalas:tabAlca:pValAnosTrans,pDifFinal,pRebDes,pValRebDes,pBasImp,pImpuesto,pProc"
                                          process="@this,pDifNeta, pComTT" async="true" global="false"/> 
                                         </p:inputText>

@@ -37,43 +37,43 @@
                                 
                                 <p:outputLabel value="#{txt.parroquia}"/>
                                 <p:inputText id="alParr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreCodNacional}"                                                     
-                                            />
+                                             disabled="true"/>
                                 
                                 <p:outputLabel value="#{txt.sector}"/>
                                 <p:inputText id="alSec" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreNombreSector}" 
-                                            />
+                                            disabled="true"/>
                                 
                                 <p:outputLabel value="#{txt.direccion}"/>
                                 <p:inputText id="alDir" value="#{gestionAlcabalasControlador.propietario.proDireccion}"
-                                            />
+                                            disabled="true"/>
                                 
                                  <p:outputLabel value="#{txt.vendedor}"/>
                                  <p:inputText id="alVen" value="#{gestionAlcabalasControlador.propietario.proNombres} #{gestionAlcabalasControlador.propietario.proApellidos}"
-                                            />
-                                
-                                
+                                            disabled="true"/>
+                                 
                                 <p:outputLabel value="#{txt.comprador}"/>
                                 <p:inputText id="alCom" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalComprador}"   
                                             />
                                 
                                 <p:outputLabel value="#{txt.area_de_terreno}"/>
                                 <p:inputText id="alTerr" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal}"
-                                            />
+                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.area_de_construccion}"/>
                                 <p:inputText id="alCons" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalCons}"
-                                            />
+                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.area_total}"/>
                                 <p:inputText id="alTot" value="#{gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotal+gestionAlcabalasControlador.catastroPredialActual.catpreAreaTotalCons}"
-                                            />
+                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.avaluo_actual}"/>
                                 <p:inputText id="alAva" value="#{gestionAlcabalasControlador.catastroPredialValoracionActual.catprevalAvaluoTot}"   
-                                            />
+                                             disabled="true" />
                                 
                                 <p:outputLabel value="#{txt.precio_de_venta}"/>
-                                <p:inputText id="alPrec" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}">
+                                <p:inputText id="alPrec" value="#{gestionAlcabalasControlador.catastroPredialAlcabalaValoracion.catprealcvalPrecioventa}"
+                                             onkeypress="return isDecimalKey(event)">
                                     <p:ajax event="keyup" listener="#{gestionAlcabalasControlador.valorMayorBaseImponible}"  update=":frmAlcabalas:tabAlca:panelPlusvalia"
                                          process="@this" async="true" global="false"/>  
                                 </p:inputText>
