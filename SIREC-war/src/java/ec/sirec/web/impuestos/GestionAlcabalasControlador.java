@@ -24,6 +24,7 @@ import ec.sirec.ejb.servicios.CatastroPredialServicio;
 import ec.sirec.ejb.servicios.CatastroPredialValoracionServicio;
 import ec.sirec.ejb.servicios.CpAlcabalaValoracionExtrasServicio;
 import ec.sirec.ejb.servicios.CpValoracionExtrasServicio;
+import ec.sirec.ejb.servicios.DatoGlobalServicio;
 import ec.sirec.ejb.servicios.PredioArchivoServicio;
 import ec.sirec.web.base.BaseControlador;
 import java.io.IOException;
@@ -121,6 +122,8 @@ public class GestionAlcabalasControlador extends BaseControlador {
     private AdicionalesDeductivosServicio adicionalesDeductivosServicio;
     @EJB
     private PredioArchivoServicio predioArchivoServicio;
+    @EJB
+    private DatoGlobalServicio datoGlobalServicio;
     
     /// SERVICIOS PLUSVALIA
     
@@ -467,11 +470,11 @@ public void calularRebajaDesvalorizacionBaseImpImpuesto() {
             // valor quemado porcentaje rebaja
             catastroPredialPlusvaliaValoracion.setCatprepluvalPorcRebaja(50); 
             catastroPredialPlusvaliaValoracion.setCatprepluvalValorRebaja(new BigDecimal(catastroPredialPlusvaliaValoracion.getCatprepluvalPorcRebaja()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal()));
-            catastroPredialPlusvaliaValoracion.setCatprepluvalBaseimp(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalValorRebaja()));                                                 
-           // catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo());            
-           // System.out.println("nM: "+catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor());            
-            catastroPredialPlusvaliaValoracion.setCatprepluvalImpuesto(new BigDecimal(catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValor()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()));             
-            catastroPredialPlusvaliaValoracion.setCatprepluvalTasaproc(new BigDecimal(2)); 
+            catastroPredialPlusvaliaValoracion.setCatprepluvalBaseimp(catastroPredialPlusvaliaValoracion.getCatprepluvalDifFinal().subtract(catastroPredialPlusvaliaValoracion.getCatprepluvalValorRebaja()));                                                            
+//            System.out.println("ss: "+catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValorDecimal()); 
+//            System.out.println("ssbaseImp: "+catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()); 
+            catastroPredialPlusvaliaValoracion.setCatprepluvalImpuesto(new BigDecimal(catastroPredialServicio.cargarObjetoCatalogoDetalle(catastroPredialPlusvaliaValoracion.getCatdetTipoTarifa().getCatdetCodigo()).getCatdetValorDecimal()).multiply(catastroPredialPlusvaliaValoracion.getCatprepluvalBaseimp()));             
+            catastroPredialPlusvaliaValoracion.setCatprepluvalTasaproc(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Val_tasa_procesamiento").getDatgloValor())); 
             
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);

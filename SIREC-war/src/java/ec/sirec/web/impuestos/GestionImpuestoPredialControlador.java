@@ -7,6 +7,7 @@ package ec.sirec.web.impuestos;
 
 import ec.sirec.ejb.clases.EjecutarValoracion;
 import ec.sirec.ejb.entidades.AdicionalesDeductivos;
+import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
@@ -76,13 +77,15 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private List<CatastroPredial> listaCatastroPredialExoRecarDeduc;
     private List<CatastroPredial> listaCatastroPredialClavesCatastrales;
     private List<EjecutarValoracion> listaEjecutarValoracion;
-    private EjecutarValoracion ejecutarValoracionAcual;
+    
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_1;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_2;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion1_3;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion2;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion3;
     private List<CatastroPredialEdificacion> listaCatastroPredialEdificacion4;
+    private List<CatalogoDetalle> listaParroquias;
+    private List<CatalogoDetalle> listaSectores;
 
     private PredioArchivo predioArchivo;
     private CatastroPredial catastroPredialActual;
@@ -96,7 +99,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     private FittoCorvini fittoCorvini;
     private RecaudacionCab recaudacioCab;
     private RecaudacionDet recaudacionDet;
-    private DatoGlobal datoGlobal;
+    private int anio;
+    private CatalogoDetalle catalogoParroquia;
+    private CatalogoDetalle catalogoSector;
+   
+    private EjecutarValoracion ejecutarValoracionAcual;
 
     // SERVICIOS
     @EJB
@@ -128,7 +135,9 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             listarTodasComboClaves();
             listarCatastroPredialERD();
             criterio = "";
-            datoGlobal = new DatoGlobal();
+           
+            listarParroquias();
+            listarSectores();
 
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -147,6 +156,21 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
 
         try {
             listaCatastroPredialClavesCatastrales = catastroPredialServicio.listarClaveCatastral();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void listarParroquias() {
+        try {
+            listaParroquias = catastroPredialServicio.listaCatParroquias();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    public void listarSectores() {
+        try {
+            listaSectores = catastroPredialServicio.listaCatSectores();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -450,14 +474,15 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
           catastroPredialValoracionActual.setCatprevalAvaluoTerr(valorAvaluoTerrero); 
           catastroPredialValoracionActual.setCatprevalAvaluoTot(valorAvaluoConstruccion.add(valorAvaluoTerrero)); 
           catastroPredialValoracionActual.setCatprevalValorPropieda(valorAvaluoConstruccion.add(valorAvaluoTerrero));           
-          catastroPredialValoracionActual.setCatprevalBaseImponible(valorAvaluoConstruccion.add(valorAvaluoTerrero));                     
-//          int d;
-//             d = (int) datoGlobalServicio.obtenerDatoGlobal("Banda_Impositiva").getDatgloValor();         
-          catastroPredialValoracionActual.setCatprevalImpuesto(valorAvaluoConstruccion.add(valorAvaluoTerrero).multiply(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Banda_Impositiva").getDatgloValor()).divide(new BigDecimal(100))));  
+          catastroPredialValoracionActual.setCatprevalBaseImponible(valorAvaluoConstruccion.add(valorAvaluoTerrero));                            //                
+          catastroPredialValoracionActual.setCatprevalImpuesto(valorAvaluoConstruccion.add(valorAvaluoTerrero).multiply(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Banda_Impositiva_Urbana").getDatgloValor()).divide(new BigDecimal(100))));  
+          catastroPredialValoracionActual.setCatprevalBomberos(valorAvaluoConstruccion.add(valorAvaluoTerrero).multiply(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Bomberos").getDatgloValor()).divide(new BigDecimal(100))));  
+          catastroPredialValoracionActual.setCatprevalSolarNoedificado(valorAvaluoConstruccion.add(valorAvaluoTerrero).multiply(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Solar_No_Edif").getDatgloValor()).divide(new BigDecimal(100))));  
+          catastroPredialValoracionActual.setCatprevalTasaAdm(new BigDecimal(datoGlobalServicio.obtenerDatoGlobal("Tasa_Administrativa").getDatgloValor()));  
+          catastroPredialValoracionActual.setCatprevalAnio(anio);
           
+          catastroPredialValoracionServicio.crearAplicacion(catastroPredialValoracionActual);
           
-          
-          catastroPredialValoracionServicio.crearAplicacion(catastroPredialValoracionActual);                    
           System.out.println("valorConstruccionT: "+ valorAvaluoConstruccion);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -548,18 +573,77 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
             } else {
                 if (criterio.equals("T")) {
                     listaCatastroPredialTablaValoracion = catastroPredialServicio.listarClaveCatastral();
+                }else{
+                    if (criterio.equals("P")) {                                                                        
+                    listaCatastroPredialTablaValoracion = catastroPredialServicio.listarCatastroXParroquia(catalogoParroquia); 
+                }else{
+                        if (criterio.equals("S")) {                                                                        
+                    listaCatastroPredialTablaValoracion = catastroPredialServicio.listarCatastroXSector(catalogoSector); 
+                }
+                                        
+                    }
                 }
             }
 
             for (int i = 0; i < listaCatastroPredialTablaValoracion.size(); i++) {
                 EjecutarValoracion eVal = new EjecutarValoracion();
                 CatastroPredial CP = listaCatastroPredialTablaValoracion.get(i);
+                
+                eVal.setCatastroPredial(CP);
                 eVal.setCatpreCodigo(CP.getCatpreCodigo());
                 eVal.setCatpreClaveCatastal(CP.getCatpreCodNacional() + CP.getCatpreCodLocal());
                 eVal.setProCi(catastroPredialServicio.obtenerPropietarioPrincipalPredio(CP.getCatpreCodigo()));
-                eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
-                eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());
-                eVal.setCatastroPredialValoracion(catastroPredialValoracionServicio.buscarPorCatastroPredial(CP));
+                                               
+                if (CP.getCatpreAreaTotal() != null) {
+                    eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
+                }else{
+                     eVal.setCatpreAreaTotal(0.0);
+                }
+                if (CP.getCatpreAreaTotalCons() != null) {
+                    eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());
+                }else{
+                     eVal.setCatpreAreaTotalCons(0.0);
+                }
+                
+                CatastroPredialValoracion CPV = catastroPredialValoracionServicio.buscarPorCatastroPredial(CP);                
+                if(CPV!=null){                  
+                    if (CPV.getCatprevalAvaluoEdif() == null) {
+                         CPV.setCatprevalAvaluoEdif(BigDecimal.ZERO);
+                    }
+                    if (CPV.getCatprevalAvaluoTerr() == null) {
+                         CPV.setCatprevalAvaluoTerr(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalValorPropieda() == null) {
+                         CPV.setCatprevalValorPropieda(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalBaseImponible() == null) {
+                         CPV.setCatprevalBaseImponible(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalImpuesto() == null) {
+                         CPV.setCatprevalImpuesto(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalBomberos() == null) {
+                         CPV.setCatprevalBomberos(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalSolarNoedificado() == null) {
+                         CPV.setCatprevalSolarNoedificado(BigDecimal.ZERO);
+                    } 
+                    if (CPV.getCatprevalTasaAdm() == null) {
+                         CPV.setCatprevalTasaAdm(BigDecimal.ZERO);
+                    }                                                                                             
+                eVal.setCatastroPredialValoracion(CPV);    
+                }else{
+                      CPV = new CatastroPredialValoracion();
+                      CPV.setCatprevalAvaluoEdif(BigDecimal.ZERO);
+                      CPV.setCatprevalAvaluoTerr(BigDecimal.ZERO);
+                      CPV.setCatprevalValorPropieda(BigDecimal.ZERO);
+                      CPV.setCatprevalBaseImponible(BigDecimal.ZERO);
+                      CPV.setCatprevalImpuesto(BigDecimal.ZERO);
+                      CPV.setCatprevalBomberos(BigDecimal.ZERO);
+                      CPV.setCatprevalSolarNoedificado(BigDecimal.ZERO);
+                      CPV.setCatprevalTasaAdm(BigDecimal.ZERO);                                            
+                      eVal.setCatastroPredialValoracion(CPV);                
+                }
 
                 if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R") != null) {
                     eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R"));
@@ -576,37 +660,20 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                 } else {
                     eVal.setTotalExoneracion(BigDecimal.ZERO);
                 }
-                if (eVal.getCatpreAreaTotal() == null) {
-                    eVal.setCatpreAreaTotal(0.0);
-                }
-                if (eVal.getCatpreAreaTotalCons() == null) {
-                    eVal.setCatpreAreaTotalCons(0.0);
-                }
-                if (eVal.getCatastroPredialValoracion() == null) {
-                    CatastroPredialValoracion CPV = new CatastroPredialValoracion();
-                    CPV.setCatprevalAvaluoEdif(BigDecimal.ZERO);
-                    CPV.setCatprevalAvaluoTerr(BigDecimal.ZERO);
-                    eVal.setCatastroPredialValoracion(CPV);
-                } else {
-                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr() == null) {
-                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoTerr(BigDecimal.ZERO);
-                    }
-                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif() == null) {
-                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoEdif(BigDecimal.ZERO);
-                    }
-                }
-
-                        // Fatan setiar campos Acta 2 :
-                        // VALOR PROPIEDAD
-                        // BASE IMPONIBLE
-                        // IMPUESTO
-                        // BOMBEROS
-                        // SOLAR NO EDIFICADO
-                        // TASA ADMINISTRATIVA
-                eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons())).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr()).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif())))));
+                
+               // eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons())).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr()).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif())))));
+                eVal.setTotalRegistro(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons()))
+                        .add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr()).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif())
+                        .add(eVal.getCatastroPredialValoracion().getCatprevalValorPropieda()).add(eVal.getCatastroPredialValoracion().getCatprevalBaseImponible())
+                        .add(eVal.getCatastroPredialValoracion().getCatprevalImpuesto()).add(eVal.getCatastroPredialValoracion().getCatprevalBomberos())
+                        .add(eVal.getCatastroPredialValoracion().getCatprevalSolarNoedificado())
+                        .add(eVal.getCatastroPredialValoracion().getCatprevalTasaAdm()).add(eVal.getTotalRecargos()).add(eVal.getTotalDeduciones())
+                        .subtract(eVal.getTotalExoneracion()));   
 
                 listaEjecutarValoracion.add(eVal);
+                
                 totalTotal = totalTotal.add(eVal.getTotalRegistro());
+                
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -804,4 +871,46 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     public void setTotalTotal(BigDecimal TotalTotal) {
         this.totalTotal = TotalTotal;
     }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    public void setAnio(int anio) {
+        this.anio = anio;
+    }
+
+    public List<CatalogoDetalle> getListaParroquias() {
+        return listaParroquias;
+    }
+
+    public void setListaParroquias(List<CatalogoDetalle> listaParroquias) {
+        this.listaParroquias = listaParroquias;
+    }
+
+    public CatalogoDetalle getCatalogoParroquia() {
+        return catalogoParroquia;
+    }
+
+    public void setCatalogoParroquia(CatalogoDetalle catalogoParroquia) {
+        this.catalogoParroquia = catalogoParroquia;
+    }
+
+    public List<CatalogoDetalle> getListaSectores() {
+        return listaSectores;
+    }
+
+    public void setListaSectores(List<CatalogoDetalle> listaSectores) {
+        this.listaSectores = listaSectores;
+    }
+
+    public CatalogoDetalle getCatalogoSector() {
+        return catalogoSector;
+    }
+
+    public void setCatalogoSector(CatalogoDetalle catalogoSector) {
+        this.catalogoSector = catalogoSector;
+    }
+    
+    
 }
