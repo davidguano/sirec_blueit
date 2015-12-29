@@ -177,6 +177,12 @@ public class CatastroPredial implements Serializable {
     private String catpreIdentPredio;
     @Column(name = "catpre_num_fam_bloque")
     private Integer catpreNumFamBloque;
+    @Column(name = "catpre_docrel_cedula")
+    private Boolean catpreDocrelCedula;
+    @Column(name = "catpre_docrel_carne")
+    private Boolean catpreDocrelCarne;
+    @Column(name = "catpre_docrel_escrituras")
+    private Boolean catpreDocrelEscrituras;
     @JoinColumn(name = "usu_identificacion", referencedColumnName = "usu_identificacion")
     @ManyToOne(optional = false)
     private SegUsuario usuIdentificacion;
@@ -970,6 +976,30 @@ public class CatastroPredial implements Serializable {
 
     public void setCatpreNumFamBloque(Integer catpreNumFamBloque) {
         this.catpreNumFamBloque = catpreNumFamBloque;
+    }
+
+    public Boolean getCatpreDocrelCedula() {
+        return catpreDocrelCedula;
+    }
+
+    public void setCatpreDocrelCedula(Boolean catpreDocrelCedula) {
+        this.catpreDocrelCedula = catpreDocrelCedula;
+    }
+
+    public Boolean getCatpreDocrelCarne() {
+        return catpreDocrelCarne;
+    }
+
+    public void setCatpreDocrelCarne(Boolean catpreDocrelCarne) {
+        this.catpreDocrelCarne = catpreDocrelCarne;
+    }
+
+    public Boolean getCatpreDocrelEscrituras() {
+        return catpreDocrelEscrituras;
+    }
+
+    public void setCatpreDocrelEscrituras(Boolean catpreDocrelEscrituras) {
+        this.catpreDocrelEscrituras = catpreDocrelEscrituras;
     }
     
     

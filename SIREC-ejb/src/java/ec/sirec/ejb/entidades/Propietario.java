@@ -90,9 +90,13 @@ public class Propietario implements Serializable {
     @JoinColumn(name = "catdet_ciudad", referencedColumnName = "catdet_codigo")
     @ManyToOne(optional = false)
     private CatalogoDetalle catdetCiudad;
+    @JoinColumn(name = "catdet_tipoperjur", referencedColumnName = "catdet_codigo")
+    @ManyToOne
+    private CatalogoDetalle catdetTipoperjur;
 
     public Propietario() {
         catdetCiudad=new CatalogoDetalle();
+        catdetTipoperjur=new CatalogoDetalle();
     }
 
     public Propietario(String proCi) {
@@ -236,6 +240,19 @@ public class Propietario implements Serializable {
     public void setCatdetCiudad(CatalogoDetalle catdetCiudad) {
         this.catdetCiudad = catdetCiudad;
     }
+
+    public CatalogoDetalle getCatdetTipoperjur() {
+        if(catdetTipoperjur==null){
+            catdetTipoperjur=new CatalogoDetalle();
+        }
+        return catdetTipoperjur;
+    }
+
+    public void setCatdetTipoperjur(CatalogoDetalle catdetTipoperjur) {
+        this.catdetTipoperjur = catdetTipoperjur;
+    }
+    
+    
 
     @Override
     public int hashCode() {

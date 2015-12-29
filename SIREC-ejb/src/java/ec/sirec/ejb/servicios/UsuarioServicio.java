@@ -38,6 +38,8 @@ public class UsuarioServicio {
     }
 
     public String crearUsuarioBaseLocal(SegUsuario identificacion) throws Exception {
+        identificacion.setUsuFechaCreacion(java.util.Calendar.getInstance().getTime());
+        identificacion.setUsuFechaModificacion(java.util.Calendar.getInstance().getTime());
         segUsuarioDao.crear(identificacion);
         return "se ha creado el usuario" + identificacion;
     }
@@ -51,11 +53,14 @@ public class UsuarioServicio {
     }
 
     public String crearUsuario(SegUsuario usuIdent) throws Exception {
+         usuIdent.setUsuFechaCreacion(java.util.Calendar.getInstance().getTime());
+        usuIdent.setUsuFechaModificacion(java.util.Calendar.getInstance().getTime());
         segUsuarioDao.crear(usuIdent);
         return "se ha creado el usuario" + usuIdent;
     }
 
     public String editarUsuario(SegUsuario usuIdent) throws Exception {
+        usuIdent.setUsuFechaModificacion(java.util.Calendar.getInstance().getTime());
         segUsuarioDao.editar(usuIdent);
         return "se ha modificado al usuario" + usuIdent;
     }

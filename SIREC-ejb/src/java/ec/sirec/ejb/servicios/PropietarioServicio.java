@@ -55,6 +55,10 @@ public class PropietarioServicio {
     public List<CatalogoDetalle> listarCiudades() throws Exception {
         return catalogoDetServicio.listarPorNemonicoCatalogo("CIUDADES");
     }
+    
+    public List<CatalogoDetalle> listarTiposPersonasJuridicas() throws Exception {
+        return catalogoDetServicio.listarPorNemonicoCatalogo("TIP_PER_JUR");
+    }
 
     public Propietario buscarPropietario(String cedula) throws Exception {
         return propietarioDao.buscarPorCampo(ENTIDAD_PROPIETARIO, "proCi", cedula);

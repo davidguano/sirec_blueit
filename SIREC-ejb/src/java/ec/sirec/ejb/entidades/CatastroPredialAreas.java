@@ -43,6 +43,8 @@ public class CatastroPredialAreas implements Serializable {
     @NotNull
     @Column(name = "catpreare_area")
     private double catpreareArea;
+    @Column(name = "catpreare_piso")
+    private int catprearePiso;
     @JoinColumn(name = "catpre_codigo", referencedColumnName = "catpre_codigo")
     @ManyToOne(optional = false)
     private CatastroPredial catpreCodigo;
@@ -91,6 +93,16 @@ public class CatastroPredialAreas implements Serializable {
     public void setCatpreCodigo(CatastroPredial catpreCodigo) {
         this.catpreCodigo = catpreCodigo;
     }
+
+    public int getCatprearePiso() {
+        return catprearePiso;
+    }
+
+    public void setCatprearePiso(int catprearePiso) {
+        this.catprearePiso = catprearePiso;
+    }
+    
+    
 
     @Override
     public int hashCode() {
