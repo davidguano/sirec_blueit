@@ -47,9 +47,18 @@
                                        <p:inputText id="pMej" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalValorContrmej}"
                                                   disabled="true"/>
                                       
-                                        <p:outputLabel value="DIFERENCIA NETA"/>
+                                          <p:outputLabel value="DIFERENCIA NETA"/>
                                         <p:inputText id="pDifNeta" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalDifNeta}"
                                                   disabled="true"/>
+                                        
+                                </h:panelGrid>                                                                                                       
+                                
+                                </p:panel>
+                        
+                        <p:panel id="pnlDedPlus" header="#{txt.DEDUCCIONES}">
+                            <h:panelGrid columns="2">
+                                
+                              
                                         
                                         <p:outputLabel value="AÑOS TRANSCURRIDOS EN TRANSFERENCIA DE DOMINIO"/>
                                         <p:inputText id="pAnosTrans" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalAniosTransf}"
@@ -83,16 +92,17 @@
                                         <p:outputLabel value="PROCESAMIENTO"/>
                                         <p:inputText id="pProc" value="#{gestionAlcabalasControlador.catastroPredialPlusvaliaValoracion.catprepluvalTasaproc}"
                                             disabled="true"/>
-                                        
-                                </h:panelGrid>                                                                                                       
                                 
-                                </p:panel>
+                                
+                            </h:panelGrid>                                                        
+                        </p:panel>   
+                             
                             
                        <p:commandButton value="#{txt.guardar_btn}" 
                                                      id="btnGuardarPlus" 
                                                      action="#{gestionAlcabalasControlador.guardarPlusvalia()}" 
                                                      icon="ui-icon-disk"  
-                                                     process="@this,pnlDet" 
+                                                     process="@this,pnlDet,pnlDedPlus"  
                                                      update=":frmAlcabalas:msgs"
                                                      async="true"
                                                      global="false"
