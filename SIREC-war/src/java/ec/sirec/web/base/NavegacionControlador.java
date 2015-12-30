@@ -197,7 +197,7 @@ public class NavegacionControlador extends BaseControlador {
             
             DefaultMenuItem servicios = new DefaultMenuItem("Tasas por Servicios");
             servicios.setIcon("ui-icon-person");
-            servicios.setCommand("#{navegacionControlador.redireccionarAPagina('impuestos','')}");
+            servicios.setCommand("#{navegacionControlador.redireccionarAPagina('base','gestionTasas')}");
             subMenuImpuestos.addElement(servicios);
             
             menu.addElement(subMenuImpuestos);

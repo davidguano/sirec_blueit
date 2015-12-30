@@ -96,14 +96,9 @@ public class GestionAlcabalasControlador extends BaseControlador {
     
     ////// EMISIÓN DE ALCABALAS y PLUSVALIAS  ////////////
     
-    private List<CatastroPredial> listaCatastroPredialTablaValoracion;
-    
-    
-    
-    private List<EjecutarValoracion> listaEjecutarValoracion;
-   // private EjecutarValoracion[] listaEjecutarValoracion;
+    private List<CatastroPredial> listaCatastroPredialTablaValoracion;           
+    private List<EjecutarValoracion> listaEjecutarValoracion; 
     private List<EjecutarValoracion> listaCatastroPredialTablaValoracionSeleccion;
-  //  private EjecutarValoracion[] listaCatastroPredialTablaValoracionSeleccion;
     
     
     
@@ -150,8 +145,7 @@ public class GestionAlcabalasControlador extends BaseControlador {
             
             listarTipoTarifa();
             
-            // EMISION ALCABALA PLUSVALIA 
-            //listaCatastroPredialTablaValoracionSeleccion = new EjecutarValoracion[];
+            // EMISION ALCABALA PLUSVALIA          
             ejecutarValoracion();
 
         } catch (Exception ex) {
@@ -372,7 +366,7 @@ public class GestionAlcabalasControlador extends BaseControlador {
                 try {
                     if (listaAlcabalasArchivo.size() > 0) {
 
-                        catastroPredialAlcabalaValoracion = catastroPredialAlcabalaValoracionServicio.buscarPorCatastroPredial(catastroPredialActual);
+                        catastroPredialAlcabalaValoracion = catastroPredialServicio.buscarAlcabalaPorCatastroPredial(catastroPredialActual);
                         if (catastroPredialAlcabalaValoracion != null) {
 
                             for (int i = 0; i < listaAdicionalesDeductivosDeduccionesSeleccion.size(); i++) {
@@ -508,54 +502,34 @@ public void calularRebajaDesvalorizacionBaseImpImpuesto() {
             for (int i = 0; i < listaCatastroPredialTablaValoracion.size(); i++) {
                 EjecutarValoracion eVal = new EjecutarValoracion();
                 CatastroPredial CP = listaCatastroPredialTablaValoracion.get(i);
+                eVal.setCatastroPredial(CP);
                 eVal.setCatpreCodigo(CP.getCatpreCodigo());
                 eVal.setCatpreClaveCatastal(CP.getCatpreCodNacional() + CP.getCatpreCodLocal());
-                eVal.setProCi(catastroPredialServicio.obtenerPropietarioPrincipalPredio(CP.getCatpreCodigo()));
-                eVal.setCatpreAreaTotal(CP.getCatpreAreaTotal());
-                eVal.setCatpreAreaTotalCons(CP.getCatpreAreaTotalCons());
-                eVal.setCatastroPredialValoracion(catastroPredialValoracionServicio.buscarPorCatastroPredial(CP));
-
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R") != null) {
-                    eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R"));
-                } else {
-                    eVal.setTotalRecargos(BigDecimal.ZERO);
-                }
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D") != null) {
-                    eVal.setTotalDeduciones(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D"));
-                } else {
-                    eVal.setTotalDeduciones(BigDecimal.ZERO);
-                }
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E") != null) {
-                    eVal.setTotalExoneracion(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E"));
-                } else {
-                    eVal.setTotalExoneracion(BigDecimal.ZERO);
-                }
-                if (eVal.getCatpreAreaTotal() == null) {
-                    eVal.setCatpreAreaTotal(0.0);
-                }
-                if (eVal.getCatpreAreaTotalCons() == null) {
-                    eVal.setCatpreAreaTotalCons(0.0);
-                }
-                if (eVal.getCatastroPredialValoracion() == null) {
-                    CatastroPredialValoracion CPV = new CatastroPredialValoracion();
-                    CPV.setCatprevalAvaluoEdif(BigDecimal.ZERO);
-                    CPV.setCatprevalAvaluoTerr(BigDecimal.ZERO);
-                    eVal.setCatastroPredialValoracion(CPV);
-                } else {
-                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr() == null) {
-                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoTerr(BigDecimal.ZERO);
+                eVal.setProCi(catastroPredialServicio.obtenerPropietarioPrincipalPredio(CP.getCatpreCodigo())); 
+                
+                CatastroPredialAlcabalaValoracion ALCA = catastroPredialServicio.buscarAlcabalaPorCatastroPredial(CP);                                                               
+                if(ALCA!=null){                    
+                    if(ALCA.getCatprealcvalTotal()==null){
+                        ALCA.setCatprealcvalTotal(BigDecimal.ZERO);
                     }
-                    if (eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif() == null) {
-                        eVal.getCatastroPredialValoracion().setCatprevalAvaluoEdif(BigDecimal.ZERO);
-                    }
+                                                                               
+                }else{
+                    ALCA = new CatastroPredialAlcabalaValoracion();
+                    ALCA.setCatprealcvalTotal(BigDecimal.ZERO);                                        
                 }
-
-                   
-                eVal.setTotalRegistro(eVal.getTotalRecargos().add(eVal.getTotalDeduciones().add(eVal.getTotalExoneracion().add(new BigDecimal(eVal.getCatpreAreaTotal()).add(new BigDecimal(eVal.getCatpreAreaTotalCons())).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoTerr()).add(eVal.getCatastroPredialValoracion().getCatprevalAvaluoEdif())))));
-
-                listaEjecutarValoracion.add(eVal);
-              //  listaEjecutarValoracion[i]=eVal;
-              
+                eVal.setCatastroPredialAlcabalaValoracion(ALCA); 
+                  
+                CatastroPredialPlusvaliaValoracion PLUS = catastroPredialServicio.buscarPlusvaliaPorCatastroPredial(CP);                                                               
+                if(PLUS!=null){                    
+                    if(PLUS.getCatprepluvalImpuesto()==null){
+                        PLUS.setCatprepluvalImpuesto(BigDecimal.ZERO);
+                    }                                                                              
+                }else{
+                    PLUS = new CatastroPredialPlusvaliaValoracion();
+                    PLUS.setCatprepluvalImpuesto(BigDecimal.ZERO);                                
+                }
+                eVal.setCatastroPredialPlusvaliaValoracion(PLUS);                                                                                 
+                listaEjecutarValoracion.add(eVal);                           
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -760,13 +734,6 @@ public void calularRebajaDesvalorizacionBaseImpImpuesto() {
         this.listaCatastroPredialTablaValoracionSeleccion = listaCatastroPredialTablaValoracionSeleccion;
     }
 
-//    public EjecutarValoracion[] getListaCatastroPredialTablaValoracionSeleccion() {
-//        return listaCatastroPredialTablaValoracionSeleccion;
-//    }
-//
-//    public void setListaCatastroPredialTablaValoracionSeleccion(EjecutarValoracion[] listaCatastroPredialTablaValoracionSeleccion) {
-//        this.listaCatastroPredialTablaValoracionSeleccion = listaCatastroPredialTablaValoracionSeleccion;
-//    }
 
     
     
