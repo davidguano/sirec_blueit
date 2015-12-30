@@ -7,19 +7,23 @@ package ec.sirec.ejb.servicios;
 
 import ec.sirec.ejb.entidades.CatalogoDetalle;
 import ec.sirec.ejb.entidades.CatastroPredial;
+import ec.sirec.ejb.entidades.CatastroPredialAlcabalaValoracion;
 import ec.sirec.ejb.entidades.CatastroPredialAreas;
 import ec.sirec.ejb.entidades.CatastroPredialEdificacion;
 import ec.sirec.ejb.entidades.CatastroPredialInfAnt;
 import ec.sirec.ejb.entidades.CatastroPredialInfraestructura;
+import ec.sirec.ejb.entidades.CatastroPredialPlusvaliaValoracion;
 import ec.sirec.ejb.entidades.CatastroPredialUsosuelo;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.PropietarioPredio;
+import ec.sirec.ejb.facade.CatastroPredialAlcabalaValoracionFacade;
 import ec.sirec.ejb.facade.CatastroPredialAreasFacade;
 import ec.sirec.ejb.facade.CatastroPredialEdificacionFacade;
 import ec.sirec.ejb.facade.CatastroPredialFacade;
 import ec.sirec.ejb.facade.CatastroPredialInfAntFacade;
 import ec.sirec.ejb.facade.CatastroPredialInfraestructuraFacade;
+import ec.sirec.ejb.facade.CatastroPredialPlusvaliaValoracionFacade;
 import ec.sirec.ejb.facade.CatastroPredialUsosueloFacade;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +57,10 @@ public class CatastroPredialServicio {
     private CatastroPredialValoracionServicio valoracionPredioServicio;
     @EJB
     private CatastroPredialInfAntFacade informacionAnteriorDao;
+    @EJB
+    private CatastroPredialAlcabalaValoracionFacade catastroPredialAlcabalaValoracionDao;
+    @EJB
+    private CatastroPredialPlusvaliaValoracionFacade catastroPredialPlusvaliaValoracionDao;
 
     private final String ENTIDAD_CATASTRO = "CatastroPredial";
 
@@ -672,5 +680,13 @@ public class CatastroPredialServicio {
     
      public List<CatastroPredial> listarCatastroXSector(CatalogoDetalle codSector) throws Exception {
         return catastroPredialDao.listarPorCampoOrdenada(ENTIDAD_CATASTRO, "catdetSector", codSector, "catpreCodigo", "asc");
+    }
+     
+       public CatastroPredialAlcabalaValoracion buscarAlcabalaPorCatastroPredial(CatastroPredial catastroPredial) throws Exception {
+        return catastroPredialAlcabalaValoracionDao.buscarPorCampo("CatastroPredialAlcabalaValoracion", "catpreCodigo", catastroPredial);
+    }
+     
+      public CatastroPredialPlusvaliaValoracion buscarPlusvaliaPorCatastroPredial(CatastroPredial catastroPredial) throws Exception {
+        return catastroPredialPlusvaliaValoracionDao.buscarPorCampo("CatastroPredialPlusvaliaValoracion", "catpreCodigo", catastroPredial);
     }
 }

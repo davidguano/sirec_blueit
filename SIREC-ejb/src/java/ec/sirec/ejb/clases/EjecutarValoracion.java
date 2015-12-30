@@ -7,6 +7,8 @@
 package ec.sirec.ejb.clases;
 
 import ec.sirec.ejb.entidades.CatastroPredial;
+import ec.sirec.ejb.entidades.CatastroPredialAlcabalaValoracion;
+import ec.sirec.ejb.entidades.CatastroPredialPlusvaliaValoracion;
 import ec.sirec.ejb.entidades.CatastroPredialValoracion;
 import ec.sirec.ejb.entidades.Propietario;
 import ec.sirec.ejb.entidades.SegUsuario;
@@ -41,8 +43,14 @@ public class EjecutarValoracion {
     
     private SegUsuario usuIdentificacion;
   
-    private Propietario proCi;
-   
+    private Propietario proCi;    
+       
+    private BigDecimal totalAlcabalaDeducciones;
+    private BigDecimal totalAlcabalaExenciones;
+    
+    private CatastroPredialAlcabalaValoracion catastroPredialAlcabalaValoracion;
+    private CatastroPredialPlusvaliaValoracion catastroPredialPlusvaliaValoracion;
+    
     public EjecutarValoracion(){
         
     }
@@ -158,4 +166,36 @@ public class EjecutarValoracion {
         this.CatastroPredial = CatastroPredial;
     }
 
+    public BigDecimal getTotalAlcabalaDeducciones() {
+        return totalAlcabalaDeducciones;
+    }
+
+    public void setTotalAlcabalaDeducciones(BigDecimal totalAlcabalaDeducciones) {
+        this.totalAlcabalaDeducciones = totalAlcabalaDeducciones;
+    }
+
+    public BigDecimal getTotalAlcabalaExenciones() {
+        return totalAlcabalaExenciones;
+    }
+
+    public void setTotalAlcabalaExenciones(BigDecimal totalAlcabalaExenciones) {
+        this.totalAlcabalaExenciones = totalAlcabalaExenciones;
+    }  
+
+    public CatastroPredialAlcabalaValoracion getCatastroPredialAlcabalaValoracion() {
+        return catastroPredialAlcabalaValoracion;
+    }
+
+    public void setCatastroPredialAlcabalaValoracion(CatastroPredialAlcabalaValoracion catastroPredialAlcabalaValoracion) {
+        this.catastroPredialAlcabalaValoracion = catastroPredialAlcabalaValoracion;
+    }
+
+    public CatastroPredialPlusvaliaValoracion getCatastroPredialPlusvaliaValoracion() {
+        return catastroPredialPlusvaliaValoracion;
+    }
+
+    public void setCatastroPredialPlusvaliaValoracion(CatastroPredialPlusvaliaValoracion catastroPredialPlusvaliaValoracion) {
+        this.catastroPredialPlusvaliaValoracion = catastroPredialPlusvaliaValoracion;
+    }
+                
     }
