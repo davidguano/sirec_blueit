@@ -68,7 +68,10 @@ public class AdicionalesDeductivos implements Serializable {
     private List<CpValoracionExtras> cpValoracionExtrasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "adidedCodigo")
     private List<CpAlcabalaValoracionExtras> cpAlcabalaValoracionExtrasList;
-
+    @Size(max = 10)
+    @Column(name = "adided_nemonico")
+    private String adidedNemonico;
+    
     public AdicionalesDeductivos() {
     }
 
@@ -177,6 +180,16 @@ public class AdicionalesDeductivos implements Serializable {
     public void setCpAlcabalaValoracionExtrasList(List<CpAlcabalaValoracionExtras> cpAlcabalaValoracionExtrasList) {
         this.cpAlcabalaValoracionExtrasList = cpAlcabalaValoracionExtrasList;
     }
+
+    public String getAdidedNemonico() {
+        return adidedNemonico;
+    }
+
+    public void setAdidedNemonico(String adidedNemonico) {
+        this.adidedNemonico = adidedNemonico;
+    }
+    
+    
 
     @Override
     public int hashCode() {
