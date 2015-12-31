@@ -133,12 +133,12 @@ public class GestionTasasControlador extends BaseControlador {
         try {
             if(opcionBoton.equals("N")){
              tasaServicio.crearTasa(tasasActual);
-             addSuccessMessage("Guardado satisfactoriamente");     
+             addSuccessMessage("Guardado exitosamente","Guardado exitosamente");     
             }else{
                 if(opcionBoton.equals("E")){
                     tasaServicio.editarTasa(tasasActual);
                     
-            addSuccessMessage("Se han modificado la Tasa");                 
+            addSuccessMessage("Se ha modificado el registro","Se ha modificado el registro");                 
             }            
             }                       
             listarTasas();                               
@@ -190,6 +190,7 @@ public class GestionTasasControlador extends BaseControlador {
     public void eliminarTasa(Tasa tasa) {
         try {            
             tasaServicio.eliminarTasa(tasa);             
+            addSuccessMessage("Registro Eliminado","Registro Eliminado"); 
             listarTasas();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);

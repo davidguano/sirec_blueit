@@ -188,11 +188,11 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
     public void listarCatalogosDetalle() {
         try {
             listaAdicionalesDeductivosRecargos = new ArrayList<AdicionalesDeductivos>();
-            listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R", "PA");
+            listaAdicionalesDeductivosRecargos = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("R", "PR");
             listaAdicionalesDeductivosExoneraciones = new ArrayList<AdicionalesDeductivos>();
-            listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E", "PA");
+            listaAdicionalesDeductivosExoneraciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("E", "PR");
             listaAdicionalesDeductivosDeducciones = new ArrayList<AdicionalesDeductivos>();
-            listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D", "PA");
+            listaAdicionalesDeductivosDeducciones = adicionalesDeductivosServicio.listarAdicionesDeductivosTipo("D", "PR");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -645,18 +645,18 @@ public class GestionImpuestoPredialControlador extends BaseControlador {
                       eVal.setCatastroPredialValoracion(CPV);                
                 }
 
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R") != null) {
-                    eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "R"));
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "R") != null) {
+                    eVal.setTotalRecargos(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "R"));
                 } else {
                     eVal.setTotalRecargos(BigDecimal.ZERO);
                 }
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D") != null) {
-                    eVal.setTotalDeduciones(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "D"));
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "D") != null) {
+                    eVal.setTotalDeduciones(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "D"));
                 } else {
                     eVal.setTotalDeduciones(BigDecimal.ZERO);
                 }
-                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E") != null) {
-                    eVal.setTotalExoneracion(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PA", "E"));
+                if (adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "E") != null) {
+                    eVal.setTotalExoneracion(adicionalesDeductivosServicio.obteneValorXAdicional(CP.getCatpreCodigo(), "PR", "E"));
                 } else {
                     eVal.setTotalExoneracion(BigDecimal.ZERO);
                 }
