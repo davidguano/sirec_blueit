@@ -712,7 +712,7 @@ public class CatastroControlador extends BaseControlador {
         }
     }
 
-    public String generarReporteFichaCatastral() throws Exception {
+      public String generarReporteFichaCatastral() throws Exception {
         //Conexion con local datasource
         UtilitariosCod util = new UtilitariosCod();
         Connection conexion = util.getConexion();
@@ -726,22 +726,51 @@ public class CatastroControlador extends BaseControlador {
             session.removeAttribute("reporteInforme");
             parameters.put("catpre_codigo", catastroPredialActual.getCatpreCodigo());
             parameters.put("logo_gad", servletContext.getRealPath("/imagenes/icons/gadPedroMoncayo.jpg"));
-            String subrep1 = servletContext.getRealPath("/reportes/fichaCatastral/fiCatSubRepPrt1_2_3Orden1.jasper");
             //-----------Sub reportes----------------
+            String subrep1 = servletContext.getRealPath("/reportes/fichaCatastral");
             parameters.put("SUBREPORT_DIR1", subrep1);
-            String subrep2 = servletContext.getRealPath("/reportes/fichaCatastral/fiCatSubRepPrtUsoSueloOrden2.jasper");
+            String subrep2 = servletContext.getRealPath("/reportes/fichaCatastral");
             parameters.put("SUBREPORT_DIR2", subrep2);
-            String subrep3 = servletContext.getRealPath("/reportes/fichaCatastral/fiCatSubRepPrtEdificaOrden3.jasper");
+            String subrep3 = servletContext.getRealPath("/reportes/fichaCatastral");
             parameters.put("SUBREPORT_DIR3", subrep3);
-            //---------Sub sub reportes------------------
-             String subOrden1 = servletContext.getRealPath("/reportes/fichaCatastral/subRepDetInfra.jasper");
-            parameters.put("SUB_SUBREPORT_ORD", subOrden1);
-            String subOrden2 = servletContext.getRealPath("/reportes/fichaCatastral/subRepLstUsoSuelo.jasper");
-            parameters.put("SUB_SUBREPORT_ORD2", subOrden2);
-            String subOrden3 = servletContext.getRealPath("/reportes/fichaCatastral/subRepLstCarEdif.jasper");
-            parameters.put("SUB_SUBREPORT_ORD3", subOrden3);
-             String subOrden4 = servletContext.getRealPath("/reportes/fichaCatastral/subRepLstCarEdif1.jasper");
-            parameters.put("SUB_SUBREPORT_ORD4", subOrden4);  jasperReport = (JasperReport) JRLoader.loadObject(servletContext.getRealPath("/reportes/fichaCatastral/repFichaCatastral.jasper"));
+            //---------Sub sub reportes pagina 1 
+
+            String subrep1_1 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR1_1", subrep1_1);
+            String subrep1_2 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR1_2", subrep1_2);
+            String subrep1_3 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR1_3", subrep1_3);
+            // ------------------
+            //---------Sub sub reportes pagina 2 
+            String subrep2_1 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1", subrep2_1);
+            String subrep2_2 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_2", subrep2_2);
+
+            // ------------------
+            //---------Sub sub reporte detalles pagina 2
+            String subrep2_1_a = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_a", subrep2_1_a);
+            String subrep2_1_b = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_b", subrep2_1_b);
+            String subrep2_1_c = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_c", subrep2_1_c);
+            String subrep2_1_d = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_d", subrep2_1_d);
+            String subrep2_1_e = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_e", subrep2_1_e);
+            String subrep2_1_f = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_f", subrep2_1_f);
+            String subrep2_1_g = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR2_1_g", subrep2_1_g);
+
+            //---------Sub sub reportes pagina 3
+            String subrep3_1 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR3_1", subrep3_1);
+            String subrep3_2 = servletContext.getRealPath("/reportes/fichaCatastral");
+            parameters.put("SUBREPORT_DIR3_2", subrep3_2);
+            jasperReport = (JasperReport) JRLoader.loadObject(servletContext.getRealPath("/reportes/fichaCatastral/repFichaCatastral.jasper"));
             fichero = JasperRunManager.runReportToPdf(jasperReport, parameters, conexion);
             session.setAttribute("reporteInforme", fichero);
 
@@ -756,6 +785,7 @@ public class CatastroControlador extends BaseControlador {
         }
         return null;
     }
+
 
     //GETTER AND SETTERS
     public CatastroPredial getCatastroPredialActual() {
