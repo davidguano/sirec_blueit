@@ -94,42 +94,42 @@
 	<detail>
 		<band height="156">
 			<staticText>
-				<reportElement x="10" y="56" width="54" height="13" uuid="f784bde3-dff4-4f8c-8038-a36ef1ab0740"/>
+				<reportElement x="7" y="56" width="54" height="13" uuid="f784bde3-dff4-4f8c-8038-a36ef1ab0740"/>
 				<textElement>
 					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1.2 MATERIAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="12" y="1" width="63" height="13" uuid="9167bca9-f4f3-46b4-872a-01b564dca96f"/>
+				<reportElement x="9" y="2" width="63" height="13" uuid="9167bca9-f4f3-46b4-872a-01b564dca96f"/>
 				<textElement>
 					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1.1 USO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="1" width="103" height="13" uuid="b142e489-560f-4ec0-8614-433f11606a1d"/>
+				<reportElement x="234" y="2" width="103" height="13" uuid="b142e489-560f-4ec0-8614-433f11606a1d"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[3. ABASTECIMIENTO  AGUA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="234" y="78" width="103" height="13" uuid="d7f2848e-764c-4d26-a38e-8766834563d9"/>
+				<reportElement x="234" y="78" width="82" height="13" uuid="d7f2848e-764c-4d26-a38e-8766834563d9"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[4. ALCANTARILLADO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="361" y="1" width="90" height="13" uuid="5d18991e-b17d-40f5-90d2-3a6f67582a51"/>
+				<reportElement x="354" y="2" width="90" height="13" uuid="5d18991e-b17d-40f5-90d2-3a6f67582a51"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[5.OTROS SERVICIOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="1" width="63" height="13" uuid="6304bb32-61e9-4843-bdc3-eb1bf1591748"/>
+				<reportElement x="110" y="2" width="63" height="13" uuid="6304bb32-61e9-4843-bdc3-eb1bf1591748"/>
 				<textElement>
 					<font size="7" isBold="true"/>
 				</textElement>
@@ -138,7 +138,7 @@
 			<staticText>
 				<reportElement x="109" y="57" width="103" height="13" uuid="33bbbd4b-761e-4d53-b7ce-361f045dea49"/>
 				<textElement>
-					<font fontName="Arial" size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[2. ENERGIA ELECTRICA]]></text>
 			</staticText>
